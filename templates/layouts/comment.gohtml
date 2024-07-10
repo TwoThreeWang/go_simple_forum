@@ -1,0 +1,75 @@
+{{define "comment"}}
+<div id="c-{{.Comment.CID}}" class="p2 comment flex flex-row gap2 items-start">
+    <div class="flex flex-col items-center cursor-pointer">
+        <a class="text-coolGray {{if .Comment.UpVoted}}text-red{{end}}" href="{{if .Comment.UpVoted}}javascript:void(0);{{else}}/vote?id={{.Comment.CID}}&action=u&type=COMMENT{{end}}" >
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M1 21h22L12 2"/>
+            </svg>
+        </a>
+        <div class="text-sm text-coolGray">{{.Comment.UpVote}}</div>
+        {{if gt (len .Comment.Comments) 0}}
+        <div class="text-gray hover:text-black text-xs toggleComment" data-cid="{{.Comment.CID}}">[-]</div>
+        {{end}}
+    </div>
+    <div class="flex flex-col flex-1">
+        <div class="flex flex-row gap-2 text-gray text-xs">
+           <!-- <div class="avatar">
+                <a href="/u/profile/{{.Comment.User.Username}}"
+                ><img class="w-5 h-5 rounded" src="https://i.pravatar.cc/30?img=1" alt=""
+                /></a>
+            </div>-->
+
+            <div><a class="cursor-pointer  hover:text-hover" href="/u/profile/{{.Comment.User.Username}}">{{.Comment.User.Username}}</a>
+            </div>
+            <div class="when">{{.Comment.CreatedAt | timeAgo}}</div>
+            <div>|</div>
+            <div><a class="hover:text-hover" href="#c-{{.Comment.CID}}">链接</a></div>
+            {{if .Login}}
+            <div>|</div>
+            <div class="hover:text-hover reply cursor-pointer" data-cid="{{.Comment.CID}}">回复</div>
+            {{end}}
+        </div>
+        <div class="content text-sm" id="comment-content-{{.Comment.CID}}">
+            {{.Comment.Content | html}}
+        </div>
+        <script>
+            var html = marked.parse('{{.Comment.Content | html}}');
+            // 链接改为新标签页打开
+            html = html.replaceAll('<a href','<a target="_blank" rel="noopener noreferrer" href');
+            document.getElementById('comment-content-{{.Comment.CID}}').innerHTML = html;
+        </script>
+        <div class="hidden form-parent">
+            <form method="post" action="/p/comment" class="reply-form" data-cid="{{.Comment.CID}}">
+                <input type="hidden" name="post_pid" value="{{.Post.Pid}}">
+                <input type="hidden" name="post_id" value="{{.Post.ID}}">
+                <input type="hidden" name="parent_comment_id" value="{{.Comment.ID}}">
+                <div class="flex flex-col gap-2 mt-4">
+                    <textarea id="comment-{{.Comment.CID}}" name="content" class="input" rows="5"></textarea>
+                    <div class="flex flex-row gap2 mt-2">
+                        <button class="btn" type="submit">发表评论</button>
+                    </div>
+                    <script type="text/javascript">
+                        //获取textarea dom对象
+                        var ele_textarea = document.getElementById('comment-{{.Comment.CID}}');
+                        //实例化Mditor
+                        var editor = new mditor(ele_textarea,{
+                            //自定义显示效果class
+                            previewClass : 'content'
+                        });
+                    </script>
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{{if gt (len .Comment.Comments) 0}}
+<div class="comment-tree">
+    {{range .Comment.Comments}}
+    {{template "comment" dict "Comment" . "Post" $.Post "Login" $.Login}}
+    {{end}}
+</div>
+{{end}}
+{{end}}

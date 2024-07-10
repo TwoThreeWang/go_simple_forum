@@ -1,0 +1,144 @@
+{{ define "title"}}<title>统计分析 - {{.siteName}}</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+<script>
+    $(function () {
+        const myChart = echarts.init(document.getElementById('main'));
+        const countryChart = echarts.init(document.getElementById('country'));
+        const referChart = echarts.init(document.getElementById('refer'));
+
+        setTimeout(() => {
+            let $main = $("#main");
+            let $country = $("#country");
+            let $refer = $("#refer");
+            const w = $main.parent().width()
+            $main.css('width', w)
+            $country.css('width', w)
+            $refer.css('width', w)
+            myChart.resize()
+            countryChart.resize()
+            referChart.resize()
+        }, 200)
+
+        const option = {
+            title: {
+                text: '独立IP统计',
+                left: 'center'
+            },
+            "xAxis": {
+                "name": "日期",
+                "type": "category",
+                "data": {{.xAxis}}
+            },
+            "yAxis": {
+                "name": "IP数量",
+                "type": "value"
+            },
+            "series": [
+                {
+                    "data": {{.yAxis}},
+                    "type": "line",
+                    "smooth": true,
+                    "itemStyle": {"normal": {"label": {"show": true}}}
+                }
+            ]
+        }
+        myChart.setOption(option);
+
+
+        const countryChartOption = {
+            title: {
+                text: '国家统计',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                    name: '来自国家',
+                    type: 'pie',
+                    radius: '50%',
+                    data: {{.countryData}},
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        countryChart.setOption(countryChartOption)
+
+        const referChartOption = {
+            title: {
+                text: '来源统计',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                    name: '来源于',
+                    type: 'pie',
+                    radius: '50%',
+                    data: {{.referData}},
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        referChart.setOption(referChartOption)
+
+        window.onresize = function () {
+            myChart.resize();
+            countryChart.resize();
+            referChart.resize();
+        }
+    })
+</script>
+{{end}}
+
+{{define "content"}}
+    <form method="get" action="/statistics" class="dark:text-white">
+        <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-center">
+                <label for="start" class="fw-bold">开始日期</label>
+                <input type="date" name="start" id="start" value="{{.startDate}}">
+            </div>
+
+            <div class="flex gap-2 items-center">
+                <label for="end" class="fw-bold">结束日期</label>
+                <input type="date" name="end" id="end" value="{{.endDate}}">
+            </div>
+            <div class="flex gap-2">
+                <input type="submit" class="btn my-2" value="查询">
+            </div>
+        </div>
+    </form>
+
+    <div class="dark:text-white">
+        <div id="main" class="my-4" style="width:800px;height:400px;"></div>
+        <div id="country" class="my-4" style="width:800px;height:400px;"></div>
+        <div id="refer" class="my-4" style="width:800px;height:400px;"></div>
+    </div>
+{{end}}
+{{ define "afterBody"}}{{end}}

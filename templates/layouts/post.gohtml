@@ -1,0 +1,159 @@
+{{define "post"}}
+    <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
+    <script src='{{getStaticPath "/js/mditor.js"}}'></script>
+    <style>.mditor-mini textarea{min-height:100px}</style>
+    <div class="x-post-list flex flex-col gap-2">
+        {{range  $index, $post := .posts}}
+            <div class="x-post-item flex flex-row gap-2 lg:gap-4 p-2 flex-1 items-start bg-white rounded shadow dark:bg-slate-800">
+                <div class="flex flex-col items-center cursor-pointer upVoteParent ">
+                    <a class="text-coolGray  {{if $post.UpVoted}}text-red{{end}}"
+                       href="{{if $post.UpVoted}}javascript:void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M1 21h22L12 2"/>
+                        </svg>
+                    </a>
+                    <div class="text-sm text-coolGray upVote">{{$post.UpVote}}</div>
+                </div>
+                <div class="flex flex-col flex-1 gap-1 ">
+                    <div class="flex flex-row gap-2 items-center flex-wrap ">
+
+                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] ">
+                            {{ if eq $post.Type "ask"}}
+                                <a href="/p/{{$post.Pid}}">{{$post.Title}}</a>
+                            {{else}}
+                                <a href="{{$post.Link}}" target="_blank">{{$post.Title}}</a>
+                            {{end}}
+                        </div>
+                        {{if or (eq $.selected "/") (eq $.selected "history")}}
+                            {{if gt $post.Top 0}}
+                                <svg width="16px" height="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
+                                    <g fill="#ef4444">
+                                        <path d="M8.052 1.436a1.5 1.5 0 0 0-2.38.347L4.145 4.608l-2.33.928a.5.5 0 0 0-.169.818l1.647 1.647l-2.146 2.146l-.147.854l.854-.147L4 8.708l1.646 1.646a.5.5 0 0 0 .818-.168l.933-2.332l2.821-1.526a1.5 1.5 0 0 0 .347-2.38L8.052 1.436z"
+                                              fill="#ef4444"></path>
+                                    </g>
+                                </svg>
+                            {{end}}
+                        {{end}}
+
+                        <div class="flex flex-row gap-1 items-center text-xs ">
+                            {{range $post.Tags}}
+                                <div class="x-post-tag  {{.CssClass}} ">
+                                    <a href="/t/{{.Name}}">{{.Name}}</a></div>
+                            {{end}}
+                            {{ if eq $post.Type "ask"}}
+                                <div class=" border px-1.5 rounded bg-gray-2 b-solid  cursor-pointer ask bg-red text-white">
+                                    <a href="/type/ask">讨论</a>
+                                </div>
+                            {{end}}
+                            <div class="text-gray">
+                                <a href="/d/{{$post.Domain}}" class="hover:text-hover">{{$post.Domain}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="x-post-toolbar flex flex-row gap-2 items-center text-xs text-gray">
+                        <img src="{{$.avatarCdn}}/{{$post.User.EmailHash}}" class="rounded w-4 h-4"/>
+                        <div><a class="cursor-pointer  hover:text-hover"
+                                href="/u/profile/{{$post.User.Username}}">{{$post.User.Username}}</a></div>
+                        <div class="when">{{$post.CreatedAt | timeAgo}}</div>
+                        <div>|</div>
+                        <div class="cursor-pointer  hover:text-hover">
+                            <a href="/p/{{$post.Pid}}#comment_form">
+                                {{if gt $post.CommentCount 0 }}{{$post.CommentCount}}条{{else}}去{{end}}评论
+                            </a>
+                        </div>
+
+                        {{ if $.userinfo}}
+                            {{if or (eq $.userinfo.Role "admin") (eq $.userinfo.Username $post.User.Username) }}
+                                <div>|</div>
+                                <div class="cursor-pointer hover:text-red">
+                                    <a href="/p/{{$post.Pid}}/edit">去编辑</a>
+                                </div>
+                            {{end}}
+                        {{end}}
+                    </div>
+                    {{ if eq $.selected "detail"}}
+                        <div class="mt-2 text-sm content dark:text-white" id="post-content">
+                            {{$post.Content | html}}
+                        </div>
+                        <script>
+                            var html = marked.parse('{{$post.Content | html}}');
+                            // 链接改为新标签页打开
+                            html = html.replaceAll('<a href','<a target="_blank" rel="noopener noreferrer" href');
+                            document.getElementById('post-content').innerHTML = html;
+                        </script>
+                    {{end}}
+
+                    {{ if eq $.selected "detail" }}
+                        <form method="post" action="/p/comment" id="comment_form">
+                            <input type="hidden" name="post_pid" value="{{$post.Pid}}">
+                            <input type="hidden" name="post_id" value="{{$post.ID}}">
+                            <input type="hidden" name="parent_comment_id" value="">
+                            <div class="flex flex-col gap-2 mt-4">
+                                <textarea id="md_editor" name="content" class="input" rows="5"></textarea>
+{{/*                                <textarea*/}}
+{{/*                                        name="content"*/}}
+{{/*                                        id="comment"*/}}
+{{/*                                        cols="30"*/}}
+{{/*                                        rows="5"*/}}
+{{/*                                        class="input"*/}}
+{{/*                                >{{if not $.login}}先登录才能发表评论{{end}}</textarea>*/}}
+
+                                <div class="flex flex-row gap2 mt-2 dark:text-white">
+                                    {{if $.login}}
+                                        <button class="btn" type="submit">发表评论</button>
+                                    {{else}}
+                                        <a href="/u/login?redirect=/p/{{$post.Pid}}"
+                                           class="text-sm hover:text-hover underline fw700">去登录发表评论</a>
+                                    {{end}}
+                                </div>
+                                <script type="text/javascript">
+                                    //获取textarea dom对象
+                                    var ele_textarea = document.getElementById('md_editor');
+                                    //实例化Mditor
+                                    var editor = new mditor(ele_textarea,{
+                                        //自定义显示效果class
+                                        previewClass : 'content'
+                                    });
+                                    {{if not $.login}}
+                                    setTimeout(()=>{
+                                        editor.insert("登录后发表评论");
+                                    },10)
+                                    {{end}}
+                                </script>
+                            </div>
+                        </form>
+
+                    {{end}}
+
+
+                    {{if and (gt (len $post.Comments) 0) (not (eq $.selected "mine"))}}
+                        <div id="comment-tree" class="mt-4 relative">
+                            {{range $post.Comments}}
+                                {{template "comment" dict "Comment" . "Post" $post "Login" $.login}}
+                            {{end}}
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+            {{ if eq $.selected "approve"}}
+                <form action="/inspect" method="post">
+                    <div class="flex flex-col gap2 mt-2 text-xs" id="approve-form" data-post-id="{{$post.ID}}">
+                        <input name="post_id" type="hidden" value="{{$post.ID}}">
+                        <input name="inspect_type" type="hidden" value="POST">
+                        <div class="flex flex-row gap-1  items-center">
+                            <input type="radio" value="pass" id="pass-{{$index}}" data-index="{{$index}}" name="result">
+                            <label for="pass-{{$index}}">通过</label>
+                            <input type="radio" class="ml-2" value="reject" id="reject-{{$index}}"
+                                   data-index="{{$index}}" name="result">
+                            <label for="reject-{{$index}}">拒绝</label>
+                            <button class="btn text-xs ml-2" type="submit">审核</button>
+                        </div>
+                        <div class="hidden" id="reason-{{$index}}">
+                            <textarea name="reason" class="input w-full" placeholder="填写拒绝理由"></textarea>
+                        </div>
+                    </div>
+                </form>
+            {{end}}
+        {{end}}
+    </div>
+{{end}}

@@ -1,0 +1,30 @@
+{{ define "title"}}<title>{{(index .posts 0).Title}} - {{.siteName}}</title>
+<script>
+    $(function () {
+        $(".reply").click(function () {
+            const cid = $(this).data('cid')
+            $(this).parents(`#c-${cid}`).find(".form-parent").first().toggle()
+        })
+
+        $(".toggleComment").click(function () {
+            const parent = $(this).parents("#c-" + $(this).data("cid"))
+            const value = $(this).text()
+            $(this).text(value === '[+]' ? '[-]' : '[+]')
+            parent.next(".comment-tree").toggle(200)
+        })
+    })
+</script>
+<style>
+    .content > .sceditor-container > .sceditor-toolbar {
+        display: none;
+    }
+
+    .content > .sceditor-container {
+        border: 0;
+    }
+</style>
+{{ end }}
+{{define "content"}}
+    {{template "post" .}}
+{{end}}
+{{ define "afterBody"}}{{end}}
