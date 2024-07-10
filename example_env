@@ -1,0 +1,4 @@
+PORT=32919
+DB='host=127.0.0.1 user=postgres password=123456 dbname=hotnews port=5432 sslmode=disable TimeZone=Asia/Shanghai'
+COOKIE_SECRET=test
+VERSION=0.0.1
