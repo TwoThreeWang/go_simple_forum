@@ -1,104 +1,50 @@
 {{ define "title"}}
     <title>个人设置 - {{.siteName}}</title>
-
-    <script>
-        function copyCode(target,code) {
-            navigator.clipboard.writeText(`${window.location.origin}\/invite\/${code}`);
-            target.innerText = '已复制!快去邀请他人吧.'
-            target.style.color='green'
-        }
-    </script>
 {{ end }}
 
 {{define "content"}}
 
 
     {{if .msg}}
-        <div class="fw-bold my-4">不存在这个用户</div>
+        <div class="fw-bold my-4">错误！</div>
         {{.msg}}
     {{else}}
 
-
-        <div class="flex flex-col gap2 dark:text-white/70">
-            <p class="font-bold text-lg">{{.user.Username}}</p>
-            <!--
-            <img class="w-20 h-20 rounded" src="https://i.pravatar.cc/120?img=1" alt=""
-            />
-            -->
-
-
+        <form action="/u/profile/edit" class="flex flex-col gap2 dark:text-white/70" method="post">
+            <br>
+            <p class="font-bold text-lg">个人设置.</p>
+            <br>
+            <input type="hidden" name="uid" value="{{.uid}}">
             <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold ">账号状态</div>
-                <div>{{.user.Status}}</div>
-            </div>
-
-            <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
-
-            <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold">加入时间</div>
-                <div>{{.user.CreatedAt.Format "2006-01-02"}}{{if .invitedUsername }}  通过  <a
-                            href="/u/profile/{{.invitedUsername}}" class="aLink">{{.invitedUsername}}</a> 的 <a href="/"
-                                                                                                                class="aLink">邀请</a> 加入{{end}}
-                </div>
+                <div class="font-bold ">用户昵称</div>
+                <input type="text" name="username" id="username" class="input" value="{{.user.Username}}">
             </div>
 
             <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold">提交主题</div>
-                <div><a href="/u/profile/{{.user.Username}}/links" class="aLink">{{.user.PostCount}}</a></div>
+                <div class="font-bold ">注册邮箱</div>
+                <input type="text" name="email" id="email" class="input" value="{{.user.Email}}">
             </div>
 
             <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold">发表评论</div>
-                <div><a href="/u/profile/{{.user.Username}}/comments" class="aLink">{{.user.CommentCount}}</a></div>
+                <div class="font-bold ">用户头像</div>
+                <input type="text" name="avatar" id="avatar" class="input" value="{{.user.EmailHash}}">
             </div>
+            {{ if regexMatch "http" .user.EmailHash }}
+                <img src="{{.user.EmailHash}}" class="rounded w-12 h-12"/>
+            {{else}}
+                <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
+            {{end}}
 
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold">个人介绍</div>
-                <div>{{.user.Bio}}</div>
+                <input type="text" name="bio" id="bio" class="input" value="{{.user.Bio}}">
             </div>
-            {{if .inviteRecords}}
-                <div class="flex flex-row gap-8 items-start text-sm ">
-                    <div class="font-bold">邀请他人</div>
-                    <div class="flex flex-col gap-2">
-                        {{range .inviteRecords}}
-                            <div class="flex items-end">
-                                {{if eq .Status "DISABLE"}}
-                                    <a class="aLink" target="_blank" href="/invite/{{.Code}}">{{.Code}}</a> - 已经被
-                                    <a class="aLink" href="/u/profile/{{.InvitedUsername}}">{{.InvitedUsername}}</a>
-                                        于 {{.UpdatedAt | timeAgo}} 使用
-                                {{else}}
-                                    <a class="aLink" target="_blank" href="/invite/{{.Code}}">{{.Code}}</a>
-                                    <div class="cursor-pointer hover:text-green-5" onclick="copyCode(this,'{{.Code}}')">复制链接</div>
-                                {{end}}
-                            </div>
-                        {{end}}
-                    </div>
-                </div>
-            {{end}}
-        </div>
 
-        <div class="flex gap-2 my-4  text-sm fw-bold dark:text-white/70" style="border-bottom: 1px solid #eee">
-            <a class="{{if eq .sub "link"}}border-b border-b-[#5468ff] border-b-solid border-b-2 {{end}} cursor-pointer hover:text-gray"
-               href="/u/profile/{{.user.Username}}/links">分享</a>
-            <a class="{{if eq .sub "ask"}}border-b border-b-[#5468ff] border-b-solid border-b-2{{end}} cursor-pointer hover:text-gray"
-               href="/u/profile/{{.user.Username}}/asks">讨论</a>
-            <a class="{{if eq .sub "comments"}}border-b border-b-[#5468ff] border-b-solid border-b-2{{end}} cursor-pointer hover:text-gray"
-               href="/u/profile/{{.user.Username}}/comments">评论</a>
-        </div>
-        {{template "post" .}}
-        {{if .comments}}
-            {{range .comments}}
-                {{template "comment" dict "Comment" . "Login" false}}
-            {{end}}
-        {{end}}
-        <div class="flex flex-row gap2 items-center text-gray text-xs mt-4">
-            {{ if .hasPrev}}
-                <a href="?p={{sub .currentPage 1}}" class="hover:text-hover"><< 上一页</a>
-            {{end}}
-            {{ if .hasNext}}
-                <a href="?p={{add .currentPage 1}}" class="hover:text-hover">下一页>></a>
-            {{end}}
-        </div>
+            <div class="flex items-center gap-2">
+                <input type="submit" value="保存" class="btn">
+                <a class="bLink" href="/u/profile/{{.user.Username }}">返回</a>
+            </div>
+        </form>
     {{end}}
 {{end}}
 {{ define "afterBody"}}{{end}}

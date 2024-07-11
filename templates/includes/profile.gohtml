@@ -21,7 +21,7 @@
 
         <div class="flex flex-col gap2 dark:text-white/70">
             <br>
-            <p class="font-bold text-lg">Hi,{{.user.Username}}.</p>
+            <p class="font-bold text-lg">Here is {{.user.Username}}.</p>
             <br>
             <!--
             <img class="w-20 h-20 rounded" src="https://i.pravatar.cc/120?img=1" alt=""
@@ -33,10 +33,21 @@
                 <div class="font-bold ">账号状态</div>
                 <div>{{.user.Status}}</div>
             </div>
-
+        {{ if $.userinfo}}
+            {{if eq $.userinfo.Username .user.Username }}
+            <div class="flex flex-row gap-8 items-center text-sm">
+                <div class="font-bold ">注册邮箱</div>
+                <div>{{.user.Email}}</div>
+            </div>
+            {{end}}
+        {{end}}
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold ">用户头像</div>
-                <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
+                {{ if regexMatch "http" .user.EmailHash }}
+                    <img src="{{.user.EmailHash}}" class="rounded w-12 h-12"/>
+                {{else}}
+                    <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
+                {{end}}
             </div>
 
             <div class="flex flex-row gap-8 items-center text-sm">
@@ -86,8 +97,8 @@
                 <br>
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold">其他功能</div>
-                <a href="/u/profiledit/{{.user.Username }}" class="btn">用户设置</a>
-                <a class="dark:text-white/70" href="/">退出登录</a>
+                <a href="/u/profile/{{.user.Username }}/edit" class="btn">用户设置</a>
+                <a class="dark:text-white/70" href="/resetPwd">修改密码</a>
             </div>
             {{end}}
         {{end}}

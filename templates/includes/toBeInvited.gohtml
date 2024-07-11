@@ -14,7 +14,7 @@
 
 
             {{ if not .codeIsInvalid}}
-                {{if not (eq .invited.Username "hotnews")}}
+                {{if not (eq .code "open")}}
                     <div class="my-2 text-sm">用户<a class="aLink"
                                                      href="/u/profile/{{.invited.Username}}">{{.invited.Username}}</a>邀请你加入社区,请填写以下信息:
                     </div>

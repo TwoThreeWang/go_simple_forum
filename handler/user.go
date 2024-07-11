@@ -201,6 +201,79 @@ func (u *UserHandler) Links(c *gin.Context) {
 	}))
 }
 
+func (u *UserHandler) UserEdit(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
+	username := c.Param("username")
+	if userinfo.Username != username {
+		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"selected": "mine",
+			"msg":      "确定【" + username + "】是你本人？请核对用户名！",
+		}))
+		return
+	}
+	var user model.TbUser
+	if err := u.db.Preload(clause.Associations).Where("username= ?", username).First(&user).Error; err == gorm.ErrRecordNotFound {
+		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"selected": "mine",
+			"msg":      "如果用户确定存在,可能他改名字了.",
+		}))
+		return
+	}
+
+	c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		"selected": "mine",
+		"user":     user,
+		"uid":      userinfo.ID,
+		"sub":      "link",
+	}))
+}
+
+func (u *UserHandler) SaveUser(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
+
+	var user vo.EditUserRequest
+
+	if err := c.Bind(&user); err != nil {
+		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"msg": "内容异常，请检查后重试！",
+		}))
+		return
+	}
+
+	if userinfo.ID != user.Uid {
+		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"msg": "确定【" + user.Username + "】是你本人？请核对用户名！",
+		}))
+		return
+	}
+
+	if len(user.Username) < 3 {
+		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"msg": "用户名长度必须大于3位",
+		}))
+		return
+	}
+	if _, ok := mail.ParseAddress(user.Email); ok != nil {
+		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"msg": "邮箱格式不正确",
+		}))
+		return
+	}
+
+	u.db.Model(&model.TbUser{}).Where("id = ?", user.Uid).
+		Updates(map[string]interface{}{
+			"username":   user.Username,
+			"email_hash": user.Avatar,
+			"email":      user.Email,
+			"bio":        user.Bio,
+			"updated_at": time.Now(),
+		})
+	c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		"msg": "修改成功，如修改用户名请重新登陆",
+	}))
+	return
+}
+
 func (u *UserHandler) ToMessage(c *gin.Context) {
 
 	var messages []model.TbMessage
@@ -315,7 +388,7 @@ func (u *UserHandler) ToInvited(c *gin.Context) {
 		c.Redirect(200, "/")
 		return
 	}
-	if settings.Content.RegMode == "hotnews" {
+	if settings.Content.RegMode == "open" {
 		c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"selected": "/",
 			"code":     code,

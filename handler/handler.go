@@ -58,6 +58,8 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/login", userHandler.ToLogin)
 	userGroup.GET("/logout", userHandler.Logout)
 	userGroup.GET("/profile/:username", userHandler.Links)
+	userGroup.GET("/profile/:username/edit", userHandler.UserEdit)
+	userGroup.POST("/profile/edit", userHandler.SaveUser)
 	userGroup.GET("/profile/:username/asks", userHandler.Asks)
 	userGroup.GET("/profile/:username/links", userHandler.Links)
 	userGroup.GET("/profile/:username/comments", userHandler.Comments)
