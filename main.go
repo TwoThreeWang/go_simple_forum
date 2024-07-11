@@ -99,6 +99,10 @@ func main() {
 	}
 	// 路由注册
 	handler.SetupRouter(injector, engine)
+	// 处理 404 错误
+	engine.NoRoute(func(c *gin.Context) {
+		c.HTML(200, "404.gohtml", gin.H{})
+	})
 
 	go task.StartPostTask(injector)
 

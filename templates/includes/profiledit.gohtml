@@ -1,5 +1,5 @@
 {{ define "title"}}
-    <title>个人中心 - {{.siteName}}</title>
+    <title>个人设置 - {{.siteName}}</title>
 
     <script>
         function copyCode(target,code) {
@@ -20,9 +20,7 @@
 
 
         <div class="flex flex-col gap2 dark:text-white/70">
-            <br>
-            <p class="font-bold text-lg">Hi,{{.user.Username}}.</p>
-            <br>
+            <p class="font-bold text-lg">{{.user.Username}}</p>
             <!--
             <img class="w-20 h-20 rounded" src="https://i.pravatar.cc/120?img=1" alt=""
             />
@@ -34,10 +32,7 @@
                 <div>{{.user.Status}}</div>
             </div>
 
-            <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold ">用户头像</div>
-                <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
-            </div>
+            <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
 
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold">加入时间</div>
@@ -81,17 +76,6 @@
                 </div>
             {{end}}
         </div>
-        {{ if $.userinfo}}
-            {{if eq $.userinfo.Username .user.Username }}
-                <br>
-            <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold">其他功能</div>
-                <a href="/u/profiledit/{{.user.Username }}" class="btn">用户设置</a>
-                <a class="dark:text-white/70" href="/">退出登录</a>
-            </div>
-            {{end}}
-        {{end}}
-        <br>
 
         <div class="flex gap-2 my-4  text-sm fw-bold dark:text-white/70" style="border-bottom: 1px solid #eee">
             <a class="{{if eq .sub "link"}}border-b border-b-[#5468ff] border-b-solid border-b-2 {{end}} cursor-pointer hover:text-gray"

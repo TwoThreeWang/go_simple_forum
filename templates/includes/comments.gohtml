@@ -3,7 +3,7 @@
 
 {{define "content"}}
     <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
-<div class="flex flex-col gap-2 dark:text-white">
+<div class="flex flex-col gap-2 dark:text-white/70">
 
     {{ range .comments}}
     <div class="flex flex-row gap-2">
@@ -38,7 +38,7 @@
             <script>
                 var html = marked.parse('{{.Content | html}}');
                 // 链接改为新标签页打开
-                html = html.replaceAll('<a href','<a target="_blank" rel="noopener noreferrer" href');
+                html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
                 document.getElementById('comment-content-{{.CID}}').innerHTML = html;
             </script>
         </div>

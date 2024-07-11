@@ -37,7 +37,7 @@
 
                         <div class="flex flex-row gap-1 items-center text-xs ">
                             {{range $post.Tags}}
-                                <div class="x-post-tag  {{.CssClass}} ">
+                                <div class="x-post-tag dark:text-white/70 {{.CssClass}} ">
                                     <a href="/t/{{.Name}}">{{.Name}}</a></div>
                             {{end}}
                             {{ if eq $post.Type "ask"}}
@@ -72,13 +72,13 @@
                         {{end}}
                     </div>
                     {{ if eq $.selected "detail"}}
-                        <div class="mt-2 text-sm content dark:text-white" id="post-content">
+                        <div class="mt-2 text-sm content dark:text-white/70" id="post-content">
                             {{$post.Content | html}}
                         </div>
                         <script>
                             var html = marked.parse('{{$post.Content | html}}');
                             // 链接改为新标签页打开
-                            html = html.replaceAll('<a href','<a target="_blank" rel="noopener noreferrer" href');
+                            html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
                             document.getElementById('post-content').innerHTML = html;
                         </script>
                     {{end}}
@@ -90,14 +90,6 @@
                             <input type="hidden" name="parent_comment_id" value="">
                             <div class="flex flex-col gap-2 mt-4">
                                 <textarea id="md_editor" name="content" class="input" rows="5"></textarea>
-{{/*                                <textarea*/}}
-{{/*                                        name="content"*/}}
-{{/*                                        id="comment"*/}}
-{{/*                                        cols="30"*/}}
-{{/*                                        rows="5"*/}}
-{{/*                                        class="input"*/}}
-{{/*                                >{{if not $.login}}先登录才能发表评论{{end}}</textarea>*/}}
-
                                 <div class="flex flex-row gap2 mt-2 dark:text-white">
                                     {{if $.login}}
                                         <button class="btn" type="submit">发表评论</button>
@@ -117,7 +109,7 @@
                                     {{if not $.login}}
                                     setTimeout(()=>{
                                         editor.insert("登录后发表评论");
-                                    },10)
+                                    },5)
                                     {{end}}
                                 </script>
                             </div>

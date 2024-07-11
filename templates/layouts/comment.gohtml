@@ -29,13 +29,13 @@
             <div class="hover:text-hover reply cursor-pointer" data-cid="{{.Comment.CID}}">回复</div>
             {{end}}
         </div>
-        <div class="content text-sm" id="comment-content-{{.Comment.CID}}">
+        <div class="content text-sm dark:text-white/50" id="comment-content-{{.Comment.CID}}">
             {{.Comment.Content | html}}
         </div>
         <script>
             var html = marked.parse('{{.Comment.Content | html}}');
             // 链接改为新标签页打开
-            html = html.replaceAll('<a href','<a target="_blank" rel="noopener noreferrer" href');
+            html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
             document.getElementById('comment-content-{{.Comment.CID}}').innerHTML = html;
         </script>
         <div class="hidden form-parent">

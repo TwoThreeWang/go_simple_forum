@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href='{{getStaticPath "/favicon.svg"}}'/>
+    <link rel="icon" href='{{getStaticPath "/logo.svg"}}'/>
     <link rel="stylesheet" href='{{getStaticPath "/css/normalize.min.css"}}'>
     <link rel="stylesheet" href='{{getStaticPath "/css/main.css"}}'>
     <script src='{{getStaticPath "/js/jquery.min.js"}}'></script>
@@ -32,7 +32,7 @@
     {{end}}
 </head>
 <body class="dark:bg-slate-700 bg-slate-50">
-<div class="x-main w-full h-full lg:w-800px mx-auto p-2  " un-cloak>
+<div class="x-main w-full h-full lg:w-800px mx-auto p-2 dark:text-white/70 " un-cloak>
     {{template "header" . }}
     {{template "content" .}}
     {{template "footer" .}}
