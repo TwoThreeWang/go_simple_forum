@@ -41,6 +41,12 @@
                 <input type="text" name="bio" id="bio" class="input" value="{{.user.Bio}}">
             </div>
 
+            <div class="flex flex-row gap-8 items-center text-sm">
+                <div class="font-bold">登录密码</div>
+                <input type="password" name="password" id="password" class="input" value="">
+                <small>* 如果不修改密码留空即可</small>
+            </div>
+
             <div class="flex items-center gap-2">
                 <input type="submit" value="保存" class="btn">
                 <a class="bLink" href="/u/profile/{{.user.Username }}">返回</a>

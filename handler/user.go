@@ -259,15 +259,40 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 		}))
 		return
 	}
-
-	u.db.Model(&model.TbUser{}).Where("id = ?", user.Uid).
-		Updates(map[string]interface{}{
+	updateData := map[string]interface{}{
+		"username":   user.Username,
+		"email_hash": user.Avatar,
+		"email":      user.Email,
+		"bio":        user.Bio,
+		"updated_at": time.Now(),
+	}
+	if user.Password != "" {
+		hashedPwd, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+				"msg": "系统错误，请稍后重试！",
+			}))
+			return
+		}
+		updateData = map[string]interface{}{
 			"username":   user.Username,
 			"email_hash": user.Avatar,
 			"email":      user.Email,
 			"bio":        user.Bio,
+			"password":   string(hashedPwd),
 			"updated_at": time.Now(),
-		})
+		}
+	}
+
+	affected := u.db.Model(&model.TbUser{}).Where("id = ?", user.Uid).
+		Updates(updateData)
+	if affected.RowsAffected == 0 {
+		// 没有记录被更新，可能是没有找到匹配的记录
+		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"msg": "操作成功，但是没有内容被更新！",
+		}))
+		return
+	}
 	c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
 		"msg": "修改成功，如修改用户名请重新登陆",
 	}))
