@@ -43,7 +43,8 @@
         {{end}}
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold ">用户头像</div>
-                {{ if regexMatch "http" .user.EmailHash }}
+                {{ $firstFourChars := slice .user.EmailHash 0 4 }}
+                {{ if eq $firstFourChars "http" }}
                     <img src="{{.user.EmailHash}}" class="rounded w-12 h-12"/>
                 {{else}}
                     <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>

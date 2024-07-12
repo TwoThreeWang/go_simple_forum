@@ -54,7 +54,12 @@
                 {{end}}
                 <div class='x-header-item hover:text-hover {{if eq .selected "new"}}selected{{end}}'><a href="/new">发布</a></div>
                 <div class='x-header-item  flex items-center gap-1 {{if eq .selected "mine"}}selected{{end}}'>
-                    <img src="{{$.avatarCdn}}/{{.userinfo.EmailHash}}" class="rounded w-4 h-4"/>
+                    {{ $firstFourChars := slice .userinfo.EmailHash 0 4 }}
+                    {{ if eq $firstFourChars "http" }}
+                        <img src="{{.userinfo.EmailHash}}" class="rounded w-4 h-4"/>
+                    {{else}}
+                        <img src="{{$.avatarCdn}}/{{.userinfo.EmailHash}}" class="rounded w-4 h-4"/>
+                    {{end}}
                     <a class="hover:text-hover"
                             href="/u/profile/{{.userinfo.Username}}">{{.userinfo.Username}}</a></div>
                 <div class='x-header-item flex gap-1 items-center hover:text-hover {{if eq .selected "message"}}selected{{end}} {{if gt .unReadMessageCount 0}}text-red{{end}}'>

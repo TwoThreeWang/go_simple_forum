@@ -51,10 +51,11 @@
                         </div>
                     </div>
                     <div class="x-post-toolbar flex flex-row gap-2 items-center text-xs text-gray">
-                        {{ if regexMatch "http" .user.EmailHash }}
-                            <img src="{{.user.EmailHash}}" class="rounded w-4 h-4"/>
+                        {{ $firstFourChars := slice $post.User.EmailHash 0 4 }}
+                        {{ if eq $firstFourChars "http" }}
+                            <img src="{{$post.User.EmailHash}}" class="rounded w-4 h-4"/>
                         {{else}}
-                            <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-4 h-4"/>
+                            <img src="{{$.avatarCdn}}/{{$post.User.EmailHash}}" class="rounded w-4 h-4"/>
                         {{end}}
                         <div><a class="cursor-pointer  hover:text-hover"
                                 href="/u/profile/{{$post.User.Username}}">{{$post.User.Username}}</a></div>

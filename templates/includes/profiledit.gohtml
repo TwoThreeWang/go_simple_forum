@@ -29,7 +29,8 @@
                 <div class="font-bold ">用户头像</div>
                 <input type="text" name="avatar" id="avatar" class="input" value="{{.user.EmailHash}}">
             </div>
-            {{ if regexMatch "http" .user.EmailHash }}
+            {{ $firstFourChars := slice .user.EmailHash 0 4 }}
+            {{ if eq $firstFourChars "http" }}
                 <img src="{{.user.EmailHash}}" class="rounded w-12 h-12"/>
             {{else}}
                 <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
