@@ -28,3 +28,8 @@ type Userinfo struct {
 	Email     string
 	EmailHash string
 }
+
+type ResetPwd struct {
+	Email    string `form:"email,omitempty"`
+	Password string `form:"password,omitempty"`
+}

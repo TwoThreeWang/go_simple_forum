@@ -34,6 +34,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/new", indexHandler.ToNew)
 	engine.GET("/s/:pid", indexHandler.ToPost)
 	engine.GET("/resetPwd", indexHandler.ToResetPwd)
+	engine.POST("/resetPwd", indexHandler.DoResetPwd)
 	engine.GET("/tags", indexHandler.ToTags)
 	engine.GET("/tags/edit/:id", indexHandler.ToEditTag)
 	engine.GET("/tags/add", indexHandler.ToAddTag)

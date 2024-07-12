@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/model"
+	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"github.com/spf13/cast"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"log"
+	"math/rand"
 	"strconv"
 	"time"
 )
@@ -80,6 +83,61 @@ func (i *IndexHandler) ToPost(c *gin.Context) {
 }
 func (i *IndexHandler) ToResetPwd(c *gin.Context) {
 	c.HTML(200, "resetPwd.gohtml", OutputCommonSession(i.injector, c, gin.H{}))
+}
+
+// DoResetPwd 重置密码操作函数
+func (i *IndexHandler) DoResetPwd(c *gin.Context) {
+	var data vo.ResetPwd
+	if err := c.Bind(&data); err != nil {
+		c.HTML(200, "resetPwd.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"msg": "内容异常，请检查后重试！",
+		}))
+		return
+	}
+	if data.Email == "" {
+		c.HTML(200, "resetPwd.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"msg": "内容异常，请先输入注册邮箱！",
+		}))
+		return
+	}
+	// 校验邮箱是否存在
+	// 生成一个随机密码并且修改密码数据
+	rand.Seed(time.Now().UnixNano())
+	// 生成一个8位的随机数
+	randomNumber := rand.Int63n(100000000) // 100000000 是 10^8
+	// 格式化为8位数，如果生成的随机数不足8位，前面补0
+	formattedNumber := fmt.Sprintf("%08d", randomNumber)
+	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(formattedNumber), bcrypt.DefaultCost)
+	if err != nil {
+		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"title": "系统异常", "msg": "密码重置出错，请稍后重试！",
+		}))
+		return
+	}
+	affected := i.db.Model(&model.TbUser{}).Where("email = ?", data.Email).
+		Updates(map[string]interface{}{
+			"password":   string(hashedPwd),
+			"updated_at": time.Now(),
+		})
+	if affected.RowsAffected == 0 {
+		// 没有记录被更新，可能是没有找到匹配的记录
+		c.HTML(200, "resetPwd.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"msg": "密码重置失败，请检查邮箱是否正确后重试！",
+		}))
+		return
+	}
+	// 将随机密码邮件发送给用户
+	content := "您好，<br><br>收到此邮件是因为您在竹林网站上进行了重置密码的操作，<br>现已经将密码重置为 " + formattedNumber + "，<br>请使用新密码登陆，登陆后可以在个人中心修改密码。"
+	msg := utils.Email{}.Send(data.Email, "密码重置操作", content)
+	if msg != "Success" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"title": "系统异常", "msg": "密码重置邮件发送异常，请稍后重试！",
+		}))
+		return
+	}
+	c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		"title": "密码重置成功", "msg": "密码重置邮件已发送，请查收邮箱！",
+	}))
 }
 
 func (i *IndexHandler) ToAddTag(c *gin.Context) {
