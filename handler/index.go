@@ -189,12 +189,16 @@ func (i *IndexHandler) SaveTag(c *gin.Context) {
 	}
 	showInHot := "Y"
 	showInAll := "Y"
+	openShow := "Y"
 	var pid *uint
 	if request.ShowInHot != "on" {
 		showInHot = "N"
 	}
 	if request.ShowInAll != "on" {
 		showInAll = "N"
+	}
+	if request.OpenShow != "on" {
+		openShow = "N"
 	}
 	if cast.ToInt(request.ParentID) > 0 {
 		id := cast.ToUint(request.ParentID)
@@ -211,6 +215,7 @@ func (i *IndexHandler) SaveTag(c *gin.Context) {
 			CssClass:  request.CssClass,
 			ShowInHot: showInHot,
 			ShowInAll: showInAll,
+			OpenShow:  openShow,
 		})
 	} else {
 		i.db.Model(&model.TbTag{}).Where("id = ?", request.ID).
@@ -221,6 +226,7 @@ func (i *IndexHandler) SaveTag(c *gin.Context) {
 				"css_class":   request.CssClass,
 				"show_in_hot": showInHot,
 				"show_in_all": showInAll,
+				"open_show":   openShow,
 			})
 	}
 
@@ -308,6 +314,12 @@ func (i *IndexHandler) ToComments(c *gin.Context) {
 	var totalPage int64
 	pageNumber := cast.ToInt(page)
 	userinfo := GetCurrentUser(c)
+	if userinfo == nil {
+		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"title": "权限错误", "msg": "游客无法查看全部评论列表！",
+		}))
+		return
+	}
 
 	if userinfo != nil {
 		subQuery := i.db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'COMMENT' and action ='UP'", userinfo.ID)

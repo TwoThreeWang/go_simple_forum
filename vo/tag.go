@@ -7,5 +7,6 @@ type EditTagVo struct {
 	ParentID  *uint  `form:"parentID,omitempty"`
 	ShowInAll string `form:"showInAll,omitempty"`
 	ShowInHot string `form:"showInHot,omitempty"`
+	OpenShow  string `form:"openShow,omitempty"`
 	CssClass  string `form:"cssClass,omitempty"`
 }

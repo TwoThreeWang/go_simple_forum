@@ -129,6 +129,19 @@ func (p PostHandler) Detail(c *gin.Context) {
 		uid = userinfo.ID
 	}
 	posts = result["posts"].([]model.TbPost)
+	// 未登录用户禁止查看隐藏标签下的内容
+	if userinfo == nil {
+		for _, post := range posts {
+			for _, tag := range post.Tags {
+				if tag.OpenShow == "N" {
+					c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+						"title": "权限错误", "msg": "游客无法查看隐藏标签下的内容！",
+					}))
+					return
+				}
+			}
+		}
+	}
 
 	var rootComments []model.TbComment
 	if len(posts) > 0 {
