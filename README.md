@@ -12,6 +12,7 @@
 -[x] 用户信息修改功能
 -[ ] 注册及找回密码邮件功能
 -[x] 增加404页面
+-[ ] 增加积分功能
 
 [Docker镜像](https://hub.docker.com/repository/docker/kingwrcy/hotnews)
 
