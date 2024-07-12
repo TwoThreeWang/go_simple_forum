@@ -440,6 +440,10 @@ func QueryPosts(db *gorm.DB, request vo.QueryPostsRequest) gin.H {
 	if request.Userinfo != nil {
 		subQuery := db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'POST' and action ='UP'", request.Userinfo.ID)
 		tx.Joins("LEFT JOIN (?) AS vote ON p.id = vote.target_id", subQuery)
+	} else {
+		tx.InnerJoins(",tb_post_tag ptw,tb_tag tw")
+		tx.Where("tw.id = ptw.tb_tag_id and ptw.tb_post_id = p.id")
+		tx.Where("tw.open_show = 'Y'")
 	}
 	if len(request.Tags) > 0 {
 		tx.InnerJoins(",tb_post_tag pt,tb_tag t")

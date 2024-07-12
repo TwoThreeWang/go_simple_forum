@@ -1,4 +1,4 @@
-### [极简论坛](https://one.wangtwothree.com)
+### [Go开发的极简论坛](https://one.wangtwothree.com)
 
 基于 [https://github.com/kingwrcy/hotnews](https://github.com/kingwrcy/hotnews) 修改而来
 
@@ -15,6 +15,8 @@
 -[ ] 增加签到功能
 -[x] 标签增加对游客隐藏选项
 -[ ] 新注册用户邮箱激活功能
+
+TODO：搜索结果登陆用户也不显示隐藏文章了
 
 [Docker镜像](https://hub.docker.com/repository/docker/kingwrcy/hotnews)
 
