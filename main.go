@@ -238,7 +238,7 @@ func initSystem(db *gorm.DB) {
 	var settings model.TbSettings
 	if errors.Is(db.First(&settings).Error, gorm.ErrRecordNotFound) {
 		saveSettings := vo.SaveSettingsRequest{
-			RegMode: "hotnews",
+			RegMode: "open",
 			Css:     "",
 			Js:      "",
 		}

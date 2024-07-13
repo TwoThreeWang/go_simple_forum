@@ -234,28 +234,28 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 	var user vo.EditUserRequest
 
 	if err := c.Bind(&user); err != nil {
-		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"msg": "内容异常，请检查后重试！",
 		}))
 		return
 	}
 
 	if userinfo.ID != user.Uid {
-		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
-			"msg": "确定【" + user.Username + "】是你本人？请核对用户名！",
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error", "msg": "确定【" + user.Username + "】是你本人？请核对用户名！",
 		}))
 		return
 	}
 
 	if len(user.Username) < 3 {
-		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
-			"msg": "用户名长度必须大于3位",
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error", "msg": "用户名长度必须大于3位",
 		}))
 		return
 	}
 	if _, ok := mail.ParseAddress(user.Email); ok != nil {
-		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
-			"msg": "邮箱格式不正确",
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error", "msg": "邮箱格式不正确",
 		}))
 		return
 	}
@@ -269,8 +269,8 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 	if user.Password != "" {
 		hashedPwd, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if err != nil {
-			c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
-				"msg": "系统错误，请稍后重试！",
+			c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+				"title": "Error", "msg": "系统错误，请稍后重试！",
 			}))
 			return
 		}
@@ -288,13 +288,13 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 		Updates(updateData)
 	if affected.RowsAffected == 0 {
 		// 没有记录被更新，可能是没有找到匹配的记录
-		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
-			"msg": "操作成功，但是没有内容被更新！",
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Success", "msg": "操作成功，但是没有内容被更新！",
 		}))
 		return
 	}
-	c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
-		"msg": "修改成功，如修改用户名请重新登陆",
+	c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		"title": "Success", "msg": "修改成功，如修改用户名请重新登陆",
 	}))
 	return
 }

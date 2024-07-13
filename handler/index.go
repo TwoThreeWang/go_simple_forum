@@ -57,9 +57,11 @@ func (i *IndexHandler) ToSearch(c *gin.Context) {
 }
 
 func (i *IndexHandler) DoSearch(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
 	var request vo.QueryPostsRequest
 	c.Bind(&request)
 	request.Size = 25
+	request.Userinfo = userinfo
 	if request.Page <= 0 {
 		request.Page = 1
 	}
