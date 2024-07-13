@@ -15,6 +15,7 @@ import (
 	"gorm.io/gorm/clause"
 	"log"
 	"net/mail"
+	"strings"
 	"time"
 )
 
@@ -295,6 +296,48 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 	}
 	c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
 		"title": "Success", "msg": "修改成功，如修改用户名请重新登陆",
+	}))
+	return
+}
+
+// SetStatus 设置用户状态
+func (u *UserHandler) SetStatus(c *gin.Context) {
+	uid := c.Query("id")
+	key := c.Query("key")
+	if uid == "" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error", "msg": "参数错误！",
+		}))
+		return
+	}
+	userinfo := GetCurrentUser(c)
+	updateData := map[string]interface{}{}
+	where := "1=1"
+	msg := ""
+	if strings.Contains("ActiveBannedWait", key) && userinfo.Role == "admin" {
+		updateData = map[string]interface{}{
+			"status":     key,
+			"updated_at": time.Now(),
+		}
+		msg = "操作成功！"
+	} else {
+		where = "email_hash='" + key + "'"
+		updateData = map[string]interface{}{
+			"status": "Active",
+		}
+		msg = "激活成功，欢迎加入！"
+	}
+	affected := u.db.Model(&model.TbUser{}).Where("id = ?", uid).Where(where).
+		Updates(updateData)
+	if affected.RowsAffected == 0 {
+		// 没有记录被更新，可能是没有找到匹配的记录
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Success", "msg": "操作成功，但是没有内容被更新！",
+		}))
+		return
+	}
+	c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		"title": "Success", "msg": msg,
 	}))
 	return
 }

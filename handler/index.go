@@ -13,6 +13,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 )
@@ -128,9 +129,10 @@ func (i *IndexHandler) DoResetPwd(c *gin.Context) {
 		}))
 		return
 	}
+	siteName := os.Getenv("SiteName")
 	// 将随机密码邮件发送给用户
-	content := "您好，<br><br>收到此邮件是因为您在竹林网站上进行了重置密码的操作，<br>现已经将密码重置为 " + formattedNumber + "，<br>请使用新密码登陆，登陆后可以在个人中心修改密码。"
-	msg := utils.Email{}.Send(data.Email, "密码重置操作", content)
+	content := "您好，<br><br>收到此邮件是因为您在" + siteName + "网站上进行了重置密码的操作，<br>现已经将密码重置为 " + formattedNumber + "，<br>请使用新密码登陆，登陆后可以在个人中心修改密码。"
+	msg := utils.Email{}.Send(data.Email, "["+siteName+"]密码重置操作", content)
 	if msg != "Success" {
 		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
 			"title": "系统异常", "msg": "密码重置邮件发送异常，请稍后重试！",
@@ -531,4 +533,31 @@ func (i *IndexHandler) RemoveTag(c *gin.Context) {
 	i.db.Delete(&tag.Posts)
 	i.db.Delete(&tag)
 	c.Redirect(302, "/tags")
+}
+
+// Activate 发送激活邮件
+func (i *IndexHandler) Activate(c *gin.Context) {
+	uid := c.Query("id")
+	key := c.Query("key")
+	userinfo := GetCurrentUser(c)
+	if uid == "" || key == "" || userinfo == nil {
+		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"title": "Error", "msg": "参数错误！",
+		}))
+		return
+	}
+	siteName := os.Getenv("SiteName")
+	siteUrl := os.Getenv("SiteUrl")
+	// 将激活邮件发送给用户
+	content := "您好，<br><br>收到此邮件是因为您在竹林网站上进行了注册，<br>请点击链接激活账号：" + siteUrl + "/u/activate?id=" + uid + "&key=" + key
+	msg := utils.Email{}.Send(userinfo.Email, "["+siteName+"]账户激活邮件", content)
+	if msg != "Success" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"title": "系统异常", "msg": "激活邮件发送异常，请稍后重试！",
+		}))
+		return
+	}
+	c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		"title": "Success", "msg": "激活邮件已发送，请查收邮箱！",
+	}))
 }

@@ -196,6 +196,18 @@ func (p PostHandler) Add(c *gin.Context) {
 		return
 	}
 	uid := userinfo.ID
+	// 判断用户是否激活
+	var user model.TbUser
+	p.db.Model(model.TbUser{}).Where("id=?", uid).First(&user)
+	status := user.Status
+	if status != "Active" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"title": "Error",
+			"msg":   "用户状态【" + status + "】不允许发布内容！",
+		}))
+		return
+	}
+
 	var tempTags []model.TbTag
 	p.db.Model(&model.TbTag{}).Preload("Parent").Where("parent_id is null").Preload("Children").Find(&tempTags)
 
@@ -239,10 +251,6 @@ func (p PostHandler) Add(c *gin.Context) {
 			Model: gorm.Model{ID: v},
 		})
 	}
-	var user model.TbUser
-
-	p.db.Model(model.TbUser{}).Where("id=?", uid).First(&user)
-	status := "Active"
 
 	host := ""
 	if request.Type == "link" {
@@ -301,6 +309,17 @@ func (p PostHandler) AddComment(c *gin.Context) {
 		return
 	}
 	uid := userinfo.ID
+	// 判断用户激活状态
+	var user model.TbUser
+	p.db.Model(model.TbUser{}).Where("id=?", uid).First(&user)
+	status := user.Status
+	if status != "Active" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"title": "Error",
+			"msg":   "用户状态【" + status + "】不允许发布内容！",
+		}))
+		return
+	}
 	var comment model.TbComment
 	var request vo.NewCommentRequest
 	err := c.Bind(&request)

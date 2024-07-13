@@ -51,6 +51,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/about", userHandler.ToAbout)
 	engine.GET("/type/:type", postHandler.SearchByType)
 	engine.GET("/users", userHandler.ToList)
+	engine.GET("/activate", indexHandler.Activate)
 
 	engine.POST("/inspect", inspectHandler.Inspect)
 
@@ -67,6 +68,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/message/setAllRead", userHandler.SetAllRead)
 	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead)
 	userGroup.GET("/message", userHandler.ToMessage)
+	userGroup.GET("/status", userHandler.SetStatus)
 
 	//commentGroup := engine.Group("/c")
 	//commentGroup.GET("/vote", commentHandler.Vote)
@@ -152,7 +154,7 @@ func OutputCommonSession(injector *do.Injector, c *gin.Context, h ...gin.H) gin.
 	var settings model.TbSettings
 	db.First(&settings)
 
-	result["siteName"] = "竹林"
+	result["siteName"] = os.Getenv("SiteName")
 	result["path"] = c.Request.URL.Path
 	result["refer"] = c.Request.Referer()
 	result["VERSION"] = os.Getenv("VERSION")

@@ -14,7 +14,8 @@
 - [ ] 增加积分功能
 - [ ] 增加签到功能
 - [x] 标签增加对游客隐藏选项
-- [ ] 新注册用户邮箱激活功能
+- [x] 新注册用户邮箱激活功能
+- [x] 管理员管理用户状态（Wait：等待激活；Active：活跃用户；Banned：禁止用户）
 
 [Docker镜像](https://hub.docker.com/repository/docker/kingwrcy/hotnews)
 
