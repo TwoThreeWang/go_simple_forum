@@ -21,7 +21,7 @@
                     <td>{{dateFormat .CreatedAt "2006-01-02 15:04:05"}}</td>
                     <td><a class="bLink" href="/u/profile/{{ .Username }}/links">{{.PostCount}}</a></td>
                     <td><a class="bLink" href="/u/profile/{{ .Username }}/comments">{{.CommentCount}}</a></td>
-                    <td>{{.Status}}（<a href="/u/activate?id={{.ID}}&key=Active">活跃</a> ｜<a href="/u/activate?id={{.ID}}&key=Wait">待激活</a>｜<a href="/u/activate?id={{.ID}}&key=Banned">禁止</a>）</td>
+                    <td>{{.Status}}（<a href="/u/status?id={{.ID}}&key=Active">活跃</a> ｜<a href="/u/status?id={{.ID}}&key=Wait">待激活</a>｜<a href="/u/status?id={{.ID}}&key=Banned">禁止</a>）</td>
                 </tr>
             {{end}}
             </tbody>

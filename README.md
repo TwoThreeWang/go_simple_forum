@@ -16,15 +16,16 @@
 - [x] 标签增加对游客隐藏选项
 - [x] 新注册用户邮箱激活功能
 - [x] 管理员管理用户状态（Wait：等待激活；Active：活跃用户；Banned：禁止用户）
+- [x] 管理员管理文章状态（Wait：等待审核；Active：正常；Rejected：删除）
 
 [Docker镜像](https://hub.docker.com/repository/docker/kingwrcy/hotnews)
 
-| 环境变量          | 解释                  | 示例                                                                                                             |
-|---------------|---------------------|----------------------------------------------------------------------------------------------------------------|
-| PORT          | 监听端口                | 选填,默认32919                                                                                                     |
-| COOKIE_SECRET | cookie密钥            | 必填,如:UbnpjqcvDJ8mDCB                                                                                           |
+| 环境变量              | 解释                  | 示例                                                                                                             |
+|-------------------|---------------------|----------------------------------------------------------------------------------------------------------------|
+| PORT              | 监听端口                | 选填,默认32919                                                                                                     |
+| COOKIE_SECRET     | cookie密钥            | 必填,如:UbnpjqcvDJ8mDCB                                                                                           |
 | STATIC_CDN_PREFIX | 静态资源CDN前缀           | 选填,默认取使用本地静态文件                                                                                                 |
-| DB            | 数据库链接,目前只支持Postgres | 必填,'host=localhost user=username password=password dbname=hn port=5432 sslmode=disable TimeZone=Asia/Shanghai' |
+| DB                | 数据库链接,目前只支持Postgres | 必填,'host=localhost user=username password=password dbname=hn port=5432 sslmode=disable TimeZone=Asia/Shanghai' |
 
 默认第一个注册的用户是管理员,自行注册即可.
 
@@ -40,6 +41,21 @@
 
 ![alt](https://openai-75050.gzc.vod.tencent-cloud.com/openaiassets_5ba4ebcbd2030fee5ac43c38e41a0f41_2579861720144999302.png 'title')
 
+数据库表介绍
+
+| 表名                |  介绍     |
+|-------------------|---------|
+| tb_comment        | 评论详情表   |
+| tb_inspect_log    | 审核日志表   |
+| tb_invite_record  | 邀请码表    |
+| tb_message        | 消息表     |
+| tb_post           | 文章表     |
+| tb_post_tag       | 文章标签关系表 |
+| tb_settings       | 系统设置表   |
+| tb_statistics     | 数据统计表   |
+| tb_tag            | 标签详情表   |
+| tb_user           | 用户表     |
+| tb_vote           | 投票表     |
 
 ### docker启动
 

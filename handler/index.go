@@ -278,7 +278,7 @@ func (i *IndexHandler) ToWaitApproved(c *gin.Context) {
 	if userinfo != nil {
 		if userinfo.Role == "admin" || userinfo.Role == "inspector" {
 			i.db.Model(&model.TbPost{}).Preload("User").Preload("Tags").
-				Where("status = 'WAIT_APPROVE'").Order("created_at desc").
+				Where("status = 'Wait'").Order("created_at desc").
 				Find(&waitApprovedList)
 			if len(waitApprovedList) == 0 {
 				c.Redirect(302, "/")

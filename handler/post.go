@@ -166,6 +166,11 @@ func (p PostHandler) Detail(c *gin.Context) {
 
 		buildCommentTree(&rootComments, p.db, uid)
 		posts[0].Comments = rootComments
+	} else {
+		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"title": "Nothing To Show", "msg": "没有内容可以展示！",
+		}))
+		return
 	}
 	c.HTML(200, "post.gohtml", OutputCommonSession(p.injector, c, gin.H{
 		"posts":    posts,

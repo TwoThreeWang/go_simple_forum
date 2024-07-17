@@ -40,7 +40,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/tags/add", indexHandler.ToAddTag)
 	engine.POST("/tags/edit", indexHandler.SaveTag)
 	engine.POST("/tags/remove", indexHandler.RemoveTag)
-	//engine.GET("/wait", indexHandler.ToWaitApproved)
+	engine.GET("/wait", indexHandler.ToWaitApproved)
 	engine.GET("/comments", indexHandler.ToComments)
 	engine.GET("/vote", indexHandler.Vote)
 	engine.GET("/moderations", indexHandler.Moderation)
