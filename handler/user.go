@@ -559,7 +559,7 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 	user.Password = string(hashedPwd)
 	user.Bio = request.Bio
 	user.Email = request.Email
-	user.Status = "Active"
+	user.Status = "Wait"
 	user.CommentCount = 0
 	user.PostCount = 0
 

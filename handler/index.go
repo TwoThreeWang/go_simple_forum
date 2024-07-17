@@ -550,7 +550,7 @@ func (i *IndexHandler) Activate(c *gin.Context) {
 	siteName := os.Getenv("SiteName")
 	siteUrl := os.Getenv("SiteUrl")
 	// 将激活邮件发送给用户
-	content := "您好，<br><br>收到此邮件是因为您在<b>竹林</b>网站上进行了注册，<br><br>请点击链接激活账号：" + siteUrl + "/u/activate?id=" + uid + "&key=" + key
+	content := "您好，<br><br>收到此邮件是因为您在<b>竹林</b>网站上进行了注册，<br><br>请点击链接激活账号：" + siteUrl + "/u/status?id=" + uid + "&key=" + key
 	msg := utils.Email{}.Send(userinfo.Email, "["+siteName+"] 账户激活邮件", content)
 	if msg != "Success" {
 		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
