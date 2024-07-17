@@ -104,6 +104,17 @@ func (i *IndexHandler) DoResetPwd(c *gin.Context) {
 		return
 	}
 	// 校验邮箱是否存在
+	var user model.TbUser
+	if err := i.db.
+		Where("email = ?", data.Email).
+		First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+
+		c.HTML(200, "resetPwd.gohtml", gin.H{
+			"msg": "内容异常，请确认注册邮箱是否正确！",
+		})
+		return
+	}
+	// TODO 邮件不修改密码，给一个链接，点击链接后自定义密码
 	// 生成一个随机密码并且修改密码数据
 	rand.Seed(time.Now().UnixNano())
 	// 生成一个8位的随机数
