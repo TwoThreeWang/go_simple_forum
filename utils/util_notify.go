@@ -49,6 +49,7 @@ func (e Email) Send(toUser, subject, content string) string {
 	EmailApiUrl := os.Getenv("EmailApiUrl")
 	EmailSender := os.Getenv("EmailSender")
 	EmailSenderName := os.Getenv("EmailSenderName")
+	content += "<br><br>Thanks,<br>The ZhuLin Team."
 	postData := fmt.Sprintf(`{
   "from": {
       "email": "%s",
@@ -67,7 +68,7 @@ func (e Email) Send(toUser, subject, content string) string {
   "subject": "%s",
   "content": [
     {
-      "type": "text/plain",
+      "type": "text/html",
       "value": "%s"
     }
   ]
