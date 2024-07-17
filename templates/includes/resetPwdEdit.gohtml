@@ -1,0 +1,24 @@
+{{ define "title"}}<title>重置密码 - {{.siteName}}</title>{{ end }}
+
+{{define "content"}}
+<form action="/resetPwdEdit" class="flex flex-col gap2 mt-4 items-start dark:text-white/70" method="post">
+    <p class="font-bold">重置密码</p>
+    <div class="text-sm text-coolGray">
+        在下面输入你的注册邮箱和新密码，点击确认重置密码。
+    </div>
+    <input type="text" class="input" name="key" value="{{.key}}" disabled hidden/>
+    <div class="flex flex-row items-center gap2">
+        <label for="title" class="font-bold text-sm">注册邮箱</label>
+        <input type="text" class="input" name="email" />
+    </div>
+    <div class="flex flex-row items-center gap2">
+        <label for="title" class="font-bold text-sm">新密码</label>
+        <input type="password" class="input" name="password" />
+    </div>
+    <button class="btn">确认重置</button>
+    {{if .msg}}
+        <div class="text-red-5">错误：{{.msg}}</div>
+    {{end}}
+</form>
+{{end}}
+{{ define "afterBody"}}{{end}}

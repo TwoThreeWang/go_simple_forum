@@ -32,4 +32,5 @@ type Userinfo struct {
 type ResetPwd struct {
 	Email    string `form:"email,omitempty"`
 	Password string `form:"password,omitempty"`
+	Key      string `form:"key,omitempty"`
 }
