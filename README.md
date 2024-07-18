@@ -61,16 +61,16 @@
 | COOKIE_SECRET     | cookie密钥                                                                         | 必填,如:UbnpjqcvDJ8mDCB                                                                                           |
 | STATIC_CDN_PREFIX | 静态资源CDN前缀                                                                        | 选填,默认取使用本地静态文件                                                                                                 |
 | DB                | 数据库链接,目前只支持Postgres                                                              | 必填,'host=localhost user=username password=password dbname=hn port=5432 sslmode=disable TimeZone=Asia/Shanghai' |
-| VERSION           | 程序版本号                                                                            | 0.0.1                                                                                                          |
-| SiteName          | 网站名称                                                                             | 竹林                                                                                                             |
-| SiteUrl           | 网站链接                                                                             | https://zhulink.club                                                                                           |
-| EmailApiUrl       | 邮件发送链接，邮件发送使用的是cloudflare，相关教程 https://wangtwothree.com/sao/cloudflare-mail.html | https://<sender-name>.<your-name>.workers.dev                                                                  |
-| EmailSender       | 发件人邮箱                                                                            | 竹林                                                                                                             |
-| EmailSenderName   | 发件人名称                                                                            | 竹林                                                                                                             |
+| VERSION           | 程序版本号                                                                            | 必填, 0.0.1                                                                                                      |
+| SiteName          | 网站名称                                                                             | 必填, 竹林                                                                                                         |
+| SiteUrl           | 网站链接                                                                             | 必填, https://zhulink.club                                                                                       |
+| EmailApiUrl       | 邮件发送链接，邮件发送使用的是cloudflare，相关教程 https://wangtwothree.com/sao/cloudflare-mail.html | 必填（不填影响邮件发送功能，其他功能正常）, https://<sender-name>.<your-name>.workers.dev                                           |
+| EmailSender       | 发件人邮箱                                                                            | 必填（不填影响邮件发送功能，其他功能正常）, 竹林                                                                                      |
+| EmailSenderName   | 发件人名称                                                                            | 必填（不填影响邮件发送功能，其他功能正常）, 竹林                                                                                      |
+| GIN_MODE          | GIN程序运行模式，debug调试模式、release生产模式、test测试模式                                         | 选填, release                                                                                                    |
 
 
-
-### docker启动
+### 启动
 
 1. 程序目录下新建`.env`文件,内容如下,每个字段含义上面有写
 ```dotenv
@@ -83,11 +83,13 @@ SiteUrl=https://zhulink.club
 EmailApiUrl=https://<sender-name>.<your-name>.workers.dev
 EmailSender=发件人地址
 EmailSenderName=发件人姓名
+GIN_MODE=release
 ```
 
-2. 使用如下命令启动
-```shell
-docker run --name hotnews -d --env-file .env -p 32912:32912 kingwrcy/hotnews:latest
-```
+2. 启动
+
+本地启动直接运行 main.go 即可
+
+build.sh 文件中有镜像打包及容器启动命令
 
 3. 打开浏览器访问`本地ip:32912`即可.

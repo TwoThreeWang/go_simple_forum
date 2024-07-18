@@ -7,3 +7,4 @@ SiteUrl=https://zhulink.club
 EmailApiUrl=https://<sender-name>.<your-name>.workers.dev
 EmailSender=发件人地址
 EmailSenderName=发件人姓名
+GIN_MODE=debug
