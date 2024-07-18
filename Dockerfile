@@ -14,8 +14,8 @@ ADD go.mod .
 ADD go.sum .
 RUN go mod download
 COPY . .
-COPY templates templates
-COPY static static
+COPY templates /app/templates
+COPY static /app/static
 RUN go build -ldflags="-s -w" -o /app/main main.go
 
 
@@ -30,6 +30,6 @@ ENV HN_VERSION $VERSION
 
 WORKDIR /
 COPY --from=builder /app/main /main
-COPY --from=builder templates /templates
-COPY --from=builder static /static
+COPY --from=builder /app/templates /templates
+COPY --from=builder /app/static /static
 CMD ["/main"]
