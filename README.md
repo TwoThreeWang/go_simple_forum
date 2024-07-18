@@ -72,7 +72,7 @@
 
 ### docker启动
 
-1. 跟目录下新建`.env`文件,内容如下,每个字段含义上面有写
+1. 程序目录下新建`.env`文件,内容如下,每个字段含义上面有写
 ```dotenv
 PORT=32919
 DB='host=127.0.0.1 user=postgres password=123456 dbname=hotnews port=5432 sslmode=disable TimeZone=Asia/Shanghai'

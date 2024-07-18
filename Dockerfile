@@ -26,9 +26,9 @@ COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/S
 ENV TZ Asia/Shanghai
 ENV HN_VERSION $VERSION
 
-WORKDIR /app
-COPY --from=builder /app/main /app/main
+WORKDIR /
+COPY --from=builder /app/main /main
 
 ENV GIN_MODE release
 
-CMD ["/app/main"]
+CMD ["/main"]
