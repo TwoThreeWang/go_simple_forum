@@ -27,7 +27,7 @@ ENV TZ Asia/Shanghai
 ENV HN_VERSION $VERSION
 
 WORKDIR /app
-COPY --from=builder main /app/main
+COPY --from=builder /app/main /app/main
 
 ENV GIN_MODE release
 
