@@ -43,7 +43,7 @@ func (u *UserHandler) Login(c *gin.Context) {
 	}
 	var user model.TbUser
 	if err := u.db.
-		Where("username = ?", request.Username).
+		Where("username = ?", request.Username).Or("email = ?", request.Username).
 		First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 
 		c.HTML(200, "login.gohtml", gin.H{

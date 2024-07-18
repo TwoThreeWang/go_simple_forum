@@ -17,6 +17,7 @@
 - [x] 新注册用户邮箱激活功能
 - [x] 管理员管理用户状态（Wait：等待激活；Active：活跃用户；Banned：禁止用户）
 - [x] 管理员管理文章状态（Wait：等待审核；Active：正常；Rejected：删除）
+- [x] 增加邮箱登录支持
 
 [Docker镜像](https://hub.docker.com/repository/docker/kingwrcy/hotnews)
 
