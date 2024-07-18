@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  zhulink:
+    image: zhulink:latest
+    container_name: zhulink
+    ports:
+      - "32912:32912"
+    restart: always
+    environment:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"

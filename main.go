@@ -56,7 +56,7 @@ func main() {
 	// 加载配置文件
 	err := godotenv.Load()
 	if err != nil {
-		log.Printf("Error loading .env file")
+		log.Printf("Error loading .env file" + err.Error())
 	}
 	// 创建依赖注入容器
 	injector := do.New()
