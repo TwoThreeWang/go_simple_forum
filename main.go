@@ -20,7 +20,6 @@ import (
 	"html/template"
 	"io"
 	"io/fs"
-	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -87,16 +86,17 @@ func main() {
 
 	engine.Use(sessions.Sessions("c", store))
 	engine.Use(middleware.CostHandler())
-
-	if os.Getenv("GIN_MODE") == "release" {
-		ts, _ := fs.Sub(templatesFS, "templates")
-		engine.HTMLRender = loadTemplates(ts)
-		s, _ := fs.Sub(staticFS, "static")
-		engine.StaticFS("/static", http.FS(s))
-	} else {
-		engine.HTMLRender = loadLocalTemplates("./templates")
-		engine.Static("/static", "./static")
-	}
+	engine.HTMLRender = loadLocalTemplates("./templates")
+	engine.Static("/static", "./static")
+	//if os.Getenv("GIN_MODE") == "release" {
+	//	ts, _ := fs.Sub(templatesFS, "templates")
+	//	engine.HTMLRender = loadTemplates(ts)
+	//	s, _ := fs.Sub(staticFS, "static")
+	//	engine.StaticFS("/static", http.FS(s))
+	//} else {
+	//	engine.HTMLRender = loadLocalTemplates("./templates")
+	//	engine.Static("/static", "./static")
+	//}
 	// 路由注册
 	handler.SetupRouter(injector, engine)
 	// 处理 404 错误
