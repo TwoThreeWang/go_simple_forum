@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/samber/do"
 	"gorm.io/driver/postgres"
@@ -18,6 +19,7 @@ type AppConfig struct {
 
 func NewRepository(i *do.Injector) (*gorm.DB, error) {
 	appConfig := do.MustInvoke[*AppConfig](i)
+	fmt.Println(appConfig.DB)
 	db, err := gorm.Open(postgres.Open(appConfig.DB), &gorm.Config{
 		Logger:         logger.Default.LogMode(logger.Info),
 		TranslateError: true})
