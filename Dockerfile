@@ -29,6 +29,4 @@ ENV HN_VERSION $VERSION
 WORKDIR /
 COPY --from=builder /app/main /main
 
-ENV GIN_MODE release
-
 CMD ["/main"]
