@@ -14,7 +14,7 @@ ADD go.mod .
 ADD go.sum .
 RUN go mod download
 COPY . .
-RUN go build -ldflags="-s -w" -o /app/hn main.go
+RUN go build -ldflags="-s -w" -o /app/main main.go
 
 
 FROM scratch
@@ -27,8 +27,8 @@ ENV TZ Asia/Shanghai
 ENV HN_VERSION $VERSION
 
 WORKDIR /app
-COPY --from=builder /app/hn /app/hn
+COPY --from=builder main /app/main
 
 ENV GIN_MODE release
 
-CMD ["/app/hn"]
+CMD ["/app/main"]
