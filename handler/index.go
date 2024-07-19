@@ -9,6 +9,7 @@ import (
 	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
+	"github.com/snabb/sitemap"
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -50,6 +51,30 @@ func (i *IndexHandler) Index(c *gin.Context) {
 	c.HTML(200, "index.gohtml", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "/",
 	}, topics))
+}
+
+func (i *IndexHandler) SiteMap(c *gin.Context) {
+	var items []model.TbPost
+	i.db.Model(&model.TbPost{}).Where("status = 'Active'").Find(&items)
+	sm := sitemap.New()
+	SiteUrl := os.Getenv("SiteUrl")
+	for _, item := range items {
+		sm.Add(&sitemap.URL{
+			Loc:        SiteUrl + "/p/" + item.Pid,
+			LastMod:    &item.Model.UpdatedAt,
+			ChangeFreq: sitemap.Daily,
+			Priority:   0.5,
+		})
+	}
+	// 设置 Header，指示浏览器这是一个 XML 文件
+	c.Header("Content-Type", "application/xml")
+	// 将 Sitemap 内容写入响应
+	_, err := sm.WriteTo(c.Writer)
+	if err != nil {
+		fmt.Println("Error writing sitemap:", err)
+		c.String(500, "Error generating sitemap")
+		return
+	}
 }
 
 func (i *IndexHandler) ToSearch(c *gin.Context) {
