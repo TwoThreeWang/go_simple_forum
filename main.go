@@ -228,6 +228,7 @@ func initSystem(db *gorm.DB) {
 			Status:          "",
 			Posts:           nil,
 			UpVotedPosts:    nil,
+			Points:          0,
 			Comments:        nil,
 			UpVotedComments: nil,
 		}

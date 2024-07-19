@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type IndexHandler struct {
@@ -437,6 +438,75 @@ func (i *IndexHandler) ToComments(c *gin.Context) {
 		"hasPrev":     pageNumber > 1,
 		"currentPage": pageNumber,
 	}))
+}
+
+func (i *IndexHandler) DelComment(c *gin.Context) {
+	cid := c.Query("cid")
+	userinfo := GetCurrentUser(c)
+	if userinfo == nil {
+		c.Redirect(302, "/u/login")
+		return
+	}
+	if userinfo.Role != "admin" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			"title": "权限错误", "msg": "非管理员禁止删除评论！",
+		}))
+		return
+	}
+
+	refer := c.GetHeader("Referer")
+	if refer == "" {
+		refer = "/"
+	}
+
+	// 发送提醒消息和删除评论
+	var targetID uint
+	var message model.TbMessage
+
+	message.FromUserID = 999999999
+	message.CreatedAt = time.Now()
+	message.UpdatedAt = time.Now()
+	message.Read = "N"
+	var item model.TbComment
+	i.db.Model(&model.TbComment{}).Preload("Post").Where("cid = ?", cid).First(&item)
+	targetID = item.ID
+	if utf8.RuneCountInString(item.Content) > 10 {
+		i := 0
+		for j := range item.Content {
+			if i == 10 {
+				item.Content = item.Content[:j] + "..."
+				break
+			}
+			i++
+		}
+	}
+	message.ToUserID = item.UserID
+	message.Content = fmt.Sprintf("你的评论被管理员删除 (<a class='bLink' href='/p/%s#c-%s'>%s</a>)",
+		item.Post.Pid, item.CID, item.Content)
+	var inspectLog model.TbInspectLog
+	inspectLog.InspectType = "Comment"
+	inspectLog.PostID = item.PostID
+	inspectLog.Reason = "删除评论"
+	inspectLog.Result = "deleted"
+	inspectLog.Action = "deleted Comment"
+	inspectLog.InspectorID = userinfo.ID
+	inspectLog.Title = item.Content
+
+	i.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&model.TbComment{}).Where("id =?", targetID).Update("content", "**** 该评论已被删除 ****").Error; err != nil {
+			return err
+		}
+		err := tx.Save(&inspectLog).Error
+		if err != nil {
+			return err
+		}
+		if err := tx.Save(&message).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+
+	c.Redirect(302, refer)
 }
 
 func (i *IndexHandler) Vote(c *gin.Context) {

@@ -17,6 +17,7 @@ type TbUser struct {
 	EmailHash       string      `gorm:"column:email_hash;type:varchar(80)"`
 	Posts           []TbPost    `gorm:"foreignKey:UserID"`
 	UpVotedPosts    []TbPost    `gorm:"many2many:tb_vote;"`
+	Points          int         `gorm:"column:points;type:int;default:0"`
 	Comments        []TbComment `gorm:"foreignKey:UserID"`
 	UpVotedComments []TbComment `gorm:"many2many:tb_vote;"`
 }

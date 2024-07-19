@@ -46,6 +46,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/wait", indexHandler.ToWaitApproved)
 	engine.GET("/comments", indexHandler.ToComments)
 	engine.GET("/vote", indexHandler.Vote)
+	engine.GET("/delcomment", indexHandler.DelComment)
 	engine.GET("/moderations", indexHandler.Moderation)
 	engine.GET("/d/:domainName", indexHandler.SearchByDomain)
 	engine.POST("/search", indexHandler.DoSearch)
@@ -56,7 +57,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/users", userHandler.ToList)
 	engine.GET("/activate", indexHandler.Activate)
 
-	engine.POST("/inspect", inspectHandler.Inspect)
+	engine.POST("/inspect", inspectHandler.Inspect) // 帖子审核
 
 	userGroup := engine.Group("/u")
 	userGroup.POST("/login", userHandler.Login)

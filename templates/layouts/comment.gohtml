@@ -33,6 +33,10 @@
             <div>|</div>
             <div class="hover:text-hover reply cursor-pointer" data-cid="{{.Comment.CID}}">回复</div>
             {{end}}
+            {{ if and (.Userinfo) (eq .Userinfo.Role "admin")}}
+            <div>|</div>
+            <div class="hover:text-hover reply cursor-pointer"><a class="hover:text-hover" href="/delcomment?cid={{.Comment.CID}}">删除</a></div>
+            {{end}}
         </div>
         <div class="content text-sm dark:text-white/50" id="comment-content-{{.Comment.CID}}">
             {{.Comment.Content | html}}
@@ -73,7 +77,7 @@
 {{if gt (len .Comment.Comments) 0}}
 <div class="comment-tree">
     {{range .Comment.Comments}}
-    {{template "comment" dict "Comment" . "Post" $.Post "Login" $.Login}}
+    {{template "comment" dict "Comment" . "Post" $.Post "Login" $.Login  "Userinfo" $.Userinfo}}
     {{end}}
 </div>
 {{end}}
