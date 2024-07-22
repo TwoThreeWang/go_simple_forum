@@ -1,6 +1,9 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 const TableNameTbUser = "tb_user"
 
@@ -18,6 +21,7 @@ type TbUser struct {
 	Posts           []TbPost    `gorm:"foreignKey:UserID"`
 	UpVotedPosts    []TbPost    `gorm:"many2many:tb_vote;"`
 	Points          int         `gorm:"column:points;type:int;default:0"`
+	PunchAt         time.Time   `gorm:"column:punch_at;type:timestamptz(6)"`
 	Comments        []TbComment `gorm:"foreignKey:UserID"`
 	UpVotedComments []TbComment `gorm:"many2many:tb_vote;"`
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/model"
+	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"github.com/spf13/cast"
@@ -14,6 +15,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"log"
+	"math/rand"
 	"net/mail"
 	"strings"
 	"time"
@@ -633,4 +635,65 @@ func (u *UserHandler) ToList(c *gin.Context) {
 		"users":    users,
 	}))
 
+}
+
+func (u *UserHandler) ChangePoints(uid uint, chengeType, points int) error {
+	var user model.TbUser
+	u.db.Where("ID = ?", uid).Order("id desc").First(&user)
+	if user.Username == "" {
+		return errors.New("用户没找到")
+	}
+	if chengeType == 0 {
+		user.Points = user.Points - points
+	} else {
+		user.Points = user.Points + points
+	}
+	if chengeType == 2 {
+		// 如果是签到，判断今天是否已经签到过了
+		// 获取当前时间的年、月、日
+		nowYear, nowMonth, nowDay := time.Now().Date()
+		// 获取目标时间的年、月、日
+		tYear, tMonth, tDay := user.PunchAt.Date()
+		// 判断年、月、日是否相同
+		if nowYear == tYear && nowMonth == tMonth && nowDay == tDay {
+			return errors.New("今天已经签到过了，请勿重复签到！")
+		}
+	}
+	if user.Role != "admin" {
+		user.Role = utils.GetUserLevel(user.Points)
+	}
+	user.PunchAt = time.Now()
+	affected := u.db.Model(&model.TbUser{}).Where("id = ?", uid).
+		Updates(user)
+	if affected.RowsAffected == 0 {
+		return errors.New("没有记录被更新")
+	}
+	return nil
+}
+
+// Punch 签到功能
+func (u *UserHandler) Punch(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
+	if userinfo == nil {
+		c.HTML(200, "login.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"msg": "先登陆后才能签到",
+		}))
+		return
+	}
+	// 使用当前时间作为随机数种子
+	rand.Seed(time.Now().UnixNano())
+	// 生成 1-10 之间的随机整数
+	randomNumber := rand.Intn(10) + 1 // rand.Intn(10) 生成 0-9 的随机数，+1 使其变为 1-10
+	err := u.ChangePoints(userinfo.ID, 2, randomNumber)
+	if err != nil {
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error",
+			"msg":   err.Error(),
+		}))
+		return
+	}
+	c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		"title": "Success",
+		"msg":   fmt.Sprintf("签到成功，获得 %d 个竹笋！", randomNumber),
+	}))
 }

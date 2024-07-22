@@ -73,6 +73,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead)
 	userGroup.GET("/message", userHandler.ToMessage)
 	userGroup.GET("/status", userHandler.SetStatus)
+	userGroup.GET("/punch", userHandler.Punch)
 
 	//commentGroup := engine.Group("/c")
 	//commentGroup.GET("/vote", commentHandler.Vote)
