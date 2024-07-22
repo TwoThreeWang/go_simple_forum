@@ -395,6 +395,13 @@ func (p PostHandler) AddComment(c *gin.Context) {
 				return err
 			}
 		}
+		if message.ToUserID > 0 {
+			handler := UserHandler{p.injector, p.db}
+			err := handler.ChangePoints(message.ToUserID, 1, 1)
+			if err != nil {
+				return err
+			}
+		}
 		return nil
 	})
 	if err != nil {
