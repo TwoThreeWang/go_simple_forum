@@ -571,6 +571,8 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 	u.db.Table("tb_user").Where("id <> 999999999").Count(&totalUsers)
 	if totalUsers == 0 {
 		user.Role = "admin"
+	} else {
+		user.Role = "0"
 	}
 
 	var inviteRecords []model.TbInviteRecord

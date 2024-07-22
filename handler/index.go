@@ -100,6 +100,16 @@ func (i *IndexHandler) DoSearch(c *gin.Context) {
 }
 
 func (i *IndexHandler) ToNew(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
+	if userinfo.Role != "admin" {
+		role, err := strconv.Atoi(userinfo.Role)
+		if role < 1 || err != nil {
+			c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+				"title": "权限错误", "msg": "LV.1 及以上等级才可以发表新帖子！",
+			}))
+			return
+		}
+	}
 	var tags []model.TbTag
 	i.db.Model(&model.TbTag{}).Preload("Parent").Where("parent_id is null").Preload("Children").Find(&tags)
 	c.HTML(200, "new.gohtml", OutputCommonSession(i.injector, c, gin.H{

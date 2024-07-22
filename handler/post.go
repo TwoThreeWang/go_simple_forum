@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -199,6 +200,15 @@ func (p PostHandler) Add(c *gin.Context) {
 	if userinfo == nil {
 		c.Redirect(302, "/u/login")
 		return
+	}
+	if userinfo.Role != "admin" {
+		role, err := strconv.Atoi(userinfo.Role)
+		if role < 1 || err != nil {
+			c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+				"title": "权限错误", "msg": "LV.1 及以上等级才可以发表新帖子！",
+			}))
+			return
+		}
 	}
 	uid := userinfo.ID
 	// 判断用户是否激活
