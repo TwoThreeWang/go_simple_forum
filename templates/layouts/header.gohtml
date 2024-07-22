@@ -97,6 +97,9 @@
                             href="/u/profile/{{.userinfo.Username}}">{{.userinfo.Username}}</a></div>
                 <div class='hover:text-hover {{if eq .selected "message"}}selected{{end}} {{if gt .unReadMessageCount 0}}text-red{{end}}'>
                     <a href="/u/message">消息({{.unReadMessageCount}})</a></div>
+                <div class='hover:text-hover'>
+                    <a href="/u/punch">签到</a>
+                </div>
             {{else}}
                 <div class='hover:text-hover {{if eq .selected "login"}}selected{{end}}'><a href="/u/login">登录</a>
                 </div>
