@@ -60,10 +60,12 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 	}
 
 	inspectLog.InspectorID = uid
+	var postUid uint
 	if request.PostID > 0 {
 		var post model.TbPost
 		if err := p.db.Model(&model.TbPost{}).Where("id = ?", request.PostID).First(&post).Error; err == nil {
 			inspectLog.Title = "链接:" + post.Title
+			postUid = post.UserID
 		}
 	}
 
@@ -77,6 +79,14 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 
 		if request.PostID > 0 {
 			err := tx.Model(model.TbPost{}).Where("id = ?", request.PostID).Update("status", status).Error
+			if err != nil {
+				return err
+			}
+		}
+
+		if postUid > 0 || request.Result == "reject" {
+			handler := UserHandler{p.injector, p.db}
+			err := handler.ChangePoints(postUid, 0, 5)
 			if err != nil {
 				return err
 			}

@@ -513,6 +513,13 @@ func (i *IndexHandler) DelComment(c *gin.Context) {
 		if err := tx.Save(&message).Error; err != nil {
 			return err
 		}
+		if message.ToUserID > 0 {
+			handler := UserHandler{i.injector, i.db}
+			err := handler.ChangePoints(message.ToUserID, 0, 3)
+			if err != nil {
+				return err
+			}
+		}
 		return nil
 	})
 
