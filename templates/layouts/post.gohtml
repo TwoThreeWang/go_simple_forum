@@ -87,7 +87,39 @@
                             document.getElementById('post-content').innerHTML = html;
                         </script>
                     {{end}}
-
+                    {{if eq $.selected "detail"}}
+                    <br>
+                    <div>
+                        <a class="text-coolGray" href="{{if $post.UpVoted}}javascript:alert('已经表过态了！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
+                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">♥ {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</span>
+                        </a>
+{{/*                        <span class="text-sm text-coolGray"> · </span>*/}}
+{{/*                        <a class="text-coolGray" href="{{if or $post.UpVoted $post.DownVoted}}javascript:alert('已经表过态了！');void(0);{{else}}/vote?id={{$post.Pid}}&action=d&type=POST{{end}}">*/}}
+{{/*                            <span class="text-sm text-coolGray upVote {{if $post.DownVoted}}text-red{{end}}">▼ {{if $post.DownVoted}}已{{end}}反对({{$post.DownVote}})</span>*/}}
+{{/*                        </a>*/}}
+                        {{ if and ($.userinfo) (eq $.userinfo.Role "admin")}}
+                            {{ if or (eq $.selected "approve") (eq $.selected "detail")}}
+                                <form action="/inspect" method="post">
+                                    <div class="flex flex-col gap2 mt-2 text-xs" id="approve-form" data-post-id="{{$post.ID}}">
+                                        <input name="post_id" type="hidden" value="{{$post.ID}}">
+                                        <input name="inspect_type" type="hidden" value="POST">
+                                        <div class="flex flex-row gap-1  items-center">
+                                            <input type="radio" value="pass" id="pass-{{$index}}" data-index="{{$index}}" name="result">
+                                            <label for="pass-{{$index}}">通过</label>
+                                            <input type="radio" class="ml-2" value="reject" id="reject-{{$index}}"
+                                                   data-index="{{$index}}" name="result">
+                                            <label for="reject-{{$index}}">拒绝</label>
+                                            <button class="btn text-xs ml-2" type="submit">审核</button>
+                                        </div>
+                                        <div class="hidden" id="reason-{{$index}}">
+                                            <textarea name="reason" class="input w-full" placeholder="填写拒绝理由"></textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                            {{end}}
+                        {{end}}
+                    </div><br>
+                    {{end}}
                     {{ if eq $.selected "detail" }}
                         <form method="post" action="/p/comment" id="comment_form">
                             <input type="hidden" name="post_pid" value="{{$post.Pid}}">
@@ -132,27 +164,6 @@
                     {{end}}
                 </div>
             </div>
-            {{ if and ($.userinfo) (eq $.userinfo.Role "admin")}}
-                {{ if or (eq $.selected "approve") (eq $.selected "detail")}}
-                    <form action="/inspect" method="post">
-                        <div class="flex flex-col gap2 mt-2 text-xs" id="approve-form" data-post-id="{{$post.ID}}">
-                            <input name="post_id" type="hidden" value="{{$post.ID}}">
-                            <input name="inspect_type" type="hidden" value="POST">
-                            <div class="flex flex-row gap-1  items-center">
-                                <input type="radio" value="pass" id="pass-{{$index}}" data-index="{{$index}}" name="result">
-                                <label for="pass-{{$index}}">通过</label>
-                                <input type="radio" class="ml-2" value="reject" id="reject-{{$index}}"
-                                       data-index="{{$index}}" name="result">
-                                <label for="reject-{{$index}}">拒绝</label>
-                                <button class="btn text-xs ml-2" type="submit">审核</button>
-                            </div>
-                            <div class="hidden" id="reason-{{$index}}">
-                                <textarea name="reason" class="input w-full" placeholder="填写拒绝理由"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                {{end}}
-            {{end}}
         {{end}}
     </div>
 {{end}}

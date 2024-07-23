@@ -155,7 +155,7 @@ func (p PostHandler) Detail(c *gin.Context) {
 		if userinfo != nil {
 			subQuery := p.db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'COMMENT' and action ='UP'", uid)
 
-			p.db.Table("tb_comment c").Select("c.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS UpVoted").Joins("LEFT JOIN (?) AS vote ON c.id = vote.target_id", subQuery).
+			p.db.Table("tb_comment c").Select("c.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS up_voted").Joins("LEFT JOIN (?) AS vote ON c.id = vote.target_id", subQuery).
 				Preload("User").Where("post_id = ? and parent_comment_id is null", posts[0].ID).Order("created_at desc").Find(&rootComments)
 
 		} else {
@@ -184,7 +184,7 @@ func buildCommentTree(comments *[]model.TbComment, db *gorm.DB, uid uint) {
 	for i := range *comments {
 		var children []model.TbComment
 		if uid > 0 {
-			db.Table("tb_comment c").Select("c.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS UpVoted").
+			db.Table("tb_comment c").Select("c.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS up_voted").
 				Joins("LEFT JOIN (?) AS vote ON c.id = vote.target_id", subQuery).Preload("User").Where("post_id = ? and parent_comment_id = ?", (*comments)[i].PostID, (*comments)[i].ID).Find(&children)
 		} else {
 			db.Model(&model.TbComment{}).
