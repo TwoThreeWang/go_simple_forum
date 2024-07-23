@@ -58,7 +58,7 @@
                             <img src="{{$.avatarCdn}}/{{$post.User.EmailHash}}" class="rounded w-4 h-4"/>
                         {{end}}
                         <div><a class="cursor-pointer  hover:text-hover"
-                                href="/u/profile/{{$post.User.Username}}">{{$post.User.Username}}</a></div>
+                                href="/u/profile/{{$post.User.ID}}">{{$post.User.Username}}</a></div>
                         <div class="when">{{$post.CreatedAt | timeAgo}}</div>
                         <div>|</div>
                         <div class="cursor-pointer  hover:text-hover">

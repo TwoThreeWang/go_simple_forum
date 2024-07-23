@@ -63,7 +63,7 @@
     {{range .logs}}
     <tr>
         <td style="width: 160px;">{{.CreatedAt.Format "2006-01-02 15:04:05"}}</td>
-        <td style="width: 100px;"><a class="text-blue" href="/u/profile/{{.Inspector.Username}}">{{.Inspector.Username}}</a></td>
+        <td style="width: 100px;"><a class="text-blue" href="/u/profile/{{.Inspector.Model.ID}}">{{.Inspector.Username}}</a></td>
         <td>
             <div class="flex flex-col gap-2 items-start p-2">
                 <div>{{if eq .InspectType "POST"}}<a class="text-blue" href="/p/{{.Post.Pid}}">帖子:{{.Post.Title}}</a>{{end}}</div>

@@ -101,16 +101,16 @@ func (u *UserHandler) Logout(c *gin.Context) {
 
 func (u *UserHandler) Asks(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
-	username := c.Param("username")
+	userid := c.Param("userid")
 	p := c.DefaultQuery("p", "1")
 	page := cast.ToInt(p)
 	size := 10
 
 	var user model.TbUser
-	if err := u.db.Preload(clause.Associations).Where("username= ?", username).First(&user).Error; err == gorm.ErrRecordNotFound {
+	if err := u.db.Preload(clause.Associations).Where("id= ?", userid).First(&user).Error; err == gorm.ErrRecordNotFound {
 		c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"selected": "mine",
-			"msg":      "如果用户确定存在,可能他改名字了.",
+			"msg":      "请核实用户是否存在.",
 		}))
 		return
 	}
@@ -157,12 +157,12 @@ func (u *UserHandler) Links(c *gin.Context) {
 	page := cast.ToInt(p)
 	size := 10
 
-	username := c.Param("username")
+	userid := c.Param("userid")
 	var user model.TbUser
-	if err := u.db.Preload(clause.Associations).Where("username= ?", username).First(&user).Error; err == gorm.ErrRecordNotFound {
+	if err := u.db.Preload(clause.Associations).Where("id= ?", userid).First(&user).Error; err == gorm.ErrRecordNotFound {
 		c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"selected": "mine",
-			"msg":      "如果用户确定存在,可能他改名字了.",
+			"msg":      "请核实后重试.",
 		}))
 		return
 	}
@@ -206,19 +206,20 @@ func (u *UserHandler) Links(c *gin.Context) {
 
 func (u *UserHandler) UserEdit(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
-	username := c.Param("username")
-	if userinfo.Username != username {
+	userid := c.Param("userid")
+	uid := fmt.Sprintf("%d", userinfo.ID)
+	if uid != userid {
 		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"selected": "mine",
-			"msg":      "确定【" + username + "】是你本人？请核对用户名！",
+			"msg":      "不允许修改非本人信息！",
 		}))
 		return
 	}
 	var user model.TbUser
-	if err := u.db.Preload(clause.Associations).Where("username= ?", username).First(&user).Error; err == gorm.ErrRecordNotFound {
+	if err := u.db.Preload(clause.Associations).Where("id= ?", userid).First(&user).Error; err == gorm.ErrRecordNotFound {
 		c.HTML(200, "profiledit.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"selected": "mine",
-			"msg":      "如果用户确定存在,可能他改名字了.",
+			"msg":      "请核实用户是否存在或禁用.",
 		}))
 		return
 	}
@@ -393,12 +394,12 @@ func (u *UserHandler) Comments(c *gin.Context) {
 	page := cast.ToInt(p)
 	size := 10
 
-	username := c.Param("username")
+	userid := c.Param("userid")
 	var user model.TbUser
-	if err := u.db.Preload(clause.Associations).Where("username= ?", username).First(&user).Error; err == gorm.ErrRecordNotFound {
+	if err := u.db.Preload(clause.Associations).Where("id= ?", userid).First(&user).Error; err == gorm.ErrRecordNotFound {
 		c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"selected": "mine",
-			"msg":      "如果用户确定存在,可能他改名字了.",
+			"msg":      "请核实用户是否存在.",
 		}))
 		return
 	}

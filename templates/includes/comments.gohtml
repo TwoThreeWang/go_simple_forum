@@ -19,7 +19,7 @@
             <div class="flex flex-row gap-2 text-gray text-xs">
 
                <div class="avatar">
-                   <a href="/u/profile/{{.User.Username}}">
+                   <a href="/u/profile/{{.UserID}}">
                        {{ $firstFourChars := slice .User.EmailHash 0 4 }}
                        {{ if eq $firstFourChars "http" }}
                            <img class="w-5 h-5 rounded" src="{{.User.EmailHash}}" alt="{{.User.Username}}" />
@@ -29,7 +29,7 @@
                    </a>
                </div>
 
-                <div><a class="cursor-pointer  hover:text-hover" href="/u/profile/{{.User.Username}}">{{.User.Username}}</a>
+                <div><a class="cursor-pointer  hover:text-hover" href="/u/profile/{{.UserID}}">{{.User.Username}}</a>
                 </div>
                 <div class="when">{{.CreatedAt | timeAgo}}</div>
                 <div>|</div>
