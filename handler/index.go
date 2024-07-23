@@ -562,8 +562,8 @@ func (i *IndexHandler) Vote(c *gin.Context) {
 			return
 		}
 		message.ToUserID = item.UserID
-		message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%s'>%s</a>给你的主题<a class='bLink' href='/p/%s'>%s</a>点赞了",
-			userinfo.Username, userinfo.Username, item.Pid, item.Title)
+		message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>给你的主题<a class='bLink' href='/p/%s'>%s</a>点赞了",
+			userinfo.ID, userinfo.Username, item.Pid, item.Title)
 	} else if targetType == "COMMENT" {
 		var item model.TbComment
 		i.db.Model(&model.TbComment{}).Preload("Post").Where("cid = ?", id).First(&item)
@@ -575,8 +575,8 @@ func (i *IndexHandler) Vote(c *gin.Context) {
 			return
 		}
 		message.ToUserID = item.UserID
-		message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%s'>%s</a>给你的<a class='bLink' href='/p/%s#c-%s'>评论</a>点赞了",
-			userinfo.Username, userinfo.Username, item.Post.Pid, item.CID)
+		message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>给你的<a class='bLink' href='/p/%s#c-%s'>评论</a>点赞了",
+			userinfo.ID, userinfo.Username, item.Post.Pid, item.CID)
 	}
 
 	if i.db.Model(&model.TbVote{}).Where("target_id = ? and tb_user_id = ?  and type = ?", targetID, uid, targetType).Count(&exists); exists == 0 {
