@@ -1,0 +1,44 @@
+{{ define "title"}}<title>我的邀请码 - {{.siteName}}</title>
+<script>
+    function copyCode(target,code) {
+        navigator.clipboard.writeText(`${window.location.origin}\/invite\/${code}`);
+        target.innerText = '已复制!快去邀请他人吧.'
+        target.style.color='green'
+    }
+</script>
+{{ end }}
+
+
+{{define "content"}}
+    <div class="flex my-4 justify-end">
+        <a class="btn dark:text-white/70" href="/u/addinvite">创建新的邀请码 (50竹笋)</a>
+    </div>
+        <table class="w-full mytable dark:text-white/70" style="border-collapse: collapse; ">
+            <thead>
+            <tr>
+                <th>邀请码</th>
+                <th>创建时间</th>
+                <th>使用时间</th>
+                <th>状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .invites}}
+                <tr>
+                    <td>{{.Code}}</td>
+                    <td>{{.CreatedAt | timeAgo}}</td>
+                    <td>{{.InvalidAt | timeAgo}}</td>
+                    <td>{{.Status}} |
+                        {{if eq .Status "ENABLE"}}
+                        <a href="javascript:void(0);" class="cursor-pointer hover:text-green-5" onclick="copyCode(this,'{{.Code}}')">复制邀请链接</a>
+                            {{else}}
+                            <a href="/u/profile/{{.InvitedUserId}}" class="cursor-pointer hover:text-green-5">已被使用</a>
+                        {{end}}
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+
+{{end}}
+{{ define "afterBody"}}{{end}}

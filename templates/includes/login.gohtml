@@ -31,6 +31,8 @@
             </div>
             {{if  eq .settings.RegMode "open"}}
                 <p class="text-sm text-gray">没有账户?去<a class="aLink underline" href="/invite/open">注册</a></p>
+                    {{else if eq .settings.RegMode "invite"}}
+                <p class="text-sm text-gray">目前仅开放邀请注册</p>
             {{end}}
             <p class="text-sm text-gray">忘记密码?去<a class="aLink underline" href="/resetPwd">重置密码</a></p>
         </div>

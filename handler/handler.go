@@ -72,6 +72,8 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/message/setAllRead", userHandler.SetAllRead)
 	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead)
 	userGroup.GET("/message", userHandler.ToMessage)
+	userGroup.GET("/invite", userHandler.InviteList)
+	userGroup.GET("/addinvite", userHandler.InviteNew)
 	userGroup.GET("/status", userHandler.SetStatus)
 	userGroup.GET("/punch", userHandler.Punch)
 

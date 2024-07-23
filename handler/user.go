@@ -152,7 +152,6 @@ func (u *UserHandler) Asks(c *gin.Context) {
 }
 
 func (u *UserHandler) Links(c *gin.Context) {
-	userinfo := GetCurrentUser(c)
 	p := c.DefaultQuery("p", "1")
 	page := cast.ToInt(p)
 	size := 10
@@ -167,12 +166,10 @@ func (u *UserHandler) Links(c *gin.Context) {
 		return
 	}
 
-	var inviteRecords []model.TbInviteRecord
-	if userinfo != nil && userinfo.ID == user.ID {
-		u.db.Model(&model.TbInviteRecord{}).Where("username = ?", user.Username).Scan(&inviteRecords)
-	}
 	var invitedUsername string
-	u.db.Model(&model.TbInviteRecord{}).Select("username").Where("\"invitedUsername\" = ?", user.Username).First(&invitedUsername)
+	var inviteUserId uint
+	u.db.Model(&model.TbInviteRecord{}).Select("user_id").Where("\"invited_user_id\" = ?", user.ID).First(&inviteUserId)
+	u.db.Model(&model.TbUser{}).Select("username").Where("\"id\" = ?", inviteUserId).First(&invitedUsername)
 
 	var total int64
 	var posts []model.TbPost
@@ -194,8 +191,8 @@ func (u *UserHandler) Links(c *gin.Context) {
 		"user":            user,
 		"sub":             "link",
 		"posts":           posts,
-		"inviteRecords":   inviteRecords,
 		"invitedUsername": invitedUsername,
+		"inviteUserId":    inviteUserId,
 		"totalPage":       totalPage,
 		"total":           total,
 		"hasNext":         cast.ToInt64(page) < totalPage,
@@ -364,6 +361,65 @@ func (u *UserHandler) ToMessage(c *gin.Context) {
 	}))
 }
 
+// InviteList 用户邀请码列表
+func (u *UserHandler) InviteList(c *gin.Context) {
+
+	var invites []model.TbInviteRecord
+	var total int64
+	userinfo := GetCurrentUser(c)
+	page := cast.ToInt(c.DefaultQuery("p", "1"))
+	size := 25
+
+	u.db.Model(&model.TbInviteRecord{}).Where("user_id = ?", userinfo.ID).Count(&total)
+	u.db.Model(&model.TbInviteRecord{}).Where("user_id = ?", userinfo.ID).Limit(size).Offset((page - 1) * size).
+		Order("created_at desc").Find(&invites)
+
+	c.HTML(200, "inviteCode.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		"selected": "invite",
+		"invites":  invites,
+		"total":    total,
+	}))
+}
+
+// InviteNew 新建一个邀请码
+func (u *UserHandler) InviteNew(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
+	fmt.Println("1111111111111111111")
+	// 扣减积分
+	var user model.TbUser
+	u.db.Model(&model.TbUser{}).Where("id = ?", userinfo.ID).First(&user)
+	if user.Points-50 < 0 {
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error",
+			"msg":   "积分不足，无法兑换新的邀请码！",
+		}))
+		return
+	}
+	user.Points = user.Points - 50
+	// 生成新的邀请码
+	inviteRecord := model.TbInviteRecord{
+		UserId: userinfo.ID,
+		Code:   RandStringBytesMaskImpr(10),
+		Status: "ENABLE",
+	}
+
+	err := u.db.Transaction(func(tx *gorm.DB) error {
+		err := tx.Save(&user).Error
+		if err != nil {
+			return err
+		}
+		return tx.Save(&inviteRecord).Error
+	})
+	if err != nil {
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error",
+			"msg":   "系统错误，请稍后重试！",
+		}))
+		return
+	}
+	c.Redirect(301, "/u/invite")
+}
+
 func (u *UserHandler) SetAllRead(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
 	if userinfo == nil {
@@ -467,7 +523,7 @@ func (u *UserHandler) ToInvited(c *gin.Context) {
 		return
 	}
 	var invited model.TbInviteRecord
-	err := u.db.Where("code = ? and \"invalidAt\" >= now() and status = 'ENABLE'", code).First(&invited).Error
+	err := u.db.Where("code = ? and status = 'ENABLE'", code).First(&invited).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"codeIsInvalid": true,
@@ -475,11 +531,14 @@ func (u *UserHandler) ToInvited(c *gin.Context) {
 		}))
 		return
 	}
+	var invitedUsername string
+	u.db.Model(&model.TbUser{}).Select("username").Where("\"id\" = ?", invited.UserId).First(&invitedUsername)
 
 	c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{
-		"selected": "/",
-		"invited":  invited,
-		"code":     code,
+		"selected":        "/",
+		"invited":         invited,
+		"invitedUsername": invitedUsername,
+		"code":            code,
 	}))
 }
 
@@ -510,7 +569,7 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 	var invited model.TbInviteRecord
 	var user model.TbUser
 	if settings.Content.RegMode == "invite" {
-		err := u.db.Where("code = ? and \"invalidAt\" >= now() and status = 'ENABLE'", code).First(&invited).Error
+		err := u.db.Where("code = ? and status = 'ENABLE'", code).First(&invited).Error
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{
 				"codeIsInvalid": true,
@@ -578,17 +637,6 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 		user.Role = "0"
 	}
 
-	var inviteRecords []model.TbInviteRecord
-	var count = 0
-	for count < 3 {
-		count++
-		inviteRecords = append(inviteRecords, model.TbInviteRecord{
-			Username:  user.Username,
-			Code:      RandStringBytesMaskImpr(10),
-			InvalidAt: time.Now().Add(30 * 24 * time.Hour),
-			Status:    "ENABLE",
-		})
-	}
 	err = u.db.Transaction(func(tx *gorm.DB) error {
 		err := tx.Save(&user).Error
 		if err != nil {
@@ -596,15 +644,15 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 		}
 		if settings.Content.RegMode == "invite" {
 			err = tx.Model(&invited).Where("id=?", invited.ID).Updates(model.TbInviteRecord{
-				InvitedUsername:  request.Username,
-				InvitedUserEmail: request.Email,
-				Status:           "DISABLE",
+				InvitedUserId: user.ID,
+				InvalidAt:     time.Now(),
+				Status:        "DISABLE",
 			}).Error
 			if err != nil {
 				return err
 			}
 		}
-		return tx.Save(&inviteRecords).Error
+		return nil
 	})
 	if errors.Is(err, gorm.ErrDuplicatedKey) {
 		c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{

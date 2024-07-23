@@ -1,14 +1,4 @@
-{{ define "title"}}
-    <title>个人中心 - {{.siteName}}</title>
-
-    <script>
-        function copyCode(target,code) {
-            navigator.clipboard.writeText(`${window.location.origin}\/invite\/${code}`);
-            target.innerText = '已复制!快去邀请他人吧.'
-            target.style.color='green'
-        }
-    </script>
-{{ end }}
+{{ define "title"}}<title>个人中心 - {{.siteName}}</title>{{ end }}
 
 {{define "content"}}
 
@@ -35,14 +25,6 @@
                 <div class="font-bold ">账号状态</div>
                 <div>{{.user.Status}}</div>
             </div>
-        {{ if $.userinfo}}
-            {{if eq $.userinfo.Username .user.Username }}
-            <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold ">注册邮箱</div>
-                <div>{{.user.Email}}</div>
-            </div>
-            {{end}}
-        {{end}}
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold ">用户头像</div>
                 {{ $firstFourChars := slice .user.EmailHash 0 4 }}
@@ -56,8 +38,7 @@
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold">加入时间</div>
                 <div>{{.user.CreatedAt.Format "2006-01-02"}}{{if .invitedUsername }}  通过  <a
-                            href="/u/profile/{{.invitedUsername}}" class="aLink">{{.invitedUsername}}</a> 的 <a href="/"
-                                                                                                                class="aLink">邀请</a> 加入{{end}}
+                            href="/u/profile/{{.inviteUserId}}" class="aLink">{{.invitedUsername}}</a> 的邀请加入{{end}}
                 </div>
             </div>
 
@@ -85,38 +66,25 @@
                 <div class="font-bold">个人介绍</div>
                 <div>{{.user.Bio}}</div>
             </div>
-{{/*            {{if .inviteRecords}}*/}}
-{{/*                <div class="flex flex-row gap-8 items-start text-sm ">*/}}
-{{/*                    <div class="font-bold">邀请他人</div>*/}}
-{{/*                    <div class="flex flex-col gap-2">*/}}
-{{/*                        {{range .inviteRecords}}*/}}
-{{/*                            <div class="flex items-end">*/}}
-{{/*                                {{if eq .Status "DISABLE"}}*/}}
-{{/*                                    <a class="aLink" target="_blank" href="/invite/{{.Code}}">{{.Code}}</a> - 已经被*/}}
-{{/*                                    <a class="aLink" href="/u/profile/{{.InvitedUsername}}">{{.InvitedUsername}}</a>*/}}
-{{/*                                        于 {{.UpdatedAt | timeAgo}} 使用*/}}
-{{/*                                {{else}}*/}}
-{{/*                                    <a class="aLink" target="_blank" href="/invite/{{.Code}}">{{.Code}}</a>*/}}
-{{/*                                    <div class="cursor-pointer hover:text-green-5" onclick="copyCode(this,'{{.Code}}')">复制链接</div>*/}}
-{{/*                                {{end}}*/}}
-{{/*                            </div>*/}}
-{{/*                        {{end}}*/}}
-{{/*                    </div>*/}}
-{{/*                </div>*/}}
-{{/*            {{end}}*/}}
-        </div>
-        {{ if $.userinfo}}
-            {{if eq $.userinfo.Username .user.Username }}
-                <br>
-            <div class="flex flex-row gap-8 items-center text-sm">
-                <div class="font-bold">其他功能</div>
-                <a href="/u/profile/{{.user.ID }}/edit" class="btn">用户设置</a>
-                <a class="dark:text-white/70 underline" href="/u/logout">退出登录</a>
-            </div>
+            {{ if $.userinfo}}
+                {{if eq $.userinfo.ID .user.ID }}
+                    <div class="flex flex-row gap-8 items-center text-sm">
+                        <div class="font-bold ">注册邮箱</div>
+                        <div>{{.user.Email}}</div>
+                    </div>
+                    <div class="flex flex-row gap-8 items-center text-sm">
+                        <div class="font-bold">我的邀请</div>
+                        <a href="/u/invite" class="aLink">邀请码列表</a>
+                    </div>
+                    <div class="flex flex-row gap-8 items-center text-sm">
+                        <div class="font-bold">其他功能</div>
+                        <a href="/u/profile/{{.user.ID }}/edit" class="btn">用户设置</a>
+                        <a class="dark:text-white/70 underline" href="/u/logout">退出登录</a>
+                    </div>
+                {{end}}
             {{end}}
-        {{end}}
+        </div>
         <br>
-
         <div class="flex gap-2 my-4  text-sm fw-bold dark:text-white/70" style="border-bottom: 1px solid #eee">
             <a class="{{if eq .sub "link"}}border-b border-b-[#5468ff] border-b-solid border-b-2 {{end}} cursor-pointer hover:text-gray"
                href="/u/profile/{{.user.ID}}/links">分享</a>
