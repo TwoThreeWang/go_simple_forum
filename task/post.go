@@ -13,12 +13,12 @@ import (
 
 func StartPostTask(i *do.Injector) {
 	s := gocron.NewScheduler()
-	s.Every(1).Minute().Do(func(i *do.Injector) {
-		log.Printf("start refresh last 7 days post points.")
+	s.Every(1).Hours().Do(func(i *do.Injector) {
+		log.Printf("start refresh last 15 days post points.")
 		db := do.MustInvoke[*gorm.DB](i)
 
 		var posts []model.TbPost
-		db.Model(&model.TbPost{}).Where("created_at >= now() - interval '7 day' and status = 'Active'").Scan(&posts)
+		db.Model(&model.TbPost{}).Where("created_at >= now() - interval '15 day' and status = 'Active'").Scan(&posts)
 		g := 1.80
 		for _, post := range posts {
 			var commentCount int64
@@ -31,7 +31,7 @@ func StartPostTask(i *do.Injector) {
 
 			db.Model(&model.TbPost{}).Where("id= ?", post.ID).Update("point", point)
 		}
-		log.Printf("end of refresh last 7 days post points.")
+		log.Printf("end of refresh last 15 days post points.")
 	}, i)
 	s.Start()
 }
