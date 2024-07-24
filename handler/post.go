@@ -201,28 +201,32 @@ func (p PostHandler) Add(c *gin.Context) {
 		c.Redirect(302, "/u/login")
 		return
 	}
-	if userinfo.Role != "admin" {
-		role, err := strconv.Atoi(userinfo.Role)
-		if role < 1 || err != nil {
-			c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
-				"title": "权限错误", "msg": "LV.1 及以上等级才可以发表新帖子！",
-			}))
-			return
-		}
-	}
+
 	uid := userinfo.ID
 	// 判断用户是否激活
 	var user model.TbUser
 	p.db.Model(model.TbUser{}).Where("id=?", uid).First(&user)
 	status := user.Status
 	if status != "Active" {
+		msg := "禁止用户不允许发布"
+		if status == "Wait" {
+			msg = "未激活用户不允许发布，请到个人中心邮箱激活账户！"
+		}
 		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
 			"title": "Error",
-			"msg":   "用户状态【" + status + "】不允许发布内容！",
+			"msg":   msg,
 		}))
 		return
 	}
-
+	if userinfo.Role != "admin" {
+		role, err := strconv.Atoi(userinfo.Role)
+		if role < 1 || err != nil {
+			c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+				"title": "权限错误", "msg": "LV.1 及以上等级才可以发表新帖子，签到、评论被点赞都可以升级！",
+			}))
+			return
+		}
+	}
 	var tempTags []model.TbTag
 	p.db.Model(&model.TbTag{}).Preload("Parent").Where("parent_id is null").Preload("Children").Find(&tempTags)
 
@@ -329,9 +333,13 @@ func (p PostHandler) AddComment(c *gin.Context) {
 	p.db.Model(model.TbUser{}).Where("id=?", uid).First(&user)
 	status := user.Status
 	if status != "Active" {
+		msg := "禁止用户不允许评论"
+		if status == "Wait" {
+			msg = "未激活用户不允许评论，请到个人中心邮箱激活账户！"
+		}
 		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
 			"title": "Error",
-			"msg":   "用户状态【" + status + "】不允许发布内容！",
+			"msg":   msg,
 		}))
 		return
 	}
@@ -358,8 +366,8 @@ func (p PostHandler) AddComment(c *gin.Context) {
 		comment.ParentCommentID = nil
 		if userinfo.ID != post.UserID {
 			message.ToUserID = post.UserID
-			message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%s'>%s</a>在<a class='bLink' href='/p/%s'>[%s]</a>中回复了你的主题",
-				userinfo.Username, userinfo.Username, post.Pid+"#c-"+comment.CID, post.Title)
+			message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>在<a class='bLink' href='/p/%s'>[%s]</a>中回复了你的主题",
+				userinfo.ID, userinfo.Username, post.Pid+"#c-"+comment.CID, post.Title)
 		}
 	} else {
 		var parent model.TbComment
@@ -367,8 +375,8 @@ func (p PostHandler) AddComment(c *gin.Context) {
 		comment.ParentCommentID = &request.ParentCommentId
 		if userinfo.ID != parent.UserID {
 			message.ToUserID = parent.UserID
-			message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%s'>%s</a>在<a class='bLink' href='/p/%s'>[%s]</a>回复了<a class='bLink' href='/p/%s'>你的评论</a>",
-				userinfo.Username, userinfo.Username, post.Pid, post.Title, post.Pid+"#c-"+parent.CID)
+			message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>在<a class='bLink' href='/p/%s'>[%s]</a>回复了<a class='bLink' href='/p/%s'>你的评论</a>",
+				userinfo.ID, userinfo.Username, post.Pid, post.Title, post.Pid+"#c-"+parent.CID)
 		}
 
 	}

@@ -17,6 +17,7 @@ import (
 	"log"
 	"math/rand"
 	"net/mail"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -157,6 +158,15 @@ func (u *UserHandler) Links(c *gin.Context) {
 	size := 10
 
 	userid := c.Param("userid")
+	// 尝试将 userid 字符串转换为 int64 类型
+	_, err := strconv.ParseInt(userid, 10, 64)
+	if err != nil {
+		c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"selected": "mine",
+			"msg":      "请核实后重试.",
+		}))
+		return
+	}
 	var user model.TbUser
 	if err := u.db.Preload(clause.Associations).Where("id= ?", userid).First(&user).Error; err == gorm.ErrRecordNotFound {
 		c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
