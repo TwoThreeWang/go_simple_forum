@@ -634,6 +634,7 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 	user.Status = "Wait"
 	user.CommentCount = 0
 	user.PostCount = 0
+	user.Bio = "这个人不懒, 但也没有介绍."
 
 	hash := sha256.New()
 	hash.Write([]byte(user.Email))
