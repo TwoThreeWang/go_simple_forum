@@ -23,6 +23,10 @@ a {
     word-break: break-all;
 }
 
+.x-post-title a:visited{
+    color:#5b88b6;
+}
+
 .header .selected > a {
     text-decoration: underline;
     text-decoration-color: #5468ff;
@@ -73,7 +77,15 @@ a {
     margin: .25em 0;
     padding: 1em;
     text-align: left;
-    white-space: pre
+    word-break:break-all;
+}
+
+.content pre ,.content code{
+    white-space: pre-wrap; /* css-3 */
+    word-wrap: break-word; /* InternetExplorer5.5+ */
+    white-space: -moz-pre-wrap; /* Mozilla,since1999 */
+    white-space: -pre-wrap; /* Opera4-6 */
+    white-space: -o-pre-wrap; /* Opera7 */
 }
 
 .content blockquote {
