@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/model"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"gorm.io/gorm"
 	"log"
+	"time"
 )
 
 type InspectHandler struct {
@@ -29,9 +31,7 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 		})
 		return
 	}
-
 	uid := userinfo.ID
-
 	var request vo.InspectRequest
 	var inspectLog model.TbInspectLog
 	if err := c.Bind(&request); err != nil {
@@ -41,7 +41,6 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 		return
 	}
 	log.Printf("%+v", request)
-
 	if request.PostID == 0 && request.CommentID == 0 {
 		c.JSON(200, gin.H{
 			"msg": "参数错误",
@@ -61,14 +60,28 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 
 	inspectLog.InspectorID = uid
 	var postUid uint
+	var post model.TbPost
 	if request.PostID > 0 {
-		var post model.TbPost
 		if err := p.db.Model(&model.TbPost{}).Where("id = ?", request.PostID).First(&post).Error; err == nil {
 			inspectLog.Title = "链接:" + post.Title
 			postUid = post.UserID
 		}
 	}
 
+	var message model.TbMessage
+	if request.PostID > 0 {
+		message.FromUserID = 999999999
+		message.CreatedAt = time.Now()
+		message.UpdatedAt = time.Now()
+		message.Read = "N"
+		message.ToUserID = postUid
+		message.Content = fmt.Sprintf("你的帖子审核通过啦 (<a class='bLink' href='/p/%s'>%s</a>)",
+			post.Pid, post.Content)
+		if request.Result == "reject" {
+			message.Content = fmt.Sprintf("你的帖子被管理员删除 (<a class='bLink' href='/p/%s'>%s</a>)",
+				post.Pid, post.Content)
+		}
+	}
 	err := p.db.Transaction(func(tx *gorm.DB) error {
 		if request.Result == "reject" {
 			err := tx.Save(&inspectLog).Error
@@ -80,6 +93,9 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 		if request.PostID > 0 {
 			err := tx.Model(model.TbPost{}).Where("id = ?", request.PostID).Update("status", status).Error
 			if err != nil {
+				return err
+			}
+			if err := tx.Save(&message).Error; err != nil {
 				return err
 			}
 		}

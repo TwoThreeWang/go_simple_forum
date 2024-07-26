@@ -206,10 +206,10 @@ func (p PostHandler) Add(c *gin.Context) {
 	// 判断用户是否激活
 	var user model.TbUser
 	p.db.Model(model.TbUser{}).Where("id=?", uid).First(&user)
-	status := user.Status
-	if status != "Active" {
+	status := "Active"
+	if user.Status != "Active" {
 		msg := "禁止用户不允许发布"
-		if status == "Wait" {
+		if user.Status == "Wait" {
 			msg = "未激活用户不允许发布，请到个人中心邮箱激活账户！"
 		}
 		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
@@ -218,13 +218,11 @@ func (p PostHandler) Add(c *gin.Context) {
 		}))
 		return
 	}
+	// 等级 2 以下的用户发帖需要审核
 	if userinfo.Role != "admin" {
 		role, err := strconv.Atoi(userinfo.Role)
-		if role < 1 || err != nil {
-			c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
-				"title": "权限错误", "msg": "LV.1 及以上等级才可以发表新帖子，签到、评论被点赞都可以升级！",
-			}))
-			return
+		if role < 2 || err != nil {
+			status = "Wait"
 		}
 	}
 	var tempTags []model.TbTag
@@ -317,7 +315,16 @@ func (p PostHandler) Add(c *gin.Context) {
 		}))
 		return
 	}
-	c.Redirect(302, "/p/"+post.Pid)
+	if status == "Active" {
+		c.Redirect(302, "/p/"+post.Pid)
+	} else if status == "Wait" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"msg":   "发布成功，等待管理员审核后展示！",
+			"title": "Success",
+		}))
+	} else {
+		c.Redirect(302, "/")
+	}
 	return
 }
 

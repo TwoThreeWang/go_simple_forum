@@ -56,7 +56,7 @@
 
 {{define "content"}}
     {{if .msg}}
-        <div class="text-red-5">发帖失败:{{.msg}}</div>
+        <div class="text-red-5">{{.msg}}</div>
     {{end}}
     <form {{if .post.Pid}}action="/p/{{.post.Pid}}/edit" {{else}}action="/p/new" {{end}} method="post" id="newPostForm">
         <div class="mt-2 flex flex-col gap2 text-sm">

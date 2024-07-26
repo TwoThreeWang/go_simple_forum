@@ -101,13 +101,11 @@ func (i *IndexHandler) DoSearch(c *gin.Context) {
 
 func (i *IndexHandler) ToNew(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
+	msg := ""
 	if userinfo.Role != "admin" {
 		role, err := strconv.Atoi(userinfo.Role)
-		if role < 1 || err != nil {
-			c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
-				"title": "权限错误", "msg": "LV.1 及以上等级才可以发表新帖子！",
-			}))
-			return
+		if role < 2 || err != nil {
+			msg = "注意：LV.2 以下等级用户发表帖子需要审核才可以展示！"
 		}
 	}
 	var tags []model.TbTag
@@ -115,6 +113,7 @@ func (i *IndexHandler) ToNew(c *gin.Context) {
 	c.HTML(200, "new.gohtml", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "new",
 		"tags":     tags,
+		"msg":      msg,
 	}))
 }
 
@@ -383,6 +382,9 @@ func (i *IndexHandler) ToWaitApproved(c *gin.Context) {
 				c.Redirect(302, "/")
 				return
 			}
+		} else {
+			c.Redirect(302, "/")
+			return
 		}
 	} else {
 		c.Redirect(302, "/u/login")

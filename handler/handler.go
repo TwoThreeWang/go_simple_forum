@@ -158,6 +158,10 @@ func OutputCommonSession(injector *do.Injector, c *gin.Context, h ...gin.H) gin.
 		db.Model(&model.TbMessage{}).Where("to_user_id = ? and read = 'N'", userinfo.ID).Count(&total)
 		result["unReadMessageCount"] = total
 	}
+	if userinfo != nil && (userinfo.Role == "admin" || userinfo.Role == "inspector") {
+		db.Model(&model.TbPost{}).Where("status = 'Wait'").Count(&total)
+		result["waitApproved"] = total
+	}
 	var settings model.TbSettings
 	db.First(&settings)
 
