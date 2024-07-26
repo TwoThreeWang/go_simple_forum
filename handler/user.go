@@ -698,6 +698,7 @@ func (u *UserHandler) ToList(c *gin.Context) {
 }
 
 func (u *UserHandler) ChangePoints(uid uint, chengeType, points int) error {
+	// chengeType 0:减积分 1:增加积分 2:签到
 	var user model.TbUser
 	u.db.Where("ID = ?", uid).Order("id desc").First(&user)
 	if user.Username == "" {

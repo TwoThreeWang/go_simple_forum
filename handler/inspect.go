@@ -8,6 +8,7 @@ import (
 	"github.com/samber/do"
 	"gorm.io/gorm"
 	"log"
+	"math/rand"
 	"time"
 )
 
@@ -89,7 +90,7 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 				return err
 			}
 		}
-
+		// 修改帖子状态
 		if request.PostID > 0 {
 			err := tx.Model(model.TbPost{}).Where("id = ?", request.PostID).Update("status", status).Error
 			if err != nil {
@@ -99,10 +100,21 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 				return err
 			}
 		}
-
-		if postUid > 0 || request.Result == "reject" {
-			handler := UserHandler{p.injector, p.db}
+		handler := UserHandler{p.injector, p.db}
+		// 删除帖子要扣除积分
+		if postUid > 0 && request.Result == "reject" {
 			err := handler.ChangePoints(postUid, 0, 5)
+			if err != nil {
+				return err
+			}
+		}
+		// 新审核通过的帖子要增加随机积分
+		if postUid > 0 && request.Result == "pass" {
+			// 使用当前时间作为随机数种子
+			rand.Seed(time.Now().UnixNano())
+			// 生成 1-10 之间的随机整数
+			points := rand.Intn(5) + 1 // rand.Intn(10) 生成 0-9 的随机数，+1 使其变为 1-10
+			err := handler.ChangePoints(postUid, 1, points)
 			if err != nil {
 				return err
 			}
