@@ -402,7 +402,7 @@ func (p PostHandler) AddComment(c *gin.Context) {
 		if err := tx.Model(&model.TbPost{}).Where("id = ?", request.PostID).Update("commentCount", gorm.Expr("\"commentCount\" + 1")).Error; err != nil {
 			return err
 		}
-		if err := tx.Model(&model.TbUser{}).Where("id = ?", userinfo.ID).Update("commentCount", gorm.Expr("\"commentCount\" + 1")).Error; err != nil {
+		if err := tx.Model(&model.TbUser{}).Where("id = ?", userinfo.ID).Update("commentCount", gorm.Expr("\"commentCount\" + 1")).Update("points", gorm.Expr("\"points\" + 1")).Error; err != nil {
 			return err
 		}
 		if message.Content != "" {
@@ -410,7 +410,8 @@ func (p PostHandler) AddComment(c *gin.Context) {
 				return err
 			}
 		}
-		if message.ToUserID > 0 {
+		// 回复评论，被回复方加积分
+		if message.ToUserID > 0 && message.ToUserID != comment.UserID {
 			handler := UserHandler{p.injector, p.db}
 			err := handler.ChangePoints(message.ToUserID, 1, 1)
 			if err != nil {
