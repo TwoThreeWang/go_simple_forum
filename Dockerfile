@@ -16,7 +16,7 @@ RUN go mod download
 COPY . .
 COPY templates /app/templates
 COPY static /app/static
-RUN go build -ldflags="-s -w" -o /app/main main.go
+RUN go build -p 10 -ldflags="-s -w" -o /app/main main.go
 
 
 FROM scratch
