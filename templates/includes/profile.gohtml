@@ -17,9 +17,9 @@
                 <div>
                     {{ $firstFourChars := slice .user.EmailHash 0 4 }}
                     {{ if eq $firstFourChars "http" }}
-                        <img src="{{.user.EmailHash}}" class="rounded w-12 h-12"/>
+                        <img src="{{.user.EmailHash}}" class="rounded w-12 h-12" referrerpolicy="no-referrer"/>
                     {{else}}
-                        <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12"/>
+                        <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12" referrerpolicy="no-referrer"/>
                     {{end}}
                 </div>
                 <div>

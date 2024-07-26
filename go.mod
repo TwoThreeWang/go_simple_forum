@@ -3,6 +3,7 @@ module github.com/kingwrcy/hn
 go 1.20
 
 require (
+	github.com/gin-contrib/gzip v1.0.1
 	github.com/gin-contrib/multitemplate v1.0.1
 	github.com/gin-contrib/sessions v1.0.1
 	github.com/gin-gonic/gin v1.10.0

@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -80,7 +81,7 @@ func main() {
 
 	gob.Register(vo.Userinfo{})
 	engine := gin.Default()
-
+	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 	//store, _ := redis.NewStore(10, "tcp", config.RedisAddress, "", []byte(config.CookieSecret))
 	store := cookie.NewStore([]byte(config.CookieSecret))
 

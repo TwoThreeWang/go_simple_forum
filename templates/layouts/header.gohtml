@@ -56,9 +56,9 @@
                 <div class='x-header-item  flex items-center gap-1 {{if eq .selected "mine"}}selected{{end}}'>
                     {{ $firstFourChars := slice .userinfo.EmailHash 0 4 }}
                     {{ if eq $firstFourChars "http" }}
-                        <img src="{{.userinfo.EmailHash}}" class="rounded w-4 h-4"/>
+                        <img src="{{.userinfo.EmailHash}}" class="rounded w-4 h-4" referrerpolicy="no-referrer"/>
                     {{else}}
-                        <img src="{{$.avatarCdn}}/{{.userinfo.EmailHash}}" class="rounded w-4 h-4"/>
+                        <img src="{{$.avatarCdn}}/{{.userinfo.EmailHash}}" class="rounded w-4 h-4" referrerpolicy="no-referrer"/>
                     {{end}}
                     <a class="hover:text-hover"
                             href="/u/profile/{{.userinfo.ID}}">{{.userinfo.Username}}</a></div>
