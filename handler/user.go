@@ -748,7 +748,7 @@ func (u *UserHandler) Punch(c *gin.Context) {
 	err := u.ChangePoints(userinfo.ID, 2, randomNumber)
 	if err != nil {
 		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
-			"title": "Error",
+			"title": "请勿重复签到",
 			"msg":   err.Error(),
 		}))
 		return
