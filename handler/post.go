@@ -243,6 +243,14 @@ func (p PostHandler) Add(c *gin.Context) {
 		}))
 		return
 	}
+	if len(request.Link) > 1024 {
+		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"msg":      "网址链接太长了，最大长度1024",
+			"selected": "new",
+			"tags":     tempTags,
+		}))
+		return
+	}
 	log.Printf("params:%+v", request)
 	if len(request.TagIDs) == 0 || len(request.TagIDs) > 5 {
 		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
