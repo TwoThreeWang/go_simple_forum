@@ -105,7 +105,7 @@ func (i *IndexHandler) ToNew(c *gin.Context) {
 	if userinfo.Role != "admin" {
 		role, err := strconv.Atoi(userinfo.Role)
 		if role < 2 || err != nil {
-			msg = "注意：LV.2 以下等级用户发表帖子需要审核才可以展示！"
+			msg = "注意：信任级别 LV.2 以下的用户发表帖子需要审核才可以展示！"
 		}
 	}
 	var tags []model.TbTag

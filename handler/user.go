@@ -17,6 +17,7 @@ import (
 	"log"
 	"math/rand"
 	"net/mail"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -677,8 +678,20 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 		}))
 		return
 	}
+	// 注册成功发送激活邮件
+	siteName := os.Getenv("SiteName")
+	siteUrl := os.Getenv("SiteUrl")
+	// 将激活邮件发送给用户
+	content := fmt.Sprintf("您好，<br><br>收到此邮件是因为您在<b>竹林</b>网站上进行了注册，<br><br>请点击链接激活账号：%s/u/status?id=%d&key=%s", siteUrl, user.ID, user.EmailHash)
+	msg := utils.Email{}.Send(user.Email, "["+siteName+"] 账户激活邮件", content)
+	if msg != "Success" {
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "系统异常", "msg": "注册成功，但是激活邮件发送异常，请稍后登录个人中心重试！",
+		}))
+		return
+	}
 	c.HTML(200, "login.gohtml", OutputCommonSession(u.injector, c, gin.H{
-		"msg": "注册成功,去登录吧",
+		"msg": "注册成功,立即登录",
 	}))
 }
 
@@ -698,6 +711,7 @@ func (u *UserHandler) ToList(c *gin.Context) {
 }
 
 func (u *UserHandler) ChangePoints(uid uint, chengeType, points int) error {
+	// chengeType 0:减积分 1:增加积分 2:签到
 	var user model.TbUser
 	u.db.Where("ID = ?", uid).Order("id desc").First(&user)
 	if user.Username == "" {
@@ -747,7 +761,7 @@ func (u *UserHandler) Punch(c *gin.Context) {
 	err := u.ChangePoints(userinfo.ID, 2, randomNumber)
 	if err != nil {
 		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
-			"title": "Error",
+			"title": "请勿重复签到",
 			"msg":   err.Error(),
 		}))
 		return

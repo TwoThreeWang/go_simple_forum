@@ -11,7 +11,7 @@ const TableNameTbPost = "tb_post"
 type TbPost struct {
 	gorm.Model
 	Title           string        `gorm:"column:title;type:varchar(100);"`
-	Link            string        `gorm:"column:link;type:varchar(256)"`
+	Link            string        `gorm:"column:link;type:varchar(1024)"`
 	Status          string        `gorm:"column:status;type:varchar(20)"`
 	Content         string        `gorm:"column:content;type:text"`
 	UnEscapeContent template.HTML `gorm:"-:all"`

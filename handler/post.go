@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
 	"log"
+	"math/rand"
 	"net/url"
 	"strconv"
 	"strings"
@@ -218,11 +219,16 @@ func (p PostHandler) Add(c *gin.Context) {
 		}))
 		return
 	}
+	// 使用当前时间作为随机数种子
+	rand.Seed(time.Now().UnixNano())
+	// 生成 1-10 之间的随机整数
+	points := rand.Intn(5) + 1 // rand.Intn(10) 生成 0-9 的随机数，+1 使其变为 1-10
 	// 等级 2 以下的用户发帖需要审核
 	if userinfo.Role != "admin" {
 		role, err := strconv.Atoi(userinfo.Role)
 		if role < 2 || err != nil {
 			status = "Wait"
+			points = 0
 		}
 	}
 	var tempTags []model.TbTag
@@ -232,6 +238,14 @@ func (p PostHandler) Add(c *gin.Context) {
 	if err := c.Bind(&request); err != nil {
 		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "参数异常",
+			"selected": "new",
+			"tags":     tempTags,
+		}))
+		return
+	}
+	if len(request.Link) > 1024 {
+		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"msg":      "网址链接太长了，最大长度1024",
 			"selected": "new",
 			"tags":     tempTags,
 		}))
@@ -303,7 +317,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		if err := tx.Save(&post).Error; err != nil {
 			return err
 		}
-		if err := tx.Model(&model.TbUser{Model: gorm.Model{ID: uid}}).Update("postCount", user.PostCount+1).Error; err != nil {
+		if err := tx.Model(&model.TbUser{Model: gorm.Model{ID: uid}}).Update("postCount", user.PostCount+1).Update("points", gorm.Expr("\"points\" + ?", points)).Error; err != nil {
 			return err
 		}
 		return nil
