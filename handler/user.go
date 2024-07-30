@@ -1,7 +1,8 @@
 package handler
 
 import (
-	"crypto/sha256"
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/gin-contrib/sessions"
@@ -72,11 +73,11 @@ func (u *UserHandler) Login(c *gin.Context) {
 	}
 
 	cookieData := vo.Userinfo{
-		Username:  user.Username,
-		Role:      user.Role,
-		ID:        user.ID,
-		Email:     user.Email,
-		EmailHash: user.EmailHash,
+		Username: user.Username,
+		Role:     user.Role,
+		ID:       user.ID,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
 	}
 	c.Redirect(301, "/")
 	session := sessions.Default(c)
@@ -197,9 +198,14 @@ func (u *UserHandler) Links(c *gin.Context) {
 		totalPage = totalPage + 1
 	}
 
+	data := []byte(user.Email)
+	hash := md5.Sum(data)
+	EmailHash := hex.EncodeToString(hash[:])
+
 	c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
 		"selected":        "mine",
 		"user":            user,
+		"EmailHash":       EmailHash,
 		"sub":             "link",
 		"posts":           posts,
 		"invitedUsername": invitedUsername,
@@ -273,7 +279,7 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 	}
 	updateData := map[string]interface{}{
 		"username":   user.Username,
-		"email_hash": user.Avatar,
+		"avatar":     user.Avatar,
 		"email":      user.Email,
 		"bio":        user.Bio,
 		"updated_at": time.Now(),
@@ -288,7 +294,7 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 		}
 		updateData = map[string]interface{}{
 			"username":   user.Username,
-			"email_hash": user.Avatar,
+			"avatar":     user.Avatar,
 			"email":      user.Email,
 			"bio":        user.Bio,
 			"password":   string(hashedPwd),
@@ -332,7 +338,7 @@ func (u *UserHandler) SetStatus(c *gin.Context) {
 		}
 		msg = "操作成功！"
 	} else {
-		where = "email_hash='" + key + "'"
+		where = "MD5(email)='" + key + "'"
 		updateData = map[string]interface{}{
 			"status": "Active",
 		}
@@ -636,10 +642,7 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 	user.CommentCount = 0
 	user.PostCount = 0
 	user.Bio = "这个人不懒, 但也没有介绍."
-
-	hash := sha256.New()
-	hash.Write([]byte(user.Email))
-	user.EmailHash = fmt.Sprintf("%x", hash.Sum(nil))
+	user.Avatar = "/static/avatar.jpg"
 
 	var totalUsers int64
 	u.db.Table("tb_user").Where("id <> 999999999").Count(&totalUsers)
@@ -681,8 +684,12 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 	// 注册成功发送激活邮件
 	siteName := os.Getenv("SiteName")
 	siteUrl := os.Getenv("SiteUrl")
+	data := []byte(user.Email)
+	hash := md5.Sum(data)
+	EmailHash := hex.EncodeToString(hash[:])
+
 	// 将激活邮件发送给用户
-	content := fmt.Sprintf("您好，<br><br>收到此邮件是因为您在<b>竹林</b>网站上进行了注册，<br><br>请点击链接激活账号：%s/u/status?id=%d&key=%s", siteUrl, user.ID, user.EmailHash)
+	content := fmt.Sprintf("您好，<br><br>收到此邮件是因为您在<b>竹林</b>网站上进行了注册，<br><br>请点击链接激活账号：%s/u/status?id=%d&key=%s", siteUrl, user.ID, EmailHash)
 	msg := utils.Email{}.Send(user.Email, "["+siteName+"] 账户激活邮件", content)
 	if msg != "Success" {
 		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{

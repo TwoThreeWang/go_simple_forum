@@ -20,12 +20,7 @@
 
                <div class="avatar">
                    <a href="/u/profile/{{.UserID}}">
-                       {{ $firstFourChars := slice .User.EmailHash 0 4 }}
-                       {{ if eq $firstFourChars "http" }}
-                           <img class="w-5 h-5 rounded" src="{{.User.EmailHash}}" alt="{{.User.Username}}" referrerpolicy="no-referrer"/>
-                       {{else}}
-                           <img class="w-5 h-5 rounded" src="{{$.avatarCdn}}/{{.User.EmailHash}}" alt="{{.User.Username}}" referrerpolicy="no-referrer"/>
-                       {{end}}
+                       <img class="w-5 h-5 rounded" src="{{.User.Avatar}}" alt="{{.User.Username}}" referrerpolicy="no-referrer"/>
                    </a>
                </div>
 

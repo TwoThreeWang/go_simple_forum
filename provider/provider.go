@@ -14,7 +14,6 @@ type AppConfig struct {
 	DB              string `env:"DB"`
 	CookieSecret    string `env:"COOKIE_SECRET" env-default:"UbnpjqcvDJ8mDCB"`
 	StaticCdnPrefix string `env:"STATIC_CDN_PREFIX" env-default:"/static"`
-	AvatarCdn       string `env:"AVATAR_CDN" env-default:"https://gravatar.cooluc.com/avatar/"`
 }
 
 func NewRepository(i *do.Injector) (*gorm.DB, error) {

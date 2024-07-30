@@ -170,7 +170,6 @@ func OutputCommonSession(injector *do.Injector, c *gin.Context, h ...gin.H) gin.
 	result["refer"] = c.Request.Referer()
 	result["VERSION"] = os.Getenv("VERSION")
 	result["settings"] = settings.Content
-	result["avatarCdn"] = config.AvatarCdn
 	result["staticCdnPrefix"] = config.StaticCdnPrefix
 	result["executionTime"] = time.Since(time.UnixMilli(start)).Milliseconds()
 	return result

@@ -27,14 +27,9 @@
 
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold ">用户头像</div>
-                <input type="text" name="avatar" id="avatar" class="input" value="{{.user.EmailHash}}">
+                <input type="text" name="avatar" id="avatar" class="input" value="{{.user.Avatar}}">
             </div>
-            {{ $firstFourChars := slice .user.EmailHash 0 4 }}
-            {{ if eq $firstFourChars "http" }}
-                <img src="{{.user.EmailHash}}" class="rounded w-12 h-12" referrerpolicy="no-referrer"/>
-            {{else}}
-                <img src="{{$.avatarCdn}}/{{.user.EmailHash}}" class="rounded w-12 h-12" referrerpolicy="no-referrer"/>
-            {{end}}
+            <img src="{{.user.Avatar}}" class="rounded w-12 h-12" referrerpolicy="no-referrer"/>
 
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold">个人介绍</div>

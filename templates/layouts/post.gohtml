@@ -51,12 +51,7 @@
                         </div>
                     </div>
                     <div class="x-post-toolbar flex flex-row gap-2 items-center text-xs text-gray">
-                        {{ $firstFourChars := slice $post.User.EmailHash 0 4 }}
-                        {{ if eq $firstFourChars "http" }}
-                            <img src="{{$post.User.EmailHash}}" class="rounded w-4 h-4" referrerpolicy="no-referrer"/>
-                        {{else}}
-                            <img src="{{$.avatarCdn}}/{{$post.User.EmailHash}}" class="rounded w-4 h-4" referrerpolicy="no-referrer"/>
-                        {{end}}
+                        <img src="{{$post.User.Avatar}}" class="rounded w-4 h-4" referrerpolicy="no-referrer"/>
                         <div><a class="cursor-pointer  hover:text-hover"
                                 href="/u/profile/{{$post.User.ID}}">{{$post.User.Username}}</a></div>
                         <div class="when">{{$post.CreatedAt | timeAgo}}</div>

@@ -22,11 +22,11 @@ type EditUserRequest struct {
 }
 
 type Userinfo struct {
-	Username  string
-	Role      string
-	ID        uint
-	Email     string
-	EmailHash string
+	Username string
+	Role     string
+	ID       uint
+	Email    string
+	Avatar   string
 }
 
 type ResetPwd struct {
