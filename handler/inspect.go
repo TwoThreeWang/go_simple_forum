@@ -77,10 +77,10 @@ func (p InspectHandler) Inspect(c *gin.Context) {
 		message.Read = "N"
 		message.ToUserID = postUid
 		message.Content = fmt.Sprintf("你的帖子审核通过啦 (<a class='bLink' href='/p/%s'>%s</a>)",
-			post.Pid, post.Content)
+			post.Pid, post.Title)
 		if request.Result == "reject" {
 			message.Content = fmt.Sprintf("你的帖子被管理员删除 (<a class='bLink' href='/p/%s'>%s</a>)",
-				post.Pid, post.Content)
+				post.Pid, post.Title)
 		}
 	}
 	err := p.db.Transaction(func(tx *gorm.DB) error {
