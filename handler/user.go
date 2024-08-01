@@ -642,7 +642,10 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 	user.CommentCount = 0
 	user.PostCount = 0
 	user.Bio = "这个人不懒, 但也没有介绍."
-	user.Avatar = "/static/avatar.jpg"
+	// 生成1-6之间的随机整数
+	rand.Seed(time.Now().UnixNano())
+	randomNumber := rand.Intn(6) + 1
+	user.Avatar = fmt.Sprintf("/static/avatar/%d.jpg", randomNumber)
 
 	var totalUsers int64
 	u.db.Table("tb_user").Where("id <> 999999999").Count(&totalUsers)
