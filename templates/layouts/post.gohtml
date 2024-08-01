@@ -159,6 +159,16 @@
                             {{end}}
                         </div>
                     {{end}}
+                    <script>
+                        const image = document.getElementById('comment-img');
+                        image.addEventListener('click', function() {
+                            if (image.classList.contains('zoomed')) {
+                                image.classList.remove('zoomed');
+                            } else {
+                                image.classList.add('zoomed');
+                            }
+                        });
+                    </script>
                 </div>
             </div>
         {{end}}

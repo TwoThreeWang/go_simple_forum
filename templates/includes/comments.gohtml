@@ -40,12 +40,22 @@
                 var html = marked.parse('{{.Content | html}}');
                 // 链接改为新标签页打开
                 html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
+                html = html.replaceAll('<img src','<img  id="comment-img" title="点击放大" referrerpolicy="no-referrer" src');
                 document.getElementById('comment-content-{{.CID}}').innerHTML = html;
             </script>
         </div>
-
     </div>
     {{end}}
+    <script>
+        const image = document.getElementById('comment-img');
+        image.addEventListener('click', function() {
+            if (image.classList.contains('zoomed')) {
+                image.classList.remove('zoomed');
+            } else {
+                image.classList.add('zoomed');
+            }
+        });
+    </script>
 </div>
 
 <div class="flex flex-row gap2 items-center text-gray text-xs mt-4">

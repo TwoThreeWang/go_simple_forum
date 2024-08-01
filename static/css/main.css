@@ -160,3 +160,14 @@ div.sceditor-group {
 .x-post-tag{
     padding: 0.05rem 0.375rem;
 }
+
+#comment-img{
+    width: 100px; /* 初始宽度 */
+    height: auto; /* 高度自动 */
+    cursor: pointer; /* 鼠标悬停时显示手型 */
+    transition: transform 0.3s ease; /* 添加过渡效果 */
+}
+
+#comment-img.zoomed {
+    width: 90%;
+}

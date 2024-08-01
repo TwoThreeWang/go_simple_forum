@@ -13,11 +13,11 @@
     </div>
     <div class="flex flex-col flex-1">
         <div class="flex flex-row gap-2 text-gray text-xs">
-{{/*           <div class="avatar">*/}}
-{{/*                <a href="/u/profile/{{.Comment.User.Username}}">*/}}
-{{/*                    <img class="w-5 h-5 rounded" src="{{.Comment.User.Avatar}}" alt="{{.Comment.User.Username}}" />*/}}
-{{/*                </a>*/}}
-{{/*            </div>*/}}
+           <div class="avatar">
+                <a href="/u/profile/{{.Comment.User.ID}}">
+                    <img class="w-5 h-5 rounded" src="{{.Comment.User.Avatar}}" alt="{{.Comment.User.Username}}"  referrerpolicy="no-referrer"/>
+                </a>
+            </div>
 
             <div><a class="cursor-pointer  hover:text-hover" href="/u/profile/{{.Comment.UserID}}">{{.Comment.User.Username}}</a>
             </div>
@@ -40,6 +40,7 @@
             var html = marked.parse('{{.Comment.Content | html}}');
             // 链接改为新标签页打开
             html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
+            html = html.replaceAll('<img src','<img  id="comment-img" title="点击放大" referrerpolicy="no-referrer" src');
             document.getElementById('comment-content-{{.Comment.CID}}').innerHTML = html;
         </script>
         <div class="hidden form-parent">
