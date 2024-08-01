@@ -40,7 +40,7 @@
             var html = marked.parse('{{.Comment.Content | html}}');
             // 链接改为新标签页打开
             html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
-            html = html.replaceAll('<img src','<img  id="comment-img" title="点击放大" referrerpolicy="no-referrer" src');
+            html = html.replaceAll('<img src','<img  class="comment-img" onclick="changeClass(this)" title="点击放大" referrerpolicy="no-referrer" src');
             document.getElementById('comment-content-{{.Comment.CID}}').innerHTML = html;
         </script>
         <div class="hidden form-parent">
