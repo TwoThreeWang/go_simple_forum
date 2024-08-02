@@ -311,8 +311,20 @@ func (u *UserHandler) SaveUser(c *gin.Context) {
 		}))
 		return
 	}
+	// 更新登录的cookie
+	cookieData := vo.Userinfo{
+		Username: user.Username,
+		Role:     userinfo.Role,
+		ID:       userinfo.ID,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
+	}
+	session := sessions.Default(c)
+	session.Set("login", true)
+	session.Set("userinfo", cookieData)
+	_ = session.Save()
 	c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
-		"title": "Success", "msg": "修改成功，如修改用户名请重新登陆",
+		"title": "Success", "msg": "用户信息修改成功",
 	}))
 	return
 }
