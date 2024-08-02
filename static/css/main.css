@@ -79,6 +79,7 @@ a {
     padding: 1em;
     text-align: left;
     word-break:break-all;
+    color:#000;
 }
 
 .content pre ,.content code{
