@@ -783,6 +783,16 @@ func (i *IndexHandler) UploadImg(c *gin.Context) {
 	// 指定文件应保存的路径
 	filePath := fmt.Sprintf("./static/user_avatar/%d.jpg", userinfo.ID)
 	//filePath := fmt.Sprintf("./static/user_avatar/%d.jpg", 1)
+	// 检查文件是否存在，如果存在先删除
+	if _, err = os.Stat(filePath); err == nil {
+		// 文件存在，删除它
+		err = os.Remove(filePath)
+		if err != nil {
+			// 处理删除文件时可能出现的错误
+			c.JSON(200, gin.H{"code": 400, "file_path": "", "message": "Failed to delete the existing file"})
+			return
+		}
+	}
 	// 将文件保存到服务器上
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
 		c.JSON(200, gin.H{"code": 400, "file_path": "", "message": "Failed to save the file"})

@@ -32,8 +32,11 @@
                 <button class="btn" type="button" onclick="uploadImage();">上传头像</button>
             </div>
             <div class="flex flex-row gap-8 items-center text-sm">
-                <img src="{{.user.Avatar}}" class="rounded w-12 h-12" referrerpolicy="no-referrer"/>
-                <small>* 可以直接填写图片外链或上传，上传图片限制 100kb 以内，多次上传会覆盖之前的头像</small>
+                <img src="{{.user.Avatar}}" class="rounded w-12 h-12" id="user-avatar" referrerpolicy="no-referrer"/>
+                <small>
+                    <p>* 可以直接填写图片外链或上传，上传图片限制 100kb 以内</p>
+                    <p>* 多次上传会覆盖之前的头像，上传的图片有缓存保存后等一会刷新查看</p>
+                </small>
             </div>
             <div class="flex flex-row gap-8 items-center text-sm">
                 <div class="font-bold">个人介绍</div>
@@ -88,6 +91,7 @@
                         console.log('上传成功:', data);
                         if (data['code'] === 200) {
                             document.getElementById('avatar').value = data['file_path'];
+                            document.getElementById('user-avatar').src = data['file_path'];
                         }
                     }).catch(error => {
                         // 处理上传错误
