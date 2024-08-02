@@ -23,7 +23,11 @@
             </div>
             <div class="when">{{.Comment.CreatedAt | timeAgo}}</div>
             <div>|</div>
-            <div><a class="hover:text-hover" href="#c-{{.Comment.CID}}">链接</a></div>
+            {{if eq .Comment.Post.Pid ""}}
+                <div><a class="hover:text-hover" href="#c-{{.Comment.CID}}">链接</a></div>
+            {{else}}
+                <div><a class="hover:text-hover" href="/p/{{.Comment.Post.Pid}}#c-{{.Comment.CID}}">链接</a></div>
+            {{end}}
             {{if .Login}}
             <div>|</div>
             <div class="hover:text-hover reply cursor-pointer" data-cid="{{.Comment.CID}}">回复</div>

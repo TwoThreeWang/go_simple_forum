@@ -487,7 +487,7 @@ func (u *UserHandler) Comments(c *gin.Context) {
 
 	u.db.Model(&model.TbInviteRecord{}).Select("username").Where("\"invitedUsername\" = ?", user.Username).First(&invitedUsername)
 	var comments []model.TbComment
-	tx := u.db.Model(&model.TbComment{}).
+	tx := u.db.Model(&model.TbComment{}).Preload("Post").
 		Preload("User").
 		Where("user_id = ? ", user.ID)
 	tx.Count(&total)
