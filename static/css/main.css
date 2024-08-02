@@ -6,6 +6,9 @@ iframe[data-youtube-id]{width:100% !important;min-height:400px;}
 html.dark {
     background-color: #000 !important;
 }
+body{
+    height: auto;
+}
 
 * {
     margin: 0;
