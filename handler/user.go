@@ -103,7 +103,6 @@ func (u *UserHandler) Logout(c *gin.Context) {
 }
 
 func (u *UserHandler) Asks(c *gin.Context) {
-	userinfo := GetCurrentUser(c)
 	userid := c.Param("userid")
 	p := c.DefaultQuery("p", "1")
 	page := cast.ToInt(p)
@@ -118,10 +117,6 @@ func (u *UserHandler) Asks(c *gin.Context) {
 		return
 	}
 
-	var inviteRecords []model.TbInviteRecord
-	if userinfo != nil && userinfo.ID == user.ID {
-		u.db.Model(&model.TbInviteRecord{}).Where("username = ?", user.Username).Find(&inviteRecords)
-	}
 	var invitedUsername string
 	u.db.Model(&model.TbInviteRecord{}).Select("username").Where("invitedUsername = ?", user.Username).First(&invitedUsername)
 
@@ -144,7 +139,6 @@ func (u *UserHandler) Asks(c *gin.Context) {
 		"user":            user,
 		"sub":             "ask",
 		"posts":           posts,
-		"inviteRecords":   inviteRecords,
 		"invitedUsername": invitedUsername,
 		"totalPage":       totalPage,
 		"total":           total,
@@ -474,7 +468,6 @@ func (u *UserHandler) SetSingleRead(c *gin.Context) {
 }
 
 func (u *UserHandler) Comments(c *gin.Context) {
-	userinfo := GetCurrentUser(c)
 	p := c.DefaultQuery("p", "1")
 	page := cast.ToInt(p)
 	size := 10
@@ -487,11 +480,6 @@ func (u *UserHandler) Comments(c *gin.Context) {
 			"msg":      "请核实用户是否存在.",
 		}))
 		return
-	}
-
-	var inviteRecords []model.TbInviteRecord
-	if userinfo != nil && userinfo.ID == user.ID {
-		u.db.Model(&model.TbInviteRecord{}).Where("username = ?", user.Username).Find(&inviteRecords)
 	}
 
 	var invitedUsername string
@@ -517,7 +505,6 @@ func (u *UserHandler) Comments(c *gin.Context) {
 		"user":            user,
 		"sub":             "comments",
 		"comments":        comments,
-		"inviteRecords":   inviteRecords,
 		"invitedUsername": invitedUsername,
 		"totalPage":       totalPage,
 		"total":           total,
