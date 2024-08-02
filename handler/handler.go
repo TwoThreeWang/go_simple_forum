@@ -25,6 +25,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 
 	engine.GET("/settings", indexHandler.ToSettings)
 	engine.POST("/settings", indexHandler.SaveSettings)
+	engine.POST("/upload_img", indexHandler.UploadImg)
 	engine.GET("/hit", statisticsHandler.Hit)
 	engine.GET("/statistics", statisticsHandler.Query)
 
@@ -55,7 +56,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/about", userHandler.ToAbout)
 	engine.GET("/type/:type", postHandler.SearchByType)
 	engine.GET("/users", userHandler.ToList)
-	engine.GET("/activate", indexHandler.Activate)
+	engine.GET("/activate", indexHandler.Activate) // 发送激活邮件
 
 	engine.POST("/inspect", inspectHandler.Inspect) // 帖子审核
 
@@ -74,7 +75,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/message", userHandler.ToMessage)
 	userGroup.GET("/invite", userHandler.InviteList)
 	userGroup.GET("/addinvite", userHandler.InviteNew)
-	userGroup.GET("/status", userHandler.SetStatus)
+	userGroup.GET("/status", userHandler.SetStatus) // 修改用户状态（激活或者禁止）
 	userGroup.GET("/punch", userHandler.Punch)
 
 	//commentGroup := engine.Group("/c")

@@ -746,3 +746,49 @@ func (i *IndexHandler) Activate(c *gin.Context) {
 		"title": "Success", "msg": "激活邮件已发送，请查收邮箱！",
 	}))
 }
+
+// UploadImg 头像上传
+func (i *IndexHandler) UploadImg(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
+	if userinfo == nil {
+		c.JSON(400, gin.H{"error": "未登录用户禁止上传图片！"})
+		return
+	}
+	// 设置最大上传文件大小为200KB
+	maxMemory := int64(100 * 1024) // 200KB转换为字节，并且转换为int64类型
+	// 解析表单数据，设置最大内存使用量为maxMemory
+	err := c.Request.ParseMultipartForm(maxMemory)
+	if err != nil {
+		c.JSON(200, gin.H{"code": 400, "file_path": "", "message": "图片太大，请压缩至 100KB 以内再次上传！"})
+		return
+	}
+	// 从表单中获取文件
+	file, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(200, gin.H{"code": 400, "file_path": "", "message": err.Error()})
+		return
+	}
+	// 判断上传的是不是图片
+	mimeType := file.Header.Get("Content-Type")
+	fmt.Println(mimeType)
+	if mimeType[:6] != "image/" {
+		c.JSON(200, gin.H{"code": 400, "file_path": "", "message": "搞事情？只允许上传图片！"})
+		return
+	}
+	// 检查文件大小是否超过限制
+	if file.Size > maxMemory {
+		c.JSON(200, gin.H{"code": 400, "file_path": "", "message": "图片太大，请压缩至 100KB 以内再次上传！"})
+		return
+	}
+	// 指定文件应保存的路径
+	filePath := fmt.Sprintf("./static/user_avatar/%d.jpg", userinfo.ID)
+	//filePath := fmt.Sprintf("./static/user_avatar/%d.jpg", 1)
+	// 将文件保存到服务器上
+	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		c.JSON(200, gin.H{"code": 400, "file_path": "", "message": "Failed to save the file"})
+		return
+	}
+	filePath = strings.Replace(filePath, "./", "/", -1)
+	// 返回成功响应
+	c.JSON(200, gin.H{"code": 200, "message": "File uploaded successfully", "file_path": filePath})
+}
