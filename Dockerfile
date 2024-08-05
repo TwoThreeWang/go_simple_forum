@@ -30,6 +30,4 @@ ENV HN_VERSION $VERSION
 
 WORKDIR /
 COPY --from=builder /app/main /main
-COPY --from=builder /app/templates /templates
-COPY --from=builder /app/static /static
 CMD ["/main"]
