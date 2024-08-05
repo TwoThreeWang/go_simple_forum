@@ -15,7 +15,7 @@
             <br>
             <div class="flex flex-row gap-8 items-center text-sm" style="line-height: 2em">
                 <div>
-                    <img src="{{.user.Avatar}}" class="rounded w-12 h-12" referrerpolicy="no-referrer"/>
+                    <img src="{{.user.Avatar}}" class="rounded w-20 h-20" referrerpolicy="no-referrer"/>
                 </div>
                 <div>
                     <p class="font-bold text-lg">{{.user.Username}}</p>
@@ -83,15 +83,6 @@
             {{range .comments}}
                 {{template "comment" dict "Comment" . "Login" false}}
             {{end}}
-            <script>
-                function changeClass(img) {
-                    if (img.classList.contains("zoomed")) {
-                        img.classList.remove("zoomed");
-                    } else {
-                        img.classList.add("zoomed");
-                    }
-                }
-            </script>
         {{end}}
         <div class="flex flex-row gap2 items-center text-gray text-xs mt-4">
             {{ if .hasPrev}}
