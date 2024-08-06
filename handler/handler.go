@@ -167,6 +167,7 @@ func OutputCommonSession(injector *do.Injector, c *gin.Context, h ...gin.H) gin.
 	db.First(&settings)
 
 	result["siteName"] = os.Getenv("SiteName")
+	result["SiteUrl"] = os.Getenv("SiteUrl")
 	result["path"] = c.Request.URL.Path
 	result["refer"] = c.Request.Referer()
 	result["VERSION"] = os.Getenv("VERSION")

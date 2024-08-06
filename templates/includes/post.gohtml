@@ -1,4 +1,8 @@
-{{ define "title"}}<title>{{(index .posts 0).Title}} - {{.siteName}}</title>
+{{ define "title"}}
+    <title>{{(index .posts 0).Title}} - {{.siteName}}</title>
+    <meta name="keywords" content="{{(index .posts 0).Title}},竹林,zhulink,抽屉">
+    {{ $shortDescription := printf "%.300s" (index .posts 0).Content }}
+    <meta name="description" content="{{$shortDescription}}">
 <script>
     $(function () {
         $(".reply").click(function () {
