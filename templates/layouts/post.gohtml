@@ -1,7 +1,7 @@
 {{define "post"}}
     <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
     <script src='{{getStaticPath "/js/mditor.js"}}'></script>
-    <style>.mditor-mini textarea{min-height:100px}</style>
+    <style>.mditor-mini textarea{min-height:100px} #emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}</style>
     <div class="x-post-list flex flex-col gap-2">
         {{range  $index, $post := .posts}}
             <div class="x-post-item flex flex-row gap-2 lg:gap-4 p-2 flex-1 items-start bg-white rounded shadow dark:bg-slate-800">
@@ -87,7 +87,7 @@
                     <div>
                         {{if eq $.selected "detail"}}
                         <a class="text-coolGray" href="{{if $post.UpVoted}}javascript:alert('已经表过态了！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
-                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">♥ {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</span>
+                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">👍 {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</span>
                         </a>
                         {{end}}
 {{/*                        <span class="text-sm text-coolGray"> · </span>*/}}
@@ -124,33 +124,19 @@
                             <input type="hidden" name="parent_comment_id" value="">
                             <div class="flex flex-col gap-2 mt-4">
                                 <textarea id="md_editor" name="content" class="input" rows="5"></textarea>
+                                <div id="emoji-list" style="display: none"></div>
                                 <div class="flex flex-row gap2 mt-2 dark:text-white">
                                     {{if $.login}}
                                         <button class="btn" type="submit">发表评论</button>
+                                        <a href="javascript:void(0);" class="dark:text-white/70 underline" style="padding:0.125rem 1rem" onclick="show_emojis()">Emoji</a>
                                     {{else}}
                                         <a href="/u/login?redirect=/p/{{$post.Pid}}"
                                            class="text-sm hover:text-hover underline fw700">去登录发表评论</a>
                                     {{end}}
                                 </div>
-                                <script type="text/javascript">
-                                    //获取textarea dom对象
-                                    var ele_textarea = document.getElementById('md_editor');
-                                    //实例化Mditor
-                                    var editor = new mditor(ele_textarea,{
-                                        //自定义显示效果class
-                                        previewClass : 'content'
-                                    });
-                                    {{if not $.login}}
-                                    setTimeout(()=>{
-                                        editor.insert("登录后发表评论");
-                                    },5)
-                                    {{end}}
-                                </script>
                             </div>
                         </form>
-
                     {{end}}
-
 
                     {{if and (gt (len $post.Comments) 0) (not (eq $.selected "mine"))}}
                         <div id="comment-tree" class="mt-4 relative">
@@ -170,6 +156,37 @@
                     </script>
                 </div>
             </div>
+        {{end}}
+        {{ if eq $.selected "detail" }}
+        <script type="text/javascript">
+            //获取textarea dom对象
+            var ele_textarea = document.getElementById('md_editor');
+            //实例化Mditor
+            var editor = new mditor(ele_textarea,{
+                //自定义显示效果class
+                previewClass : 'content'
+            });
+            {{if not $.login}}
+            editor.insert("登录后发表评论");
+            {{end}}
+            // Emoji 功能
+            const emojiList = document.getElementById('emoji-list');
+            const emojis = ['😀', '😂', '🤣','😅', '😎', '😐', '😑', '🤔', '🙄', '😏', '😥', '😮', '😒', '😓', '😲', '😤', '😭', '😱', '😳', '😡', '🤡', '👻', '💩', '👌', '👍', '👎', '✊', '👊', '👏', '🙏', '👀', '🤝', '💔', '💣', '🐶', '🌹', '🍻', '🎉','🔞', '❌','⭕'];
+            // 创建 Emoji 列表
+            emojis.forEach(emoji => {
+                const emojiSpan = document.createElement('span');
+                emojiSpan.textContent = emoji;
+                emojiSpan.addEventListener('click', () => {
+                    // ele_textarea.value += emoji;
+                    editor.insert(emoji);
+                });
+                emojiList.appendChild(emojiSpan);
+            });
+            function show_emojis(){
+                // 显示/隐藏 Emoji 列表
+                emojiList.style.display = emojiList.style.display === 'block' ? 'none' : 'block';
+            }
+        </script>
         {{end}}
     </div>
 {{end}}
