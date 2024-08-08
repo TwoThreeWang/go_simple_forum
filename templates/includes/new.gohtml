@@ -127,16 +127,18 @@
                 },10)
                 {{end}}
             </script>
+            <div id="emoji-list-0" class="emoji-list"  style="display: none"></div>
             <div class="flex flex-row gap-2 items-center mt-2">
-                <button class="btn py-2 px-4" type="submit">提交</button>
-                <a class="cursor-pointer bg-white border-0 text-black rounded py-2 px-4" href="https://markdown.com.cn/cheat-sheet.html" target="_blank">markdown语法</a>
+                <button class="btn py-1 px-4" type="submit">提交</button>
+                <a href="javascript:void(0);" class="cursor-pointer bg-gray-200 border-0 text-black rounded py-1 px-4" onclick="show_emojis('0')">Emoji</a>
+                <a class="cursor-pointer bg-white border-0 text-black rounded py-1 px-4" href="https://markdown.com.cn/cheat-sheet.html" target="_blank">markdown语法</a>
             </div>
         </div>
     </form>
+    <script src='{{getStaticPath "/js/emoji.js"}}'></script>
     <style>
-        .SumoSelect {
-            flex: 1;
-        }
+        .SumoSelect {flex: 1;}
+        .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}
     </style>
 {{end}}
 {{ define "afterBody"}}{{end}}
