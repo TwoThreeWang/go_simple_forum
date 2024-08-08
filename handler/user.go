@@ -396,18 +396,19 @@ func (u *UserHandler) InviteList(c *gin.Context) {
 	u.db.Model(&model.TbInviteRecord{}).Where("user_id = ?", userinfo.ID).Count(&total)
 	u.db.Model(&model.TbInviteRecord{}).Where("user_id = ?", userinfo.ID).Limit(size).Offset((page - 1) * size).
 		Order("created_at desc").Find(&invites)
-
+	// 获取当前时间戳
+	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	c.HTML(200, "inviteCode.gohtml", OutputCommonSession(u.injector, c, gin.H{
-		"selected": "invite",
-		"invites":  invites,
-		"total":    total,
+		"selected":  "invite",
+		"invites":   invites,
+		"total":     total,
+		"timestamp": timestamp,
 	}))
 }
 
 // InviteNew 新建一个邀请码
 func (u *UserHandler) InviteNew(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
-	fmt.Println("1111111111111111111")
 	// 扣减积分
 	var user model.TbUser
 	u.db.Model(&model.TbUser{}).Where("id = ?", userinfo.ID).First(&user)
