@@ -60,6 +60,10 @@
                                 {{if gt $post.CommentCount 0 }}{{$post.CommentCount}}条{{else}}去{{end}}评论
                             </a>
                         </div>
+                        <div>|</div>
+                        <div>
+                            {{$post.ClickVote}}次点击
+                        </div>
 
                         {{ if $.userinfo}}
                             {{if or (eq $.userinfo.Role "admin") (eq $.userinfo.Username $post.User.Username) }}

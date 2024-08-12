@@ -30,6 +30,7 @@ type TbPost struct {
 	UpVoted         int         `gorm:"<-"`
 	DownVoted       int         `gorm:"<-"`
 	Top             int         `gorm:"column:top;type:int;default:0"`
+	ClickVote       int         `gorm:"column:clickVote;type:int"`
 }
 
 func (*TbPost) TableName() string {
