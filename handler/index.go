@@ -35,7 +35,7 @@ func NewIndexHandler(injector *do.Injector) (*IndexHandler, error) {
 
 func (i *IndexHandler) Index(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
-	begin := time.Now().AddDate(0, 0, -15)
+	begin := time.Now().AddDate(0, 0, -30)
 	page := c.DefaultQuery("p", "1")
 	topics := QueryPosts(i.db, vo.QueryPostsRequest{
 		Userinfo:  userinfo,
