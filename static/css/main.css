@@ -98,6 +98,7 @@ a {
     border-left: .3em solid #f4e59f;
     margin: .25em 0;
     padding: .5em .5em .5em .75em
+    color:#000;
 }
 
 .content blockquote cite {
