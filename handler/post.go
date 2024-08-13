@@ -28,6 +28,20 @@ func NewPostHandler(injector *do.Injector) (*PostHandler, error) {
 	}, nil
 }
 
+// ClickPost 帖子点击量增加
+func (p PostHandler) ClickPost(c *gin.Context) {
+	pid := cast.ToString(c.Param("pid"))
+	if pid == "" {
+		c.JSON(400, gin.H{"error": "参数不能为空"})
+		return
+	}
+	if err := p.db.Model(&model.TbPost{}).Where("pid =?", pid).Update("clickVote", gorm.Expr(fmt.Sprintf("\"%s\"", "clickVote")+"+1")).Error; err != nil {
+		fmt.Println("帖子点击量增加报错：" + err.Error())
+	}
+	c.JSON(200, gin.H{"message": "success"})
+	return
+}
+
 func (p PostHandler) DoUpdate(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
 	pid := cast.ToString(c.Param("pid"))

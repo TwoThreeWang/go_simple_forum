@@ -16,7 +16,7 @@
                 <div class="flex flex-col flex-1 gap-1 ">
                     <div class="flex flex-row gap-2 items-center flex-wrap ">
 
-                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] ">
+                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] " onclick="sendGetRequest('/p/click/{{$post.Pid}}')">
                             {{ if eq $post.Type "ask"}}
                                 <a href="/p/{{$post.Pid}}">{{$post.Title}}</a>
                             {{else}}
@@ -176,5 +176,10 @@
         </script>
         <script src='{{getStaticPath "/js/emoji.js"}}'></script>
         {{end}}
+        <script>
+            function sendGetRequest(url) {
+                fetch(url);
+            }
+        </script>
     </div>
 {{end}}

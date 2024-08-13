@@ -87,6 +87,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	postGroup.GET("/:pid/edit", postHandler.ToEdit)
 	postGroup.POST("/:pid/edit", postHandler.DoUpdate)
 	postGroup.POST("/comment", postHandler.AddComment)
+	postGroup.GET("/click/:pid", postHandler.ClickPost)
 
 	tagGroup := engine.Group("/t")
 	tagGroup.GET("/:tag", postHandler.SearchByTag)
