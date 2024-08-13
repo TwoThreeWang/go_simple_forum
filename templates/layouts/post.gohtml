@@ -4,7 +4,7 @@
     <script>function sendGetRequest(url){fetch(url)}</script>
     <div class="x-post-list flex flex-col gap-1">
         {{range  $index, $post := .posts}}
-            <div class="x-post-item flex flex-row gap-2 lg:gap-4 p-2 flex-1 items-start bg-white dark:bg-slate-800">
+            <div class="x-post-item flex flex-row gap-2 lg:gap-4 p-2 flex-1 items-start bg-white dark:bg-slate-800" itemscope itemtype="https://schema.org/BlogPosting" itemid="{{$post.Pid}}">
                 <div class="flex flex-col items-center cursor-pointer upVoteParent ">
                     <a class="text-coolGray  {{if $post.UpVoted}}text-red{{end}}"
                        href="{{if $post.UpVoted}}javascript:void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
@@ -17,7 +17,7 @@
                 <div class="flex flex-col flex-1 gap-1 ">
                     <div class="flex flex-row gap-2 items-center flex-wrap ">
 
-                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] ">
+                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] " itemprop="name">
                             {{ if eq $post.Type "ask"}}
                                 <a href="/p/{{$post.Pid}}">{{$post.Title}}</a>
                             {{else}}
@@ -52,7 +52,7 @@
                     </div>
                     <div class="x-post-toolbar flex flex-row gap-2 items-center text-xs text-gray">
                         <img src="{{$post.User.Avatar}}" class="rounded w-5 h-5" referrerpolicy="no-referrer"/>
-                        <div><a class="cursor-pointer  hover:text-hover"
+                        <div itemprop="author" itemscope itemtype="https://schema.org/Person"><a class="cursor-pointer  hover:text-hover"
                                 href="/u/profile/{{$post.User.ID}}">{{$post.User.Username}}</a></div>
                         <div class="when">{{$post.CreatedAt | timeAgo}}</div>
                         <div>|</div>
@@ -76,7 +76,7 @@
                         {{end}}
                     </div>
                     {{ if eq $.selected "detail"}}
-                        <div class="mt-2 text-sm content dark:text-white/70" id="post-content">
+                        <div class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">
                             {{$post.Content | html}}
                         </div>
                         <script>
