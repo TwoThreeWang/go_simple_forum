@@ -1,6 +1,7 @@
 {{define "post"}}
     <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
     <style>.mditor-mini textarea{min-height:100px} .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}</style>
+    <script>function sendGetRequest(url){fetch(url)}</script>
     <div class="x-post-list flex flex-col gap-1">
         {{range  $index, $post := .posts}}
             <div class="x-post-item flex flex-row gap-2 lg:gap-4 p-2 flex-1 items-start bg-white dark:bg-slate-800">
@@ -16,11 +17,11 @@
                 <div class="flex flex-col flex-1 gap-1 ">
                     <div class="flex flex-row gap-2 items-center flex-wrap ">
 
-                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] " onclick="sendGetRequest('/p/click/{{$post.Pid}}')">
+                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] ">
                             {{ if eq $post.Type "ask"}}
                                 <a href="/p/{{$post.Pid}}">{{$post.Title}}</a>
                             {{else}}
-                                <a href="{{$post.Link}}" target="_blank">{{$post.Title}}</a>
+                                <a href="{{$post.Link}}" target="_blank" onclick="sendGetRequest('/p/click/{{$post.Pid}}')">{{$post.Title}}</a>
                             {{end}}
                         </div>
                         {{if or (eq $.selected "/") (eq $.selected "history")}}
@@ -139,6 +140,7 @@
                                 </div>
                             </div>
                         </form>
+                            <script>sendGetRequest('/p/click/{{$post.Pid}}')</script>
                     {{end}}
 
                     {{if and (gt (len $post.Comments) 0) (not (eq $.selected "mine"))}}
@@ -176,10 +178,5 @@
         </script>
         <script src='{{getStaticPath "/js/emoji.js"}}'></script>
         {{end}}
-        <script>
-            function sendGetRequest(url) {
-                fetch(url);
-            }
-        </script>
     </div>
 {{end}}
