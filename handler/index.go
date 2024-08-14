@@ -79,7 +79,7 @@ func (i *IndexHandler) SiteMap(c *gin.Context) {
 }
 
 func (i *IndexHandler) Robots(c *gin.Context) {
-	c.File("robots.txt")
+	c.File("static/robots.txt")
 }
 
 func (i *IndexHandler) ToSearch(c *gin.Context) {
