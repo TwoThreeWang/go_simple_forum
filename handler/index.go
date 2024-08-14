@@ -78,6 +78,10 @@ func (i *IndexHandler) SiteMap(c *gin.Context) {
 	}
 }
 
+func (i *IndexHandler) Robots(c *gin.Context) {
+	c.File("robots.txt")
+}
+
 func (i *IndexHandler) ToSearch(c *gin.Context) {
 	c.HTML(200, "search.gohtml", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "search",

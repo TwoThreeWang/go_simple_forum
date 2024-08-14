@@ -31,6 +31,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 
 	engine.GET("/", indexHandler.Index)
 	engine.GET("/sitemap.xml", indexHandler.SiteMap)
+	engine.GET("/robots.txt", indexHandler.Robots)
 	engine.GET("/history", indexHandler.History)
 	engine.GET("/search", indexHandler.ToSearch)
 	engine.GET("/new", indexHandler.ToNew)
