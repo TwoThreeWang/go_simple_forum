@@ -12,14 +12,14 @@
         {{end}}
     </div>
     <div class="flex flex-col flex-1">
-        <div class="flex flex-row gap-2 text-gray text-xs">
+        <div class="flex flex-row gap-2 text-gray text-xs" itemprop="author" itemscope itemtype="https://schema.org/Person">
            <div class="avatar">
                 <a href="/u/profile/{{.Comment.User.ID}}">
                     <img class="w-6 h-6 rounded" src="{{.Comment.User.Avatar}}" alt="{{.Comment.User.Username}}"  referrerpolicy="no-referrer"/>
                 </a>
             </div>
 
-            <div><a class="cursor-pointer  hover:text-hover" href="/u/profile/{{.Comment.UserID}}">{{.Comment.User.Username}}</a>
+            <div><a class="cursor-pointer  hover:text-hover" href="/u/profile/{{.Comment.UserID}}" itemprop="url"><span itemprop="name">{{.Comment.User.Username}}</span></a>
             </div>
             <div class="when">{{.Comment.CreatedAt | timeAgo}}</div>
             <div>|</div>
@@ -37,6 +37,7 @@
             <div class="hover:text-hover reply cursor-pointer"><a class="hover:text-hover" href="/delcomment?cid={{.Comment.CID}}">删除</a></div>
             {{end}}
         </div>
+        <span style="display:none" itemprop="datePublished">{{.Comment.CreatedAt}}</span>
         <div class="content text-sm dark:text-white/50" id="comment-content-{{.Comment.CID}}" itemprop="text">
             {{.Comment.Content | html}}
         </div>

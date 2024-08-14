@@ -53,8 +53,8 @@
                     <div class="x-post-toolbar flex flex-row gap-2 items-center text-xs text-gray">
                         <img src="{{$post.User.Avatar}}" class="rounded w-5 h-5" referrerpolicy="no-referrer"/>
                         <div itemprop="author" itemscope itemtype="https://schema.org/Person"><a class="cursor-pointer  hover:text-hover"
-                                href="/u/profile/{{$post.User.ID}}">{{$post.User.Username}}</a></div>
-                        <div class="when">{{$post.CreatedAt | timeAgo}}</div>
+                                href="/u/profile/{{$post.User.ID}}" itemprop="url"><span itemprop="name">{{$post.User.Username}}</span></a></div>
+                        <div class="when" itemprop="datePublished">{{$post.CreatedAt | timeAgo}}</div>
                         <div>|</div>
                         <div class="cursor-pointer  hover:text-hover">
                             <a href="/p/{{$post.Pid}}#comment_form">
