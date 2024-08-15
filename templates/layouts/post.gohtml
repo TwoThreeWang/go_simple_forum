@@ -57,13 +57,13 @@
                         <div class="when" itemprop="datePublished">{{$post.CreatedAt | timeAgo}}</div>
                         <div>|</div>
                         <div class="cursor-pointer  hover:text-hover">
-                            <a href="/p/{{$post.Pid}}#comment_form">
+                            <a href="/p/{{$post.Pid}}">
                                 {{if gt $post.CommentCount 0 }}{{$post.CommentCount}}条{{else}}去{{end}}评论
                             </a>
                         </div>
                         <div>|</div>
                         <div>
-                            {{$post.ClickVote}}次点击
+                            <a href="/p/{{$post.Pid}}">{{$post.ClickVote}}次点击</a>
                         </div>
 
                         {{ if $.userinfo}}
