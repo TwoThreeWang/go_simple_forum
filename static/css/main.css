@@ -116,7 +116,8 @@ a {
 }
 
 .content div, .content p {
-    min-height: 1.25em
+    min-height: 1.25em;
+    margin-bottom: 1.25em;
 }
 
 .content a {
