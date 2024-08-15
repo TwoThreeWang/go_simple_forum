@@ -39,6 +39,7 @@ a {
 
 .content > ol, .content > ul {
     margin-left: 2rem;
+    margin-bottom: 1.5em;
 }
 
 .content img {
@@ -60,7 +61,7 @@ a {
 .content {
     word-wrap: break-word;
     min-height: 100%;
-    line-height: 2.5rem;
+    line-height: 2.5em;
     word-break: break-all;
 }
 
@@ -111,18 +112,18 @@ a {
 }
 
 .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
-    margin: 0;
+    margin-bottom: 1.5em;
     padding: 0
 }
 
 .content div, .content p {
     min-height: 1.25em;
-    margin: 1em 0;
+    margin-bottom: 1.5em;
 }
 
 .content a {
     text-decoration: underline;
-    color: #000;
+    color: #5b88b6;
 }
 
 #comment-tree .comment:target {
