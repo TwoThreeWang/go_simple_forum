@@ -56,13 +56,14 @@ func (i *IndexHandler) Index(c *gin.Context) {
 
 func (i *IndexHandler) SiteMap(c *gin.Context) {
 	var items []model.TbPost
-	i.db.Model(&model.TbPost{}).Where("status = 'Active'").Find(&items)
+	i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
 	sm := sitemap.New()
 	SiteUrl := os.Getenv("SiteUrl")
 	for _, item := range items {
+		t := item.Model.CreatedAt
 		sm.Add(&sitemap.URL{
 			Loc:        SiteUrl + "/p/" + item.Pid,
-			LastMod:    &item.Model.UpdatedAt,
+			LastMod:    &t,
 			ChangeFreq: sitemap.Daily,
 			Priority:   0.5,
 		})
