@@ -350,7 +350,7 @@ func (p PostHandler) Add(c *gin.Context) {
 	herfs := []string{
 		SiteUrl + "/p/" + post.Pid,
 	}
-	_ = utils.Submit2Google(herfs)
+	go utils.Submit2Google(herfs)
 	if status == "Active" {
 		c.Redirect(302, "/p/"+post.Pid)
 	} else if status == "Wait" {
