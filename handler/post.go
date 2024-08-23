@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/model"
+	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"github.com/spf13/cast"
@@ -11,6 +12,7 @@ import (
 	"log"
 	"math/rand"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -343,6 +345,12 @@ func (p PostHandler) Add(c *gin.Context) {
 		}))
 		return
 	}
+	// 提交到google index api
+	SiteUrl := os.Getenv("SiteUrl")
+	herfs := []string{
+		SiteUrl + "/p/" + post.Pid,
+	}
+	_ = utils.Submit2Google(herfs)
 	if status == "Active" {
 		c.Redirect(302, "/p/"+post.Pid)
 	} else if status == "Wait" {
