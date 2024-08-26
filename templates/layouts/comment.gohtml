@@ -32,7 +32,7 @@
             <div>|</div>
             <div class="hover:text-hover reply cursor-pointer" data-cid="{{.Comment.CID}}">回复</div>
             {{end}}
-            {{ if and (.Userinfo) (eq .Userinfo.Role "admin")}}
+            {{ if and (.Userinfo) (or (eq .Userinfo.Role "admin") (eq .Userinfo.ID .Comment.UserID))}}
             <div>|</div>
             <div class="hover:text-hover reply cursor-pointer"><a class="hover:text-hover" href="/delcomment?cid={{.Comment.CID}}">删除</a></div>
             {{end}}

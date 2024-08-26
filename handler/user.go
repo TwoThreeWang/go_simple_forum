@@ -732,6 +732,9 @@ func (u *UserHandler) ChangePoints(uid uint, chengeType, points int) error {
 	} else {
 		user.Points = user.Points + points
 	}
+	if user.Points < 0 {
+		user.Points = 0
+	}
 	if chengeType == 2 {
 		// 如果是签到，判断今天是否已经签到过了
 		// 获取当前时间的年、月、日

@@ -464,18 +464,27 @@ func (i *IndexHandler) DelComment(c *gin.Context) {
 		c.Redirect(302, "/u/login")
 		return
 	}
-	if userinfo.Role != "admin" {
+	// 查出这条评论
+	var item model.TbComment
+	i.db.Model(&model.TbComment{}).Preload("Post").Where("cid = ?", cid).First(&item)
+	// 如果是自己删除自己的评论，判断用户积分是否足够
+	if userinfo.Role != "admin" && userinfo.ID == item.UserID {
+		var user model.TbUser
+		i.db.Where("ID = ?", userinfo.ID).First(&user)
+		if user.Points-3 < 0 {
+			c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+				"title": "删除失败", "msg": "积分不足，删除评论失败！",
+			}))
+			return
+		}
+	}
+	// 判断这条评论是不是本人删除或者删除者是不是管理员
+	if userinfo.Role != "admin" && userinfo.ID != item.UserID {
 		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
-			"title": "权限错误", "msg": "非管理员禁止删除评论！",
+			"title": "权限错误", "msg": "非管理员只允许删除自己发布的评论！",
 		}))
 		return
 	}
-
-	refer := c.GetHeader("Referer")
-	if refer == "" {
-		refer = "/"
-	}
-
 	// 发送提醒消息和删除评论
 	var targetID uint
 	var message model.TbMessage
@@ -484,8 +493,7 @@ func (i *IndexHandler) DelComment(c *gin.Context) {
 	message.CreatedAt = time.Now()
 	message.UpdatedAt = time.Now()
 	message.Read = "N"
-	var item model.TbComment
-	i.db.Model(&model.TbComment{}).Preload("Post").Where("cid = ?", cid).First(&item)
+
 	targetID = item.ID
 	if utf8.RuneCountInString(item.Content) > 10 {
 		i := 0
@@ -510,19 +518,26 @@ func (i *IndexHandler) DelComment(c *gin.Context) {
 	inspectLog.Title = item.Content
 
 	i.db.Transaction(func(tx *gorm.DB) error {
+		// 删除评论
 		if err := tx.Model(&model.TbComment{}).Where("id =?", targetID).Update("content", "**** 该评论已被删除 ****").Error; err != nil {
 			return err
 		}
-		err := tx.Save(&inspectLog).Error
-		if err != nil {
-			return err
+		// 如果是管理员删除
+		if userinfo.Role == "admin" && userinfo.ID != item.UserID {
+			// 保存删除日志
+			err := tx.Save(&inspectLog).Error
+			if err != nil {
+				return err
+			}
+			// 发送站内信提示
+			if err := tx.Save(&message).Error; err != nil {
+				return err
+			}
 		}
-		if err := tx.Save(&message).Error; err != nil {
-			return err
-		}
-		if message.ToUserID > 0 {
+		// 扣除积分
+		if item.UserID > 0 {
 			handler := UserHandler{i.injector, i.db}
-			err := handler.ChangePoints(message.ToUserID, 0, 3)
+			err := handler.ChangePoints(item.UserID, 0, 3)
 			if err != nil {
 				return err
 			}
@@ -530,6 +545,10 @@ func (i *IndexHandler) DelComment(c *gin.Context) {
 		return nil
 	})
 
+	refer := c.GetHeader("Referer")
+	if refer == "" {
+		refer = "/"
+	}
 	c.Redirect(302, refer)
 }
 
