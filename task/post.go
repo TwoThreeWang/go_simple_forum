@@ -24,7 +24,7 @@ func StartPostTask(i *do.Injector) {
 			var commentCount int64
 			db.Model(&model.TbComment{}).Where("post_id = ? and user_id != ?", post.ID, post.UserID).Count(&commentCount)
 
-			p := float64(post.UpVote)*1.5 + cast.ToFloat64(commentCount)*1.2 + float64(post.ClickVote)*0.2
+			p := float64(post.UpVote)*1.5 + cast.ToFloat64(commentCount)*1.2 + float64(post.ClickVote)*1
 			t := time.Now().Sub(post.CreatedAt).Hours()
 
 			point := p / math.Pow(t+2, g)
