@@ -77,6 +77,8 @@
                href="/u/profile/{{.user.ID}}/asks">讨论</a>
             <a class="{{if eq .sub "comments"}}border-b border-b-[#5468ff] border-b-solid border-b-2{{end}} cursor-pointer hover:text-gray"
                href="/u/profile/{{.user.ID}}/comments">评论</a>
+            <a class="{{if eq .sub "collects"}}border-b border-b-[#5468ff] border-b-solid border-b-2{{end}} cursor-pointer hover:text-gray"
+               href="/u/profile/{{.user.ID}}/collects">收藏</a>
         </div>
         {{template "post" .}}
         {{if .comments}}

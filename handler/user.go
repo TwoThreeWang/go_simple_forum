@@ -212,6 +212,54 @@ func (u *UserHandler) Links(c *gin.Context) {
 	}))
 }
 
+// Collects 用户中心收藏列表
+func (u *UserHandler) Collects(c *gin.Context) {
+	userid := c.Param("userid")
+	p := c.DefaultQuery("p", "1")
+	page := cast.ToInt(p)
+	size := 10
+
+	var user model.TbUser
+	if err := u.db.Preload(clause.Associations).Where("id= ?", userid).First(&user).Error; err == gorm.ErrRecordNotFound {
+		c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"selected": "mine",
+			"msg":      "请核实用户是否存在.",
+		}))
+		return
+	}
+
+	var invitedUsername string
+	u.db.Model(&model.TbInviteRecord{}).Select("username").Where("invitedUsername = ?", user.Username).First(&invitedUsername)
+
+	var total int64
+	var posts []model.TbPost
+
+	tx := u.db.Model(&model.TbPost{}).Preload(clause.Associations).Where("status ='Active'")
+	subQueryCollect := u.db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'POST' and action ='Collect'", userid)
+	tx.Joins("INNER JOIN (?) AS vote_collect ON id = vote_collect.target_id", subQueryCollect)
+	tx.Count(&total)
+	tx.Order("created_at desc").Offset((cast.ToInt(page) - 1) * size).Limit(size).
+		Find(&posts)
+	totalPage := total / cast.ToInt64(size)
+
+	if total%cast.ToInt64(size) > 0 {
+		totalPage = totalPage + 1
+	}
+
+	c.HTML(200, "profile.gohtml", OutputCommonSession(u.injector, c, gin.H{
+		"selected":        "mine",
+		"user":            user,
+		"sub":             "collects",
+		"posts":           posts,
+		"invitedUsername": invitedUsername,
+		"totalPage":       totalPage,
+		"total":           total,
+		"hasNext":         cast.ToInt64(page) < totalPage,
+		"hasPrev":         page > 1,
+		"currentPage":     cast.ToInt(page),
+	}))
+}
+
 func (u *UserHandler) UserEdit(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
 	userid := c.Param("userid")

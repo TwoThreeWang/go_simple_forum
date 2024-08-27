@@ -16,7 +16,7 @@ type TbPost struct {
 	Content         string        `gorm:"column:content;type:text"`
 	UnEscapeContent template.HTML `gorm:"-:all"`
 	UpVote          int           `gorm:"column:upVote;type:int"`
-	DownVote        int           `gorm:"column:downVote;type:int"`
+	CollectVote     int           `gorm:"column:collectVote;type:int"`
 	Type            string        `gorm:"column:type;type:varchar(20)"`
 	User            TbUser        `gorm:"foreignKey:UserID"`
 	UserID          uint
@@ -28,7 +28,7 @@ type TbPost struct {
 	Comments        []TbComment `gorm:"foreignKey:PostID"`
 	Point           float64     `gorm:"column:point;type:decimal(20,10)"`
 	UpVoted         int         `gorm:"<-"`
-	DownVoted       int         `gorm:"<-"`
+	CollectVoted    int         `gorm:"<-"`
 	Top             int         `gorm:"column:top;type:int;default:0"`
 	ClickVote       int         `gorm:"column:clickVote;type:int;default:0"`
 }

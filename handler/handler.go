@@ -70,6 +70,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/profile/:userid/asks", userHandler.Asks)           // 用户讨论贴子列表
 	userGroup.GET("/profile/:userid/links", userHandler.Links)         // 用户分享帖子列表
 	userGroup.GET("/profile/:userid/comments", userHandler.Comments)   // 用户评论帖子列表
+	userGroup.GET("/profile/:userid/collects", userHandler.Collects)   // 用户收藏帖子列表
 	userGroup.GET("/message/setAllRead", userHandler.SetAllRead)       // 消息全部已读
 	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead) // 消息已读
 	userGroup.GET("/message", userHandler.ToMessage)                   // 消息列表页

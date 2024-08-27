@@ -319,7 +319,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		Status:       status,
 		Content:      strings.Trim(request.Content, " "),
 		UpVote:       0,
-		DownVote:     0,
+		CollectVote:  0,
 		Type:         request.Type,
 		Tags:         tags,
 		User:         model.TbUser{Model: gorm.Model{ID: uid}},
@@ -539,6 +539,8 @@ func QueryPosts(db *gorm.DB, request vo.QueryPostsRequest) gin.H {
 	if request.Userinfo != nil {
 		subQuery := db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'POST' and action ='UP'", request.Userinfo.ID)
 		tx.Joins("LEFT JOIN (?) AS vote ON p.id = vote.target_id", subQuery)
+		subQueryCollect := db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'POST' and action ='Collect'", request.Userinfo.ID)
+		tx.Joins("LEFT JOIN (?) AS vote_collect ON p.id = vote_collect.target_id", subQueryCollect)
 	} else {
 		tx.InnerJoins(",tb_post_tag ptw,tb_tag tw")
 		tx.Where("tw.id = ptw.tb_tag_id and ptw.tb_post_id = p.id")
@@ -563,7 +565,7 @@ func QueryPosts(db *gorm.DB, request vo.QueryPostsRequest) gin.H {
 	var posts []model.TbPost
 
 	if request.Userinfo != nil {
-		tx.Select("p.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS up_voted")
+		tx.Select("p.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS up_voted,CASE WHEN vote_collect.target_id IS NOT NULL THEN 1 ELSE 0  END AS collect_voted")
 	} else {
 		tx.Select("p.*")
 	}

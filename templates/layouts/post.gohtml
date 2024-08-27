@@ -63,7 +63,11 @@
                         </div>
                         <div>|</div>
                         <div class="cursor-pointer  hover:text-hover">
-                            <a href="/p/{{$post.Pid}}">{{$post.ClickVote}}次点击</a>
+                            <a href="/p/{{$post.Pid}}">{{$post.ClickVote}}点击</a>
+                        </div>
+                        <div>|</div>
+                        <div class="cursor-pointer  hover:text-hover">
+                            <a href="/p/{{$post.Pid}}">{{$post.CollectVote}}收藏</a>
                         </div>
 
                         {{ if $.userinfo}}
@@ -91,7 +95,10 @@
                     <div>
                         {{if eq $.selected "detail"}}
                         <a class="text-coolGray" href="{{if $post.UpVoted}}javascript:alert('已经表过态了！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
-                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">👍 {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</span>
+                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">▲ {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</span>
+                        </a>&nbsp;&nbsp;
+                        <a class="text-coolGray" href="{{if $post.CollectVoted}}/vote?id={{$post.Pid}}&action=cd&type=POST{{else}}/vote?id={{$post.Pid}}&action=c&type=POST{{end}}">
+                            <span class="text-sm text-coolGray upVote {{if $post.CollectVoted}}text-red{{end}}">★ {{if $post.CollectVoted}}已{{end}}收藏({{$post.CollectVote}})</span>
                         </a>
                         {{end}}
 {{/*                        <span class="text-sm text-coolGray"> · </span>*/}}

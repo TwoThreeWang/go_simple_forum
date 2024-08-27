@@ -569,6 +569,7 @@ func (i *IndexHandler) Vote(c *gin.Context) {
 	}
 
 	uid := userinfo.ID
+	itemUid := userinfo.ID
 
 	var exists int64
 	var targetID uint
@@ -583,17 +584,24 @@ func (i *IndexHandler) Vote(c *gin.Context) {
 		var item model.TbPost
 		i.db.Model(&model.TbPost{}).Where("pid = ?", id).First(&item)
 		targetID = item.ID
-		if item.UserID == uid {
+		itemUid = item.UserID
+		if item.UserID == uid && action == "u" {
 			c.Redirect(302, refer)
 			return
 		}
 		message.ToUserID = item.UserID
-		message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>给你的主题<a class='bLink' href='/p/%s'>%s</a>点赞了",
-			userinfo.ID, userinfo.Username, item.Pid, item.Title)
+		if action == "c" {
+			message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>收藏了你的主题<a class='bLink' href='/p/%s'>%s</a>",
+				userinfo.ID, userinfo.Username, item.Pid, item.Title)
+		} else if action == "u" {
+			message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>给你的主题<a class='bLink' href='/p/%s'>%s</a>点赞了",
+				userinfo.ID, userinfo.Username, item.Pid, item.Title)
+		}
 	} else if targetType == "COMMENT" {
 		var item model.TbComment
 		i.db.Model(&model.TbComment{}).Preload("Post").Where("cid = ?", id).First(&item)
 		targetID = item.ID
+		itemUid = item.UserID
 		if item.UserID == uid {
 			log.Printf("comment item.UserID == uid ")
 
@@ -604,20 +612,32 @@ func (i *IndexHandler) Vote(c *gin.Context) {
 		message.Content = fmt.Sprintf("<a class='bLink' href='/u/profile/%d'>%s</a>给你的<a class='bLink' href='/p/%s#c-%s'>评论</a>点赞了",
 			userinfo.ID, userinfo.Username, item.Post.Pid, item.CID)
 	}
-
-	if i.db.Model(&model.TbVote{}).Where("target_id = ? and tb_user_id = ?  and type = ?", targetID, uid, targetType).Count(&exists); exists == 0 {
-		var col string
-		if action == "u" {
-			vote.Action = "UP"
-			col = "upVote"
-		} else {
-			vote.Action = "Down"
-			col = "downVote"
-		}
-		vote.UserID = uid
-		vote.TargetID = targetID
-		vote.Type = targetType
-
+	var col string
+	if action == "u" {
+		vote.Action = "UP"
+		col = "upVote"
+	} else {
+		vote.Action = "Collect"
+		col = "collectVote"
+	}
+	vote.UserID = uid
+	vote.TargetID = targetID
+	vote.Type = targetType
+	// 取消收藏的逻辑
+	if action == "cd" {
+		i.db.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Model(&model.TbVote{}).Where("target_id = ? and tb_user_id = ?  and type = ? and action = ?", targetID, uid, targetType, vote.Action).Unscoped().Delete(&model.TbVote{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Model(&model.TbPost{}).Where("id =?", targetID).Update(col, gorm.Expr(fmt.Sprintf("\"%s\"", col)+"-1")).Error; err != nil {
+				return err
+			}
+			return nil
+		})
+		c.Redirect(302, refer)
+		return
+	}
+	if i.db.Model(&model.TbVote{}).Where("target_id = ? and tb_user_id = ?  and type = ? and action = ?", targetID, uid, targetType, vote.Action).Count(&exists); exists == 0 {
 		i.db.Transaction(func(tx *gorm.DB) error {
 			if err := tx.Save(&vote).Error; err != nil {
 				return err
@@ -631,19 +651,21 @@ func (i *IndexHandler) Vote(c *gin.Context) {
 					return err
 				}
 			}
-			if err := tx.Save(&message).Error; err != nil {
-				return err
-			}
-			if message.ToUserID > 0 {
-				handler := UserHandler{i.injector, i.db}
-				err := handler.ChangePoints(message.ToUserID, 1, 1)
-				if err != nil {
+			// 如果是自己操作自己发布的内容不发送消息和增加积分
+			if itemUid != uid {
+				if err := tx.Save(&message).Error; err != nil {
 					return err
+				}
+				if message.ToUserID > 0 {
+					handler := UserHandler{i.injector, i.db}
+					err := handler.ChangePoints(message.ToUserID, 1, 1)
+					if err != nil {
+						return err
+					}
 				}
 			}
 			return nil
 		})
-
 	}
 
 	c.Redirect(302, refer)
