@@ -23,76 +23,75 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	statisticsHandler := do.MustInvoke[*StatisticsHandler](injector)
 	_ = do.MustInvoke[*CommentHandler](injector)
 
-	engine.GET("/settings", indexHandler.ToSettings)
-	engine.POST("/settings", indexHandler.SaveSettings)
-	engine.POST("/upload_img", indexHandler.UploadImg)
-	engine.GET("/hit", statisticsHandler.Hit)
-	engine.GET("/statistics", statisticsHandler.Query)
+	engine.GET("/settings", indexHandler.ToSettings)    // 系统设置
+	engine.POST("/settings", indexHandler.SaveSettings) // 系统设置操作类
+	engine.POST("/upload_img", indexHandler.UploadImg)  // 头像上传接口
+	engine.GET("/hit", statisticsHandler.Hit)           // 统计信息收集
+	engine.GET("/statistics", statisticsHandler.Query)  // 统计页
 
-	engine.GET("/", indexHandler.Index)
-	engine.GET("/sitemap.xml", indexHandler.SiteMap)
-	engine.GET("/robots.txt", indexHandler.Robots)
-	engine.GET("/history", indexHandler.History)
-	engine.GET("/search", indexHandler.ToSearch)
-	engine.GET("/new", indexHandler.ToNew)
-	engine.GET("/s/:pid", indexHandler.ToPost)
-	engine.GET("/resetPwd", indexHandler.ToResetPwd)
-	engine.GET("/resetPwdEdit", indexHandler.ToResetPwdEdit)
-	engine.POST("/resetPwd", indexHandler.DoResetPwd)
-	engine.POST("/resetPwdEdit", indexHandler.DoResetPwdEdit)
-	engine.GET("/tags", indexHandler.ToTags)
-	engine.GET("/tags/edit/:id", indexHandler.ToEditTag)
-	engine.GET("/tags/add", indexHandler.ToAddTag)
-	engine.POST("/tags/edit", indexHandler.SaveTag)
-	engine.POST("/tags/remove", indexHandler.RemoveTag)
-	engine.GET("/wait", indexHandler.ToWaitApproved)
-	engine.GET("/comments", indexHandler.ToComments)
-	engine.GET("/vote", indexHandler.Vote)
-	engine.GET("/delcomment", indexHandler.DelComment)
-	engine.GET("/moderations", indexHandler.Moderation)
-	engine.GET("/d/:domainName", indexHandler.SearchByDomain)
-	engine.POST("/search", indexHandler.DoSearch)
-	engine.GET("/invite/:code", userHandler.ToInvited)
-	engine.POST("/invite/:code", userHandler.DoInvited)
-	engine.GET("/about", userHandler.ToAbout)
-	engine.GET("/type/:type", postHandler.SearchByType)
-	engine.GET("/users", userHandler.ToList)
-	engine.GET("/activate", indexHandler.Activate) // 发送激活邮件
-
-	engine.POST("/inspect", inspectHandler.Inspect) // 帖子审核
+	engine.GET("/", indexHandler.Index)                       // 热门帖子列表
+	engine.GET("/sitemap.xml", indexHandler.SiteMap)          // sitemap文件
+	engine.GET("/robots.txt", indexHandler.Robots)            // robots文件
+	engine.GET("/history", indexHandler.History)              // 全部帖子列表
+	engine.GET("/search", indexHandler.ToSearch)              // 搜索页
+	engine.GET("/new", indexHandler.ToNew)                    // 发布新贴
+	engine.GET("/s/:pid", indexHandler.ToPost)                //
+	engine.GET("/resetPwd", indexHandler.ToResetPwd)          // 重置密码申请页
+	engine.POST("/resetPwd", indexHandler.DoResetPwd)         // 重置密码操作类（发送重置链接邮件）
+	engine.GET("/resetPwdEdit", indexHandler.ToResetPwdEdit)  // 重置密码操作页
+	engine.POST("/resetPwdEdit", indexHandler.DoResetPwdEdit) // 重置密码操作类
+	engine.GET("/tags", indexHandler.ToTags)                  // 标签页面
+	engine.GET("/tags/edit/:id", indexHandler.ToEditTag)      // 编辑标签页面
+	engine.POST("/tags/edit", indexHandler.SaveTag)           // 编辑标签操作类
+	engine.GET("/tags/add", indexHandler.ToAddTag)            // 新增标签
+	engine.POST("/tags/remove", indexHandler.RemoveTag)       // 删除标签
+	engine.GET("/wait", indexHandler.ToWaitApproved)          // 等待审核列表
+	engine.GET("/comments", indexHandler.ToComments)          // 全部评论列表
+	engine.GET("/vote", indexHandler.Vote)                    // 投票
+	engine.GET("/delcomment", indexHandler.DelComment)        // 删除评论
+	engine.GET("/moderations", indexHandler.Moderation)       // 审核日志
+	engine.GET("/d/:domainName", indexHandler.SearchByDomain) // 根据分享域名获取帖子列表
+	engine.POST("/search", indexHandler.DoSearch)             // 搜索操作类
+	engine.GET("/invite/:code", userHandler.ToInvited)        // 邀请注册
+	engine.POST("/invite/:code", userHandler.DoInvited)       // 邀请注册操作类
+	engine.GET("/about", userHandler.ToAbout)                 // 关于页面（已废弃）
+	engine.GET("/type/:type", postHandler.SearchByType)       // 根据类型获取帖子列表
+	engine.GET("/users", userHandler.ToList)                  // 用户列表
+	engine.GET("/activate", indexHandler.Activate)            // 发送激活邮件
+	engine.POST("/inspect", inspectHandler.Inspect)           // 帖子审核
 
 	userGroup := engine.Group("/u")
-	userGroup.POST("/login", userHandler.Login)
-	userGroup.GET("/login", userHandler.ToLogin)
-	userGroup.GET("/logout", userHandler.Logout)
-	userGroup.GET("/profile/:userid", userHandler.Links)
-	userGroup.GET("/profile/:userid/edit", userHandler.UserEdit)
-	userGroup.POST("/profile/edit", userHandler.SaveUser)
-	userGroup.GET("/profile/:userid/asks", userHandler.Asks)
-	userGroup.GET("/profile/:userid/links", userHandler.Links)
-	userGroup.GET("/profile/:userid/comments", userHandler.Comments)
-	userGroup.GET("/message/setAllRead", userHandler.SetAllRead)
-	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead)
-	userGroup.GET("/message", userHandler.ToMessage)
-	userGroup.GET("/invite", userHandler.InviteList)
-	userGroup.GET("/addinvite", userHandler.InviteNew)
-	userGroup.GET("/status", userHandler.SetStatus) // 修改用户状态（激活或者禁止）
-	userGroup.GET("/punch", userHandler.Punch)
+	userGroup.POST("/login", userHandler.Login)                        // 登录操作类
+	userGroup.GET("/login", userHandler.ToLogin)                       // 登录
+	userGroup.GET("/logout", userHandler.Logout)                       // 退出登录
+	userGroup.GET("/profile/:userid", userHandler.Links)               // 用户主页
+	userGroup.GET("/profile/:userid/edit", userHandler.UserEdit)       // 用户信息修改
+	userGroup.POST("/profile/edit", userHandler.SaveUser)              // 用户信息修改操作类
+	userGroup.GET("/profile/:userid/asks", userHandler.Asks)           // 用户讨论贴子列表
+	userGroup.GET("/profile/:userid/links", userHandler.Links)         // 用户分享帖子列表
+	userGroup.GET("/profile/:userid/comments", userHandler.Comments)   // 用户评论帖子列表
+	userGroup.GET("/message/setAllRead", userHandler.SetAllRead)       // 消息全部已读
+	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead) // 消息已读
+	userGroup.GET("/message", userHandler.ToMessage)                   // 消息列表页
+	userGroup.GET("/invite", userHandler.InviteList)                   // 邀请页
+	userGroup.GET("/addinvite", userHandler.InviteNew)                 // 邀请码生成
+	userGroup.GET("/status", userHandler.SetStatus)                    // 修改用户状态（激活或者禁止）
+	userGroup.GET("/punch", userHandler.Punch)                         // 签到
 
 	//commentGroup := engine.Group("/c")
 	//commentGroup.GET("/vote", commentHandler.Vote)
 
 	postGroup := engine.Group("/p")
-	postGroup.POST("/new", postHandler.Add)
-	postGroup.GET("/:pid", postHandler.Detail)
-	postGroup.GET("/:pid/edit", postHandler.ToEdit)
-	postGroup.POST("/:pid/edit", postHandler.DoUpdate)
-	postGroup.POST("/comment", postHandler.AddComment)
-	postGroup.GET("/click/:pid", postHandler.ClickPost)
+	postGroup.POST("/new", postHandler.Add)             // 发布新帖操作类
+	postGroup.GET("/:pid", postHandler.Detail)          // 帖子详情
+	postGroup.GET("/:pid/edit", postHandler.ToEdit)     // 帖子编辑
+	postGroup.POST("/:pid/edit", postHandler.DoUpdate)  // 帖子编辑操作类
+	postGroup.POST("/comment", postHandler.AddComment)  // 发布评论
+	postGroup.GET("/click/:pid", postHandler.ClickPost) // 增加点击量
 
 	tagGroup := engine.Group("/t")
-	tagGroup.GET("/:tag", postHandler.SearchByTag)
-	tagGroup.GET("/p/:tag", postHandler.SearchByParentTag)
+	tagGroup.GET("/:tag", postHandler.SearchByTag)         // 标签页
+	tagGroup.GET("/p/:tag", postHandler.SearchByParentTag) // 标签下帖子
 
 }
 
