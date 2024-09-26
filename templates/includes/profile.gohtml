@@ -66,6 +66,22 @@
                         <a href="/u/profile/{{.user.ID }}/edit" class="btn">用户设置</a>
                         <a class="dark:text-white/70 underline" href="/u/logout">退出登录</a>
                     </div>
+                    <div class="flex flex-row gap-8 items-center text-sm">
+                        <div class="font-bold">三方账号</div>
+                        {{if $.user.GoogleId}}
+                            已绑定 Google 账号
+                        {{else}}
+                            <div class="g_id_signin"
+                                 data-type="standard"
+                                 data-shape="rectangular"
+                                 data-theme="outline"
+                                 data-text="signin"
+                                 data-size="medium"
+                                 data-logo_alignment="left"
+                                 style="max-width:200px">
+                            </div>
+                        {{end}}
+                    </div>
                 {{end}}
             {{end}}
         </div>

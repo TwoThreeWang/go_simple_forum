@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
     <link rel="icon" href='{{getStaticPath "/logo.svg"}}'/>
     <link rel="stylesheet" href='{{getStaticPath "/css/normalize.min.css?v=0.2"}}'>
     <link rel="stylesheet" href='{{getStaticPath "/css/main.min.css?v=0.18"}}'>
@@ -41,6 +42,16 @@
     {{template "content" .}}
     {{template "footer" .}}
 </div>
+
+<div id="g_id_onload"
+     data-client_id="{{.ClientID}}"
+     data-context="signin"
+     data-login_uri="{{.SiteUrl}}/oauth/callback/google"
+     data-auto_select="true"
+        {{ if eq .login nil}} data-itp_support="true"{{end}}>
+</div>
+<script src="https://accounts.google.com/gsi/client" async></script>
+
 {{ template "afterBody" . }}
 </body>
 </html>

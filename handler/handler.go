@@ -79,6 +79,8 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/status", userHandler.SetStatus)                    // 修改用户状态（激活或者禁止）
 	userGroup.GET("/punch", userHandler.Punch)                         // 签到
 
+	engine.POST("/oauth/callback/google", userHandler.Oauth) // 三方登录
+
 	//commentGroup := engine.Group("/c")
 	//commentGroup.GET("/vote", commentHandler.Vote)
 
@@ -169,6 +171,7 @@ func OutputCommonSession(injector *do.Injector, c *gin.Context, h ...gin.H) gin.
 	db.First(&settings)
 
 	result["siteName"] = os.Getenv("SiteName")
+	result["ClientID"] = os.Getenv("ClientID")
 	result["SiteUrl"] = os.Getenv("SiteUrl")
 	result["path"] = c.Request.URL.Path
 	result["refer"] = c.Request.Referer()

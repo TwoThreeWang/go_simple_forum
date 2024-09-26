@@ -8,3 +8,5 @@ EmailApiUrl=https://<sender-name>.<your-name>.workers.dev
 EmailSender=发件人地址
 EmailSenderName=发件人姓名
 GIN_MODE=debug
+ClientID=配置google登录用的应用ID
+ClientSecret=配置google登录用的应用密钥

@@ -15,6 +15,7 @@ require (
 	github.com/snabb/sitemap v1.0.4
 	github.com/spf13/cast v1.6.0
 	golang.org/x/crypto v0.26.0
+	golang.org/x/oauth2 v0.22.0
 	google.golang.org/api v0.194.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.10
@@ -69,7 +70,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/net v0.28.0 // indirect
-	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.17.0 // indirect

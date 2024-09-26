@@ -13,6 +13,7 @@ import (
 	"github.com/samber/do"
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/api/idtoken"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"log"
@@ -85,6 +86,152 @@ func (u *UserHandler) Login(c *gin.Context) {
 	session.Set("userinfo", cookieData)
 	_ = session.Save()
 	return
+}
+
+// Oauth 三方登录回调处理逻辑
+func (u *UserHandler) Oauth(c *gin.Context) {
+	userinfo := GetCurrentUser(c)
+	inviteCode := "open"
+	// TODO 开启邀请注册时，邀请码怎么传过来
+	gCsrfToken := c.PostForm("g_csrf_token")
+	if gCsrfToken == "" {
+		c.HTML(200, "login.gohtml", gin.H{
+			"msg":      "参数错误：No CSRF token in post body.",
+			"selected": "login",
+		})
+		return
+	}
+	CookiegCsrfToken, err := c.Request.Cookie("g_csrf_token")
+	if err != nil || CookiegCsrfToken.Value != gCsrfToken {
+		c.HTML(200, "login.gohtml", gin.H{
+			"msg":      "参数错误：Failed to verify double submit cookie.",
+			"selected": "login",
+		})
+		return
+	}
+	clientID := os.Getenv("ClientID")
+	//clientSecret := os.Getenv("ClientSecret")
+	credential := c.PostForm("credential")
+	data, err := idtoken.Validate(c, credential, clientID)
+	userInfo := data.Claims
+	gid := userInfo["sub"].(string)
+	username := userInfo["name"].(string)
+	email := userInfo["email"].(string)
+	avatar := userInfo["picture"].(string)
+	var user model.TbUser
+	// 如果用户已经登录，默认就是绑定三方账号
+	if userinfo != nil {
+		if err := u.db.Where("google_id = ?", gid).First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+			updateData := map[string]interface{}{
+				"google_id":  gid,
+				"updated_at": time.Now(),
+			}
+			affected := u.db.Model(&model.TbUser{}).Where("id = ?", userinfo.ID).
+				Updates(updateData)
+			if affected.RowsAffected == 0 {
+				// 没有记录被更新，可能是没有找到匹配的记录
+				c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+					"title": "Success", "msg": "操作成功，但是没有内容被更新！",
+				}))
+				return
+			}
+		} else {
+			// 已经绑定了其他用户
+			c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+				"title": "Error", "msg": "该账号已经绑定其他用户，用户名为：" + user.Username + "！",
+			}))
+			return
+		}
+	}
+
+	// 先查一下用户是否已存在，如果存在直接登录，如果不存在新增用户并登录
+Login:
+	if err := u.db.Where("google_id = ?", gid).First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		// 如果用户不存在，先去注册
+		user.Email = email
+		user.Username = username
+		user.Avatar = avatar
+		user.GoogleId = gid
+		err := u.OauthRegister(c, user, inviteCode)
+		if err != nil {
+			c.HTML(200, "login.gohtml", gin.H{
+				"msg":      err.Error(),
+				"selected": "login",
+			})
+			return
+		} else {
+			// 注册成功，重新尝试登陆
+			goto Login
+		}
+	}
+	if user.Status == "Banned" {
+		c.HTML(200, "login.gohtml", gin.H{
+			"msg":      "登录失败，用户已被ban",
+			"selected": "login",
+		})
+		return
+	}
+	cookieData := vo.Userinfo{
+		Username: user.Username,
+		Role:     user.Role,
+		ID:       user.ID,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
+	}
+	c.Redirect(301, "/")
+	session := sessions.Default(c)
+	session.Set("login", true)
+	session.Set("userinfo", cookieData)
+	_ = session.Save()
+	return
+}
+
+// OauthRegister 三方登录新用户注册流程
+func (u *UserHandler) OauthRegister(c *gin.Context, user model.TbUser, code string) error {
+	var settings model.TbSettings
+	u.db.First(&settings)
+	if settings.Content.RegMode == "shutdown" {
+		return errors.New("本站目前未开放注册！")
+	}
+
+	var invited model.TbInviteRecord
+	if settings.Content.RegMode == "invite" {
+		err := u.db.Where("code = ? and status = 'ENABLE'", code).First(&invited).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("邀请码已使用/已过期/无效！")
+		}
+	}
+	user.Status = "Active"
+	user.CommentCount = 0
+	user.PostCount = 0
+	user.Bio = "这个人不懒, 但也没有介绍."
+	user.Role = "0"
+Save:
+	err := u.db.Transaction(func(tx *gorm.DB) error {
+		err := tx.Save(&user).Error
+		if err != nil {
+			return err
+		}
+		if settings.Content.RegMode == "invite" {
+			err = tx.Model(&invited).Where("id=?", invited.ID).Updates(model.TbInviteRecord{
+				InvitedUserId: user.ID,
+				InvalidAt:     time.Now(),
+				Status:        "DISABLE",
+			}).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		// 如果用户名重复了，添加尾缀后重试
+		user.Username = user.Username + "_g"
+		goto Save
+	} else if err != nil {
+		return errors.New("系统异常，新用户注册失败！")
+	}
+	return nil
 }
 
 func (u *UserHandler) ToLogin(c *gin.Context) {

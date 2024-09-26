@@ -24,6 +24,7 @@ type TbUser struct {
 	PunchAt         time.Time   `gorm:"column:punch_at;type:timestamptz(6)"`
 	Comments        []TbComment `gorm:"foreignKey:UserID"`
 	UpVotedComments []TbComment `gorm:"many2many:tb_vote;"`
+	GoogleId        string      `gorm:"column:google_id;type:varchar(100)"`
 }
 
 func (*TbUser) TableName() string {

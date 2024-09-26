@@ -30,8 +30,18 @@
                 <div class="text-red text-sm">{{.msg}}</div>
             </div>
             {{if  eq .settings.RegMode "open"}}
-                <p class="text-sm text-gray">没有账户?去<a class="aLink underline" href="/invite/open">注册</a></p>
-                    {{else if eq .settings.RegMode "invite"}}
+{{/*                <div class="g-signin2" data-onsuccess="onSignIn" ></div>*/}}
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="medium"
+                     data-logo_alignment="left"
+                style="max-width:200px">
+                </div>
+                <p class="text-sm text-gray">新用户 <a class="aLink underline" href="/invite/open">注册</a></p>
+            {{else if eq .settings.RegMode "invite"}}
                 <p class="text-sm text-gray">目前仅开放邀请注册</p>
             {{end}}
             <p class="text-sm text-gray">忘记密码?去<a class="aLink underline" href="/resetPwd">重置密码</a></p>

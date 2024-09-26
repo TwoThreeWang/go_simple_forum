@@ -30,6 +30,7 @@
 - [x] SEO优化
 - [x] 评论增加emoji
 - [x] 增加帖子收藏功能
+- [x] 增加 Google 一键登录功能
 
 #### 关于积分增减规则
 
@@ -64,19 +65,19 @@
 
 ### 数据库表介绍
 
-| 表名                |  介绍     |
-|-------------------|---------|
-| tb_comment        | 评论详情表   |
-| tb_inspect_log    | 审核日志表   |
-| tb_invite_record  | 邀请码表    |
-| tb_message        | 消息表     |
-| tb_post           | 文章表     |
-| tb_post_tag       | 文章标签关系表 |
-| tb_settings       | 系统设置表   |
-| tb_statistics     | 数据统计表   |
-| tb_tag            | 标签详情表   |
-| tb_user           | 用户表     |
-| tb_vote           | 投票表     |
+| 表名               | 介绍      |
+|------------------|---------|
+| tb_comment       | 评论详情表   |
+| tb_inspect_log   | 审核日志表   |
+| tb_invite_record | 邀请码表    |
+| tb_message       | 消息表     |
+| tb_post          | 文章表     |
+| tb_post_tag      | 文章标签关系表 |
+| tb_settings      | 系统设置表   |
+| tb_statistics    | 数据统计表   |
+| tb_tag           | 标签详情表   |
+| tb_user          | 用户表     |
+| tb_vote          | 投票表     |
 
 ### 环境变量
 
@@ -93,11 +94,13 @@
 | EmailSender       | 发件人邮箱                                                                            | 必填（不填影响邮件发送功能，其他功能正常）, 竹林                                                                                      |
 | EmailSenderName   | 发件人名称                                                                            | 必填（不填影响邮件发送功能，其他功能正常）, 竹林                                                                                      |
 | GIN_MODE          | GIN程序运行模式，debug调试模式、release生产模式、test测试模式                                         | 选填, release                                                                                                    |
-
+| ClientID          | 配置google登录用的应用ID                                                                 | 选填                                                                                                             |
+| ClientSecret      | 配置google登录用的应用密钥                                                                 | 选填                                                                                                             |
 
 ### 启动
 
 1. 程序目录下新建`.env`文件,内容如下,每个字段含义上面有写
+
 ```dotenv
 PORT=32919
 DB='host=127.0.0.1 user=postgres password=123456 dbname=hotnews port=5432 sslmode=disable TimeZone=Asia/Shanghai'
@@ -109,6 +112,8 @@ EmailApiUrl=https://<sender-name>.<your-name>.workers.dev
 EmailSender=发件人地址
 EmailSenderName=发件人姓名
 GIN_MODE=release
+ClientID=配置google登录用的应用ID
+ClientSecret=配置google登录用的应用密钥
 ```
 
 2. 启动
