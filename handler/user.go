@@ -80,7 +80,11 @@ func (u *UserHandler) Login(c *gin.Context) {
 		Email:    user.Email,
 		Avatar:   user.Avatar,
 	}
-	c.Redirect(301, "/")
+	refer := c.GetHeader("refer")
+	if refer == "" {
+		refer = "/"
+	}
+	c.Redirect(302, refer)
 	session := sessions.Default(c)
 	session.Set("login", true)
 	session.Set("userinfo", cookieData)
@@ -90,29 +94,39 @@ func (u *UserHandler) Login(c *gin.Context) {
 
 // Oauth 三方登录回调处理逻辑
 func (u *UserHandler) Oauth(c *gin.Context) {
+	refer := c.GetHeader("refer")
+	if refer == "" {
+		refer = "/"
+	}
 	userinfo := GetCurrentUser(c)
-	inviteCode := "open"
-	// TODO 开启邀请注册时，邀请码怎么传过来
+	inviteCode := c.DefaultPostForm("invite_code", "open")
+	if inviteCode == "" {
+		inviteCode = "open"
+	}
 	gCsrfToken := c.PostForm("g_csrf_token")
 	if gCsrfToken == "" {
-		c.HTML(200, "login.gohtml", gin.H{
-			"msg":      "参数错误：No CSRF token in post body.",
-			"selected": "login",
-		})
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error", "msg": "参数错误：No CSRF token in post body.",
+		}))
 		return
 	}
 	CookiegCsrfToken, err := c.Request.Cookie("g_csrf_token")
 	if err != nil || CookiegCsrfToken.Value != gCsrfToken {
-		c.HTML(200, "login.gohtml", gin.H{
-			"msg":      "参数错误：Failed to verify double submit cookie.",
-			"selected": "login",
-		})
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error", "msg": "参数错误：Failed to verify double submit cookie.",
+		}))
 		return
 	}
 	clientID := os.Getenv("ClientID")
 	//clientSecret := os.Getenv("ClientSecret")
 	credential := c.PostForm("credential")
 	data, err := idtoken.Validate(c, credential, clientID)
+	if err != nil {
+		c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"title": "Error", "msg": "Google 登陆失败，请稍后再试！",
+		}))
+		return
+	}
 	userInfo := data.Claims
 	gid := userInfo["sub"].(string)
 	username := userInfo["name"].(string)
@@ -135,6 +149,8 @@ func (u *UserHandler) Oauth(c *gin.Context) {
 				}))
 				return
 			}
+			c.Redirect(302, refer)
+			return
 		} else {
 			// 已经绑定了其他用户
 			c.HTML(200, "result.gohtml", OutputCommonSession(u.injector, c, gin.H{
@@ -178,7 +194,7 @@ Login:
 		Email:    user.Email,
 		Avatar:   user.Avatar,
 	}
-	c.Redirect(301, "/")
+	c.Redirect(302, refer)
 	session := sessions.Default(c)
 	session.Set("login", true)
 	session.Set("userinfo", cookieData)

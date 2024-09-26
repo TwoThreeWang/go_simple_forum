@@ -69,7 +69,7 @@
                     <div class="flex flex-row gap-8 items-center text-sm">
                         <div class="font-bold">三方账号</div>
                         {{if $.user.GoogleId}}
-                            已绑定 Google 账号
+                            <a class="dark:text-white/70 underline" href="https://myaccount.google.com/" target="_blank" title="点击进入google账号中心">已绑定 Google 账号</a>
                         {{else}}
                             <div class="g_id_signin"
                                  data-type="standard"

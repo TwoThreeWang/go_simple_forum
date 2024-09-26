@@ -42,16 +42,16 @@
     {{template "content" .}}
     {{template "footer" .}}
 </div>
-
+{{if .ClientID }}
 <div id="g_id_onload"
      data-client_id="{{.ClientID}}"
      data-context="signin"
+     data-invite_code="{{.code}}"
      data-login_uri="{{.SiteUrl}}/oauth/callback/google"
-     data-auto_select="true"
-        {{ if eq .login nil}} data-itp_support="true"{{end}}>
+     {{ if eq .login nil}} data-auto_select="true" data-itp_support="true" {{else}} data-auto_prompt="false" {{end}}>
 </div>
 <script src="https://accounts.google.com/gsi/client" async></script>
-
+{{end}}
 {{ template "afterBody" . }}
 </body>
 </html>
