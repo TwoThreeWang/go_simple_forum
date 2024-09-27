@@ -16,22 +16,30 @@ window.__unocss = {
     },
 }
 
-$(function () {
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (prefersDarkScheme){
+function MediaChange(){
+    const theme = localStorage.getItem('theme') ?? 'auto'
+    if(theme === 'dark'){
         document.documentElement.classList.add('dark')
+        $('[data-theme="light"]').hide()
+        $('[data-theme="auto"]').hide()
+    }else if(theme === 'auto'){
         $('[data-theme="night"]').hide()
-    }else{
-        const theme = localStorage.getItem('theme') ?? 'light'
-        if(theme === 'dark'){
+        $('[data-theme="light"]').hide()
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDarkScheme){
             document.documentElement.classList.add('dark')
-            $('[data-theme="night"]').hide()
         }else{
-            $('[data-theme="light"]').hide()
+            document.documentElement.classList.remove('dark')
         }
+    }else{
+        document.documentElement.classList.remove('dark')
+        $('[data-theme="night"]').hide()
+        $('[data-theme="auto"]').hide()
     }
+}
 
-
+$(function () {
+    MediaChange()
 
     $("input[name='result']").click(function () {
         const val = $(this).val()
@@ -58,15 +66,32 @@ $(function () {
 
 
 
-const toggleTheme = ()=>{
-    document.documentElement.classList.toggle('dark')
-    if (document.documentElement.classList.contains('dark')){
-        localStorage.setItem('theme','dark')
-        $('[data-theme="night"]').hide()
-        $('[data-theme="light"]').show()
+const toggleTheme = (flag)=>{
+    var theme = 'auto';
+    if(flag==='night'){
+        theme = 'auto'
+    }else if(flag === 'light'){
+        theme = 'night'
     }else{
-        localStorage.setItem('theme','light')
-        $('[data-theme="light"]').hide()
+        theme = 'light'
+    }
+    if(theme=== 'night'){
+        document.documentElement.classList.add('dark')
+        localStorage.setItem('theme','dark')
         $('[data-theme="night"]').show()
+        $('[data-theme="auto"]').hide()
+        $('[data-theme="light"]').hide()
+    }else if(theme=== 'light'){
+        document.documentElement.classList.remove('dark')
+        localStorage.setItem('theme','light')
+        $('[data-theme="light"]').show()
+        $('[data-theme="night"]').hide()
+        $('[data-theme="auto"]').hide()
+    }else{
+        localStorage.setItem('theme','auto')
+        $('[data-theme="auto"]').show()
+        $('[data-theme="light"]').hide()
+        $('[data-theme="night"]').hide()
+        MediaChange()
     }
 }
