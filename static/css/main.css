@@ -61,7 +61,7 @@ a {
 .content {
     word-wrap: break-word;
     min-height: 100%;
-    line-height: 2.5em;
+    line-height: 2.3em;
     word-break: break-all;
 }
 
@@ -112,13 +112,13 @@ a {
 }
 
 .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
-    margin-bottom: 1.5em;
+    margin-bottom: 1em;
     padding: 0
 }
 
 .content div, .content p {
     min-height: 1.25em;
-    margin-bottom: 1.5em;
+    margin-bottom: 0.8em;
 }
 
 .content a {
