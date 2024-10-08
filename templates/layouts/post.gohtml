@@ -139,7 +139,6 @@
                                 <div class="flex flex-row gap2 mt-2 dark:text-white">
                                     {{if $.login}}
                                         <button class="btn" type="submit">发表评论</button>
-                                        <a href="javascript:void(0);" class="cursor-pointer bg-gray-200 border-0 text-black rounded py-1 px-4" onclick="show_emojis('0')">Emoji</a>
                                     {{else}}
                                         <a href="/u/login?redirect=/p/{{$post.Pid}}"
                                            class="text-sm hover:text-hover underline fw700">去登录发表评论</a>
@@ -183,7 +182,6 @@
             editor.insert("登录后发表评论");
             {{end}}
         </script>
-        <script src='{{getStaticPath "/js/emoji.js"}}'></script>
         {{end}}
     </div>
 {{end}}

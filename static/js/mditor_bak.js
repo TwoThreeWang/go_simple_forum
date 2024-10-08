@@ -1,9 +1,9 @@
 /**
  * @author bh-lay
- *
+ * 
  * @github https://github.com/bh-lay/mditor
  * @modified 2015-7-12 22:6
- *
+ * 
  **/
 
 
@@ -20,21 +20,21 @@
 		getItem : function(){},
 		setItem : function(){}
 	};
-
+	
 	var editor_tpl = '<div class="mditor_fullScreen"><div class="mditor_input"><textarea></textarea></div><div class="mditor_view"><div class="md_html"></div></div><div class="mditor_toolBar"><a href="javascript:void(0)" title="退出全屏" class="mditor-close">×</a></div></div>',
-      mini_tpl = `<div class="mditor-mini"><div class="mditor-mini-bar"><div class="mditor-mini-tab"><a href="javascript:void(0)"title="编辑"class="mditor-btn mditor-btn-edit active"><i class="mditor-icon "></i></a><a href="javascript:void(0)"title="预览"class="mditor-btn mditor-btn-preview"><i class="mditor-icon "></i></a><a href="javascript:void(0)"title="加粗"class="mditor-btn mditor-bold"><span>粗</span></a><a href="javascript:void(0)"title="链接"class="mditor-btn mditor-link"><span>链</span></a><a href="javascript:void(0)"title="图片"class="mditor-btn mditor-image"><span>图</span></a><a href="javascript:void(0)"title="代码"class="mditor-btn mditor-precode"><span>码</span></a><a href="javascript:void(0)"title="Emoji"class="mditor-btn mditor-emoji"><span>☺</span></a><a href="javascript:void(0)"title="全屏"class="mditor-btn mditor-btn-full"><i class="mditor-icon "></i></a><a href="javascript:void(0)"title="帮助"class="mditor-btn mditor-help"><span>？</span></a></div></div><div class="mditor-mini-preview"></div><div class="mditor-mini-help"><a href="javascript:void(0)"class="mditor-close">×</a><div class="mditor-help-txt"><h3>快捷键</h3><p><b>撤销</b>Ctrl+Z</p><p><b>恢复</b>Ctrl+Y</p><p><b>加粗</b>Ctrl+B</p><p><b>斜体</b>Ctrl+I</p><p><b>链接</b>Ctrl+L</p><p><b>图片</b>Ctrl+G</p><p><b>代码</b>Ctrl+Shift+K</p><p><b>代码块</b>Ctrl+K</p></div></div><div class="mditor-mini-emoji"></div></div>`,
-			style_css = '.mditor-icon{display:inline-block;width:15px;height:15px;vertical-align:middle;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAPCAYAAABwfkanAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAqtJREFUeNrUllmIjWEYx883xjAyGGtjKZQL0mkkuSAiFJncMBcYIs2NZA2RpexTk2WSseRopETCnKLckQuDso7cWHJlG9myc/we/b/T29t3zpkckqd+8513+573fd7/83wTpFKp2P9mhfYnCIJsc2xwDEyEMrgO+/7lYQNznmPTZkm4A4dgJ1xh3ba8nQdBA4/v8B7uWTAipk2HsdDBgozfubEcEauAKTAMDkAX9Z+2dfmCnYI49Ic+UBxBL40PgP22rjDLhkdBNeyAG1AKR2ER3HKi5a7pB1Vy8g1+QHt4aQeFpnCiNv0cPsNy6Cwfvr2DD1ALD9OajrAhsBo2y1ECrsE5qIMnEWvmwAwdcA98gTbwEabCKmiGdc4aO0yJDpnJSkQ3eOOe2LVB0vAktWugQb/LNDbCuWKzZeqPq10ufe6FSvWV6vAJx2873U6jciVKHiv0bpNo0a913qa7a0KV2hvVjikaSSWFq8t56u+qeXG1R8JA730xbXq947e35tRkiPRCjZeHfgu8a0hIe6bdpTBcydhDsjgMF72XjoaV8ErtydJek54nlMyhrbGbyqfqFDj12nR4WRubCeNhmsat74wO5NsC6CjpmJ1XhMNIVyoXQtuq/AjlYbq3sLfNII9i53tR5NbpIxJ6hZLJkmoWvNXVXFCkY172h9VjMUyAtXBbV1mt6mE3c1LyqdUG58vvJn6fhQ2tCLBVsaGsqw+rhxXuFmX4YFiiDTeqGtTleOFuVYItcBOOwy6neliZHAd3Tc9eDllJe9yKkteiOemS90jyqJfDB3re95xks2NwCWYr8m6dfgHb4aq3pqckYjfw1ckL1zpJIoHklpZHUvrtK82Zs6dKsEj7E/97eJ/xZgUt52c83PRBOj7BM9Xp14pW7G9u+nftpwADABwSFeQIwYanAAAAAElFTkSuQmCC)}.mditor-overflow{overflow:hidden !important;}.mditor_fullScreen{background:#444;position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:50000;font-family:"Microsoft Yahei";}.mditor_fullScreen textarea::selection{background:#000;}.mditor_fullScreen textarea::-moz-selection{background:#000;}.mditor_toolBar{position:absolute;top:0px;left:0px;width:100%;height:0;}.mditor-close{display:block;position:absolute;width:40px;height:40px;top:10px;right:20px;text-align:center;text-decoration:none;color:#aaa;font:bold 28px/40px "simsun";transition:0.1s;}.mditor-close:hover{background:#eee;color:#333;text-decoration:none;}.mditor-close:active{background:#aaa;color:#fff;}.mditor_input{position:absolute;top:0px;left:0px;width:50%;height:100%;}.mditor_input textarea{position:absolute;display:block;box-sizing:border-box;top:0;left:0;width:100%;height:100%;margin:0px;padding:20px 15px 20px 26px;border:none;resize:none;background:#232323;color:#e6e1dc;font-size:16px;font-family:inherit;line-height:1.6;}.mditor_input textarea:focus{box-shadow:1px 1px 10px #000;outline:none;}.mditor_view{position:absolute;top:0px;right:0px;width:50%;height:100%;overflow:auto;background:#fff;}.mditor_view .md_html{padding:20px;}.mditor-mini{position:relative;background:#fff;border:1px solid #ddd;font-family:"Microsoft Yahei";}.mditor-mini-bar{height:30px;background:#eee;}.mditor-mini-tab{float:left;background:#eee;}.mditor-btn{display:inline-block;vertical-align:middle;padding:0 0.6em;height:30px;line-height:25px;color:#333;font-size:14px;text-decoration:none;}.mditor-btn span{display:inline-block;vertical-align:middle;height:24px;}.mditor-btn:hover{background:#f4f4f4;}.mditor-btn.active{background:#fff;}.mditor-btn-preview i{background-position:-15px 0;}.mditor-btn-full i{background-position:-30px 0;}.mditor-mini-preview{display:none;min-height:200px;padding:30px 20px;}.mditor-mini textarea{display:block;box-sizing:border-box;width:100%;min-height:300px;resize:vertical;padding:20px;font-size:14px;font-family:inherit;border:none;}.mditor-mini textarea:focus{outline:none;}.mditor-mini-help,.mditor-mini-emoji{position:absolute;top:0;left:0;width:100%;height:100%;background:#fff;display:none;}.mditor-help-txt{width:300px;margin:auto;padding:30px 20px;}.mditor-help-txt h3{margin:0 0 20px;padding:10px;text-align:center;font-size:20px;border-bottom:1px solid #eee;}.mditor-help-txt p{margin:0;line-height:24px;font-size:14px;}.mditor-help-txt b{display:inline-block;width:47%;padding-right:15px;text-align:right;font-weight:normal;}@media screen and (max-width:700px){.mditor_input{width:100%;}.mditor_view{width:100%;display:none;}.mditor_preview{visibility:visible;}.mditor_viewer{left:0px;}}.emoji-tag,.mditor-emoji-close{padding:3px;margin:1px;border: 1px solid #ddd;display:inline-block;text-decoration:none;}',
-      emojis=['😀','😁','😂','🤣','😭','😃','😄','😅','😆','😉','😊','😋','😎','😍','🥰','😘','😗','😙','😚','😇','😐','😑','😶','😏','😣','😥','😮','😯','😪','😫','😴','😌','😛','😜','😝','😒','😓','😔','😕','😲','😷','😖','😞','😟','😤','😢','😭','😦','😧','😨','😬','😰','😱','😳','😵','😡','😠','💪','👈','👉','👆','👇','✋','👌','👍','👎','✊','👊','👋','👏','👐','🤝','🙏','👀','🍻','🌹','🍀','🍎','💰','📱','🌙','🍁','🍂','🍃','🌷','💎','✨','🔪','🔫','🏀','⚽','👄','🧡','💔','🔥','😈','👹','👺','💀','🤡','👻','👽','👾','💣','💩','🐶','💦','💨','🎉','🎊','🎁','💊','📢','📣','💤','💢','💬','💭','⭕','✅','❌','❎','❓','❔','❕','❗','🔆','💯','🔶','🔷','🔸','🔹','🔺','🔻','💠','🔲','🔳','⚪','⚫','🔴','🔵','🌻','🌼','🚀','🔞'];
+			mini_tpl = '<div class="mditor-mini"><div class="mditor-mini-bar"><div class="mditor-mini-tab"><a href="javascript:void(0)" title="编辑" class="mditor-btn mditor-btn-edit active"><i class="mditor-icon "></i><span>编辑</span></a><a href="javascript:void(0)" title="预览" class="mditor-btn mditor-btn-preview"><i class="mditor-icon "></i><span>预览</span></a></div><div class="mditor-mini-side"><a href="javascript:void(0)" title="帮助" class="mditor-link mditor-help">help</a><a href="javascript:void(0)" title="全屏" class="mditor-btn mditor-btn-full"><i class="mditor-icon "></i></a></div></div><div class="mditor-mini-preview"></div><div class="mditor-mini-help"><a href="javascript:void(0)" class="mditor-close">×</a><div class="mditor-help-txt"><h3>快捷键</h3><p><b>撤销</b>Ctrl + Z</p><p><b>恢复</b>Ctrl + Y</p><p><b>加粗</b>Ctrl + B</p><p><b>斜体</b>Ctrl + I</p><p><b>链接</b>Ctrl + L</p><p><b>图片</b>Ctrl + G</p><p><b>代码</b>Ctrl + Shift + K</p><p><b>代码块</b>Ctrl + K</p></div></div></div>',
+			style_css = '.mditor-icon{display:inline-block;width:15px;height:15px;margin-right:5px;vertical-align:middle;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAPCAYAAABwfkanAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAqtJREFUeNrUllmIjWEYx883xjAyGGtjKZQL0mkkuSAiFJncMBcYIs2NZA2RpexTk2WSseRopETCnKLckQuDso7cWHJlG9myc/we/b/T29t3zpkckqd+8513+573fd7/83wTpFKp2P9mhfYnCIJsc2xwDEyEMrgO+/7lYQNznmPTZkm4A4dgJ1xh3ba8nQdBA4/v8B7uWTAipk2HsdDBgozfubEcEauAKTAMDkAX9Z+2dfmCnYI49Ic+UBxBL40PgP22rjDLhkdBNeyAG1AKR2ER3HKi5a7pB1Vy8g1+QHt4aQeFpnCiNv0cPsNy6Cwfvr2DD1ALD9OajrAhsBo2y1ECrsE5qIMnEWvmwAwdcA98gTbwEabCKmiGdc4aO0yJDpnJSkQ3eOOe2LVB0vAktWugQb/LNDbCuWKzZeqPq10ufe6FSvWV6vAJx2873U6jciVKHiv0bpNo0a913qa7a0KV2hvVjikaSSWFq8t56u+qeXG1R8JA730xbXq947e35tRkiPRCjZeHfgu8a0hIe6bdpTBcydhDsjgMF72XjoaV8ErtydJek54nlMyhrbGbyqfqFDj12nR4WRubCeNhmsat74wO5NsC6CjpmJ1XhMNIVyoXQtuq/AjlYbq3sLfNII9i53tR5NbpIxJ6hZLJkmoWvNXVXFCkY172h9VjMUyAtXBbV1mt6mE3c1LyqdUG58vvJn6fhQ2tCLBVsaGsqw+rhxXuFmX4YFiiDTeqGtTleOFuVYItcBOOwy6neliZHAd3Tc9eDllJe9yKkteiOemS90jyqJfDB3re95xks2NwCWYr8m6dfgHb4aq3pqckYjfw1ckL1zpJIoHklpZHUvrtK82Zs6dKsEj7E/97eJ/xZgUt52c83PRBOj7BM9Xp14pW7G9u+nftpwADABwSFeQIwYanAAAAAElFTkSuQmCC)}.mditor-overflow{overflow:hidden !important;}.mditor_fullScreen{background:#444;position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:50000;font-family:"Microsoft Yahei";}.mditor_fullScreen textarea::selection{background:#000;}.mditor_fullScreen textarea::-moz-selection{background:#000;}.mditor_toolBar{position:absolute;top:0px;left:0px;width:100%;height:0;}.mditor-close{display:block;position:absolute;width:40px;height:40px;top:10px;right:20px;text-align:center;text-decoration:none;color:#aaa;font:bold 28px/40px "simsun";transition:0.1s;}.mditor-close:hover{background:#eee;color:#333;text-decoration:none;}.mditor-close:active{background:#aaa;color:#fff;}.mditor_input{position:absolute;top:0px;left:0px;width:50%;height:100%;}.mditor_input textarea{position:absolute;display:block;box-sizing:border-box;top:0;left:0;width:100%;height:100%;margin:0px;padding:20px 15px 20px 26px;border:none;resize:none;background:#232323;color:#e6e1dc;font-size:16px;font-family:inherit;line-height:1.6;}.mditor_input textarea:focus{box-shadow:1px 1px 10px #000;outline:none;}.mditor_view{position:absolute;top:0px;right:0px;width:50%;height:100%;overflow:auto;background:#fff;}.mditor_view .md_html{padding:20px;}.mditor-mini{position:relative;background:#fff;border:1px solid #ddd;font-family:"Microsoft Yahei";}.mditor-mini-bar{height:40px;background:#eee;}.mditor-mini-tab{float:left;}.mditor-btn{display:inline-block;vertical-align:middle;padding:0 2.4em;height:40px;line-height:38px;color:#333;font-size:14px;text-decoration:none;}.mditor-btn span{display:inline-block;vertical-align:middle;height:24px;line-height:24px;}.mditor-btn:hover{background:#f4f4f4;}.mditor-btn.active{background:#fff;}.mditor-btn-preview i{background-position:-15px 0;}.mditor-btn-full i{background-position:-30px 0;}.mditor-link{display:inline-block;vertical-align:middle;padding:0 1em;height:40px;line-height:38px;color:#555;font-size:14px;text-decoration:none;}.mditor-mini-side{float:right;}.mditor-mini-preview{display:none;min-height:200px;padding:30px 20px;}.mditor-mini textarea{display:block;box-sizing:border-box;width:100%;min-height:300px;resize:vertical;padding:20px;font-size:14px;font-family:inherit;border:none;}.mditor-mini textarea:focus{outline:none;}.mditor-mini-help{position:absolute;top:0;left:0;width:100%;height:100%;background:#fff;display:none;}.mditor-help-txt{width:300px;margin:auto;padding:30px 20px;}.mditor-help-txt h3{margin:0 0 20px;padding:10px;text-align:center;font-size:20px;border-bottom:1px solid #eee;}.mditor-help-txt p{margin:0;line-height:24px;font-size:14px;}.mditor-help-txt b{display:inline-block;width:47%;padding-right:15px;text-align:right;font-weight:normal;}@media screen and (max-width:700px){.mditor_input{width:100%;}.mditor_view{width:100%;display:none;}.mditor_preview{visibility:visible;}.mditor_viewer{left:0px;}}';
+	
   // 创建style标签
 	function createStyleSheet(cssStr,attr){
 		var styleTag = document.createElement('style');
-
+		
 		attr = attr || {};
 		attr.type = "text/css";
 		for(var i in attr){
 			styleTag.setAttribute(i, attr[i]);
 		}
-
+		
 		// IE
 		if (styleTag.styleSheet) {
 			styleTag.styleSheet.cssText = cssStr;
@@ -44,11 +44,11 @@
 		}
 		return styleTag;
 	}
-
+  
 	var private_head = document.head || document.getElementsByTagName('head')[0];
 	var styleSheet = createStyleSheet(style_css,{'data-module' : "mditor"});
 	private_head.appendChild(styleSheet);
-
+		
 	//处理自定义事件
 	function ON(eventName,callback){
 		this._events = this._events || {};
@@ -116,7 +116,7 @@
     //代码
 		code :  '`code`',
     //代码域
-		precode : '\n\n```\n{{//some code……}}\n```',
+		precode : '\n\n```javascript\n{{//some code……}}\n```',
     tab : '  '
 	};
   var keyCode_config = {
@@ -138,7 +138,7 @@
     elem.autocapitalize = 'none';
     elem.autocorrect = 'off';
   }
-
+  
   /**
    * 编辑类
    *  change:任何字符改动都会触发
@@ -148,7 +148,7 @@
   function EDITOR($area,param){
     param = param || {};
     var me = this;
-
+    
     this._$textarea = $area;
     //事件中心
 		this._events = {};
@@ -177,9 +177,9 @@
         },100);
       }
     });
-
+    
     this.content = this._$textarea.val();
-
+    
     //记录初始状态
     this._logMe();
     //当进行输入操作时，记录状态
@@ -247,28 +247,25 @@
       }else if(typeof(this[name]) == 'function'){
         //第三顺序,从自身原型链上找方法
         this[name].call(this);
-      }else{
-        utils.insertTxt(this._$textarea[0],name);
-        this._logMe();
       }
 		}
 	};
-
+  
 
   /**
    * 全屏编辑器
-   *
+   * 
    */
 	function Full(param){
 		var me = this,
         content = param.content || '',
         previewClass = param.previewClass || 'article';
-
+		
 		this._$dom = $(editor_tpl);
 		this._$textarea = this._$dom.find('textarea');
 		this._$viewScreen = this._$dom.find('.mditor_view');
 		this._$viewer = this._$viewScreen.find('.md_html');
-
+    
 		this.closeFn = param['closeFn'] || null;
     this.editor = new EDITOR(this._$textarea);
     this.editor.on('change',function(){
@@ -279,7 +276,7 @@
     this._$viewer.addClass(previewClass);
     this._$textarea.val(content);
 		this.render();
-
+		
 		this._$dom.find('.mditor-close').on('click',function(){
       me.close();
     });
@@ -327,22 +324,21 @@
     param = param || {};
 		var me = this,
         previewClass = param.previewClass || 'article';
-
+		
 		this._$dom = $(mini_tpl);
     this._$textarea = $(area);
     this._$viewer = this._$dom.find('.mditor-mini-preview');
     this._$btn_preview = this._$dom.find('.mditor-btn-preview');
     this._$btn_edit = this._$dom.find('.mditor-btn-edit');
 		this._$help = me._$dom.find('.mditor-mini-help');
-		this._$emoji = me._$dom.find('.mditor-mini-emoji');
 
-
+		
     this._$viewer.addClass(previewClass);
     //将编辑器dom放置在textarea前
     this._$textarea.before(this._$dom);
     //再将textarea移入编辑器内
     this._$dom[0].appendChild(this._$textarea[0]);
-
+    
     this.editor = new EDITOR(this._$textarea);
     //全屏
     this._$dom.on('click','.mditor-btn-full',function(){
@@ -355,36 +351,9 @@
         }
       });
     }).on('click','.mditor-help',function(){
-			me._$help.css('display', 'inline-table').fadeIn(80);
-		}).on('click','.mditor-emoji',function(){
-      const emojiList = me._$dom.find('.mditor-mini-emoji');
-      emojiList.empty();
-      emojiList.append('<a href="javascript:void(0)" class="mditor-emoji-close">关闭</a>');
-      emojis.forEach(emoji => {
-          const emojiSpan = document.createElement('a');
-          emojiSpan.href = "javascript:void(0)";
-          emojiSpan.classList.add('emoji-tag');
-          emojiSpan.textContent = emoji;
-          emojiList.append(emojiSpan);
-      });
-			me._$emoji.css('display', 'inline-table').fadeIn(80);
-		}).on('click','.emoji-tag',function(event){
-      const emojiElement = $(this);
-      const emojiText = emojiElement.text();
-      me.editor.action(" "+emojiText+" ");
-      me._$emoji.fadeOut(100);
-		}).on('click','.mditor-bold',function(){
-			me.editor.action('bold');
-		}).on('click','.mditor-link',function(){
-			me.editor.action('link');
-		}).on('click','.mditor-image',function(){
-			me.editor.action('image');
-		}).on('click','.mditor-precode',function(){
-			me.editor.action('precode');
+			me._$help.fadeIn(80);
 		}).on('click','.mditor-close',function(){
 			me._$help.fadeOut(100);
-		}).on('click','.mditor-emoji-close',function(){
-      me._$emoji.fadeOut(100);
 		});
     //预览
     this._$btn_preview.on('click',function(){

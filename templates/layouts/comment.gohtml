@@ -60,6 +60,16 @@
                     </div>
                 </div>
             </form>
+                <script src='{{getStaticPath "/js/mditor.js"}}'></script>
+                <script type="text/javascript">
+                    //获取textarea dom对象
+                    var ele_textarea_comment = document.getElementById('comment-{{.Comment.CID}}');
+                    //实例化Mditor
+                    var editor_comment = new mditor(ele_textarea_comment,{
+                        //自定义显示效果class
+                        previewClass : 'content'
+                    });
+                </script>
         </div>
 
     </div>
