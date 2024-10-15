@@ -10,12 +10,12 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jasonlvhit/gocron v0.0.1
 	github.com/joho/godotenv v1.5.1
+	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/mileusna/useragent v1.3.4
 	github.com/samber/do v1.6.0
 	github.com/snabb/sitemap v1.0.4
 	github.com/spf13/cast v1.6.0
 	golang.org/x/crypto v0.26.0
-	golang.org/x/oauth2 v0.22.0
 	google.golang.org/api v0.194.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.10
@@ -70,6 +70,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.17.0 // indirect

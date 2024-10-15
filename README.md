@@ -32,6 +32,7 @@
 - [x] 增加帖子收藏功能
 - [x] 增加 Google 一键登录功能
 - [x] 优化黑暗模式，增加自动模式切换
+- [x] 邮件发送改为使用 smtp
 
 #### 关于积分增减规则
 
@@ -91,9 +92,11 @@
 | VERSION           | 程序版本号                                                                            | 必填, 0.0.1                                                                                                      |
 | SiteName          | 网站名称                                                                             | 必填, 竹林                                                                                                         |
 | SiteUrl           | 网站链接                                                                             | 必填, https://zhulink.club                                                                                       |
-| EmailApiUrl       | 邮件发送链接，邮件发送使用的是cloudflare，相关教程 https://wangtwothree.com/sao/cloudflare-mail.html | 必填（不填影响邮件发送功能，其他功能正常）, https://<sender-name>.<your-name>.workers.dev                                           |
-| EmailSender       | 发件人邮箱                                                                            | 必填（不填影响邮件发送功能，其他功能正常）, 竹林                                                                                      |
-| EmailSenderName   | 发件人名称                                                                            | 必填（不填影响邮件发送功能，其他功能正常）, 竹林                                                                                      |
+| EmailSender       | 发件人邮箱                                                                            | 不填影响邮件发送功能，其他功能正常, 竹林                                                                                          |
+| EmailSenderName   | 发件人名称                                                                            | 不填影响邮件发送功能，其他功能正常                                                                                              |
+| EmailPassword     | Smtp 邮件账号密码                                                                      | 不填影响邮件发送功能，其他功能正常                                                                                              |
+| EmailSmtpHost     | Smtp 服务器地址                                                                       | 不填影响邮件发送功能，其他功能正常                                                                                              |
+| EmailSmtpPort     | Smtp 服务器端口                                                                       | 不填影响邮件发送功能，其他功能正常                                                                                              |
 | GIN_MODE          | GIN程序运行模式，debug调试模式、release生产模式、test测试模式                                         | 选填, release                                                                                                    |
 | ClientID          | 配置google登录用的应用ID                                                                 | 选填                                                                                                             |
 | ClientSecret      | 配置google登录用的应用密钥                                                                 | 选填                                                                                                             |
