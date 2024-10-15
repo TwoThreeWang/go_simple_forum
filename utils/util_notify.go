@@ -23,10 +23,10 @@ type Notify interface {
 }
 
 // Email 实现通知方法
-type Email struct{}
+type bakEmail struct{}
 
 // Send Email 实现 Send 方法
-func (e Email) Send(toUser, subject, content string) string {
+func (e bakEmail) bakSend(toUser, subject, content string) string {
 	// SMTP 服务器配置
 	smtpHost := os.Getenv("EmailSmtpHost")   // SMTP 服务器地址
 	smtpPort := os.Getenv("EmailSmtpPort")   // SMTP 端口
@@ -51,8 +51,8 @@ func (e Email) Send(toUser, subject, content string) string {
 	return "Success"
 }
 
-// CloudFlareEmail 实现通知方法
-type CloudFlareEmail struct{}
+// Email 实现通知方法
+type Email struct{}
 
 // MailPost 邮件发送结构体
 type MailPost struct {
@@ -73,7 +73,7 @@ type MailPost struct {
 	} `json:"content"`
 }
 
-func (e CloudFlareEmail) ApiSend(toUser, subject, content string) string {
+func (e Email) Send(toUser, subject, content string) string {
 	// 创建请求体数据
 	EmailApiUrl := os.Getenv("EmailApiUrl")
 	EmailSender := os.Getenv("EmailSender")
