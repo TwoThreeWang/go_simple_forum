@@ -23,10 +23,10 @@ type Notify interface {
 }
 
 // Email 实现通知方法
-type bakEmail struct{}
+type Email struct{}
 
 // Send Email 实现 Send 方法
-func (e bakEmail) bakSend(toUser, subject, content string) string {
+func (e Email) Send(toUser, subject, content string) string {
 	// SMTP 服务器配置
 	smtpHost := os.Getenv("EmailSmtpHost")   // SMTP 服务器地址
 	smtpPort := os.Getenv("EmailSmtpPort")   // SMTP 端口
@@ -34,15 +34,24 @@ func (e bakEmail) bakSend(toUser, subject, content string) string {
 	sendEmail := os.Getenv("EmailSender")    // 发件人邮箱
 	password := os.Getenv("EmailPassword")   // 发件人邮箱密码
 
-	// 邮件内容
-	from := fmt.Sprintf("%s <%s>", username, sendEmail)
+	// 创建邮件头
+	header := make(map[string]string)
+	header["From"] = fmt.Sprintf("%s <%s>", username, sendEmail)
+	header["To"] = toUser
+	header["Subject"] = subject
+	header["Content-Type"] = "text/html; charset=\"utf-8\""
+
+	// 创建邮件消息
+	message := ""
+	for k, v := range header {
+		message += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+	message += "\r\n" + content
 	to := []string{toUser} // 收件人邮箱
-	body := content
-	message := []byte(fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s", from, to[0], subject, body))
 
 	// 连接到 SMTP 服务器
-	auth := smtp.PlainAuth("", username, password, smtpHost)
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
+	auth := smtp.PlainAuth("", sendEmail, password, smtpHost)
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, sendEmail, to, []byte(message))
 	if err != nil {
 		fmt.Println("Error sending email:", err)
 		return "系统错误，邮件发送失败！"
@@ -51,8 +60,8 @@ func (e bakEmail) bakSend(toUser, subject, content string) string {
 	return "Success"
 }
 
-// Email 实现通知方法
-type Email struct{}
+// ApiEmail 实现通知方法
+type ApiEmail struct{}
 
 // MailPost 邮件发送结构体
 type MailPost struct {
@@ -73,7 +82,7 @@ type MailPost struct {
 	} `json:"content"`
 }
 
-func (e Email) Send(toUser, subject, content string) string {
+func (e ApiEmail) Send(toUser, subject, content string) string {
 	// 创建请求体数据
 	EmailApiUrl := os.Getenv("EmailApiUrl")
 	EmailSender := os.Getenv("EmailSender")
