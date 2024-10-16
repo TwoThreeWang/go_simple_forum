@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"crypto/md5"
 	"encoding/base64"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -769,14 +771,17 @@ func (i *IndexHandler) RemoveTag(c *gin.Context) {
 // Activate 发送激活邮件
 func (i *IndexHandler) Activate(c *gin.Context) {
 	uid := c.Query("id")
-	key := c.Query("key")
+	//key := c.Query("key")
 	userinfo := GetCurrentUser(c)
-	if uid == "" || key == "" || userinfo == nil {
+	if uid == "" || userinfo == nil || uid != strconv.FormatUint(uint64(userinfo.ID), 10) {
 		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
 			"title": "Error", "msg": "参数错误！",
 		}))
 		return
 	}
+	data := []byte(userinfo.Email)
+	hash := md5.Sum(data)
+	key := hex.EncodeToString(hash[:])
 	siteName := os.Getenv("SiteName")
 	siteUrl := os.Getenv("SiteUrl")
 	// 将激活邮件发送给用户

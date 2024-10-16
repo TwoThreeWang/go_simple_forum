@@ -8,7 +8,7 @@
         {{.msg}}
     {{else}}
         {{if and (eq .user.Status "Wait") ($.userinfo) (eq $.userinfo.Username .user.Username)}}
-            <div class="dark:text-black" style="background-color: #ffd5d5;padding:5px 10px;border-radius: 3px;font-size: smaller;">未激活用户，请先去邮箱激活账户！<a href="/activate?id={{$.userinfo.ID}}&key={{$.EmailHash}}">【点击发送激活邮件】</a></div>
+            <div class="dark:text-black" style="background-color: #ffd5d5;padding:5px 10px;border-radius: 3px;font-size: smaller;">未激活用户，请先去邮箱激活账户！<a href="/activate?id={{$.userinfo.ID}}">【点击发送激活邮件】</a></div>
         {{end}}
 
         <div class="flex flex-col gap2 dark:text-white/70">
