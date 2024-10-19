@@ -24,7 +24,7 @@
 
                <div class="avatar">
                    <a href="/u/profile/{{.UserID}}">
-                       <img class="w-6 h-6 rounded" src="{{.User.Avatar}}" alt="{{.User.Username}}" referrerpolicy="no-referrer"/>
+                       <img class="w-6 h-6 rounded" src="{{.User.Avatar}}" referrerpolicy="no-referrer" rel="noopener" onerror="this.onerror=null; this.src='/static/imgerr.png'" alt="{{.User.Username}}"/>
                    </a>
                </div>
 

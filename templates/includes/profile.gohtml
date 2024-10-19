@@ -15,7 +15,7 @@
             <br>
             <div class="flex flex-row gap-8 items-center text-sm" style="line-height: 2em">
                 <div>
-                    <img src="{{.user.Avatar}}" class="rounded w-20 h-20" referrerpolicy="no-referrer"/>
+                    <img src="{{.user.Avatar}}" class="rounded w-20 h-20" alt="{{.user.Username}}" referrerpolicy="no-referrer" rel="noopener" onerror="this.onerror=null; this.src='/static/imgerr.png'"/>
                 </div>
                 <div>
                     <p class="font-bold text-lg">{{.user.Username}}</p>

@@ -33,7 +33,7 @@
                 <small id="tips"></small>
             </div>
             <div class="flex flex-row gap-8 items-center text-sm">
-                <img src="{{.user.Avatar}}" class="rounded w-12 h-12" id="user-avatar" referrerpolicy="no-referrer"/>
+                <img src="{{.user.Avatar}}" class="rounded w-12 h-12" id="user-avatar" alt="{{.user.Username}}" referrerpolicy="no-referrer" rel="noopener" onerror="this.onerror=null; this.src='/static/imgerr.png'"/>
                 <small>
                     <p>* 可以直接填写图片外链或上传，上传图片限制 100kb 以内</p>
                     <p>* 多次上传会覆盖之前的头像</p>

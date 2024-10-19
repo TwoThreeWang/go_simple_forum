@@ -15,7 +15,7 @@
         <div class="flex flex-row gap-2 text-gray text-xs" itemprop="author" itemscope itemtype="https://schema.org/Person">
            <div class="avatar">
                 <a href="/u/profile/{{.Comment.User.ID}}">
-                    <img class="w-6 h-6 rounded" src="{{.Comment.User.Avatar}}" alt="{{.Comment.User.Username}}"  referrerpolicy="no-referrer"/>
+                    <img class="w-6 h-6 rounded" src="{{.Comment.User.Avatar}}" alt="{{.Comment.User.Username}}"  referrerpolicy="no-referrer" rel="noopener" onerror="this.onerror=null; this.src='/static/imgerr.png'"/>
                 </a>
             </div>
 
@@ -45,7 +45,7 @@
             var html = marked.parse('{{.Comment.Content | html}}');
             // 链接改为新标签页打开
             html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
-            html = html.replaceAll('<img src','<img  class="comment-img" onclick="changeClass(this)" title="点击放大" referrerpolicy="no-referrer" src');
+            html = html.replaceAll('<img src','<img  class="comment-img" onclick="changeClass(this)" title="点击放大" referrerpolicy="no-referrer" rel="noopener" onerror="this.onerror=null; this.src=\'/static/imgerr.png\'" src');
             document.getElementById('comment-content-{{.Comment.CID}}').innerHTML = html;
         </script>
         <div class="hidden form-parent">
