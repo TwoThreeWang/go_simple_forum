@@ -80,6 +80,10 @@
                         {{end}}
                     </div>
                     {{ if eq $.selected "detail"}}
+                        {{ if eq $post.Type "link"}}
+                            <br>
+                            <div class="dark:text-black" style="background-color: #eee;padding:5px 10px;border-radius: 3px;font-size: smaller;">阅读原文：<a href="{{$post.Link}}" target="_blank">{{$post.Link}}</a></div>
+                        {{end}}
                         <div class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">
                             {{$post.Content | html}}
                         </div>
