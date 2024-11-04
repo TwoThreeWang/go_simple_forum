@@ -17,7 +17,7 @@ type TbUser struct {
 	CommentCount    int         `gorm:"column:commentCount;type:int"`
 	PostCount       int         `gorm:"column:postCount;type:int"`
 	Status          string      `gorm:"column:status;type:varchar(20)"`
-	Avatar          string      `gorm:"column:avatar;type:varchar(100)"`
+	Avatar          string      `gorm:"column:avatar;type:varchar(500)"`
 	Posts           []TbPost    `gorm:"foreignKey:UserID"`
 	UpVotedPosts    []TbPost    `gorm:"many2many:tb_vote;"`
 	Points          int         `gorm:"column:points;type:int;default:0"`
