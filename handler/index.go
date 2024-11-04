@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/feeds"
 	"github.com/kingwrcy/hn/model"
 	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
@@ -79,6 +80,46 @@ func (i *IndexHandler) SiteMap(c *gin.Context) {
 		c.String(500, "Error generating sitemap")
 		return
 	}
+}
+
+func (i *IndexHandler) Feed(c *gin.Context) {
+	var items []model.TbPost
+	i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
+	// 创建 RSS Feed 数据
+	SiteUrl := os.Getenv("SiteUrl")
+	rssFeed := &feeds.Feed{
+		Title:       os.Getenv("SiteName"),
+		Link:        &feeds.Link{Href: SiteUrl},
+		Description: "竹林是一个类似抽屉网的内容聚合网站，分享新奇、新闻、有趣的内容，结合了书签、博客、RSS 以及无等级的评论。",
+		Created:     time.Now(),
+		Updated:     time.Now(),
+	}
+	for _, item := range items {
+		t := item.Model.CreatedAt
+		description := item.Content
+		if len(item.Content) > 100 {
+			description = string([]rune(item.Content)[:100]) + "..."
+		}
+		feedItem := feeds.Item{
+			Title:       item.Title,
+			Id:          item.Pid,
+			Author:      &feeds.Author{Name: item.User.Username},
+			Description: description,
+			Link:        &feeds.Link{Href: SiteUrl + "/p/" + item.Pid},
+			Created:     t,
+		}
+		rssFeed.Items = append(rssFeed.Items, &feedItem)
+	}
+	// 生成 RSS XML 内容
+	rssXml, err := rssFeed.ToRss()
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	// 设置响应头
+	c.Header("Content-Type", "application/rss+xml; charset=utf-8")
+	// 输出 RSS XML 内容
+	c.String(200, rssXml)
 }
 
 func (i *IndexHandler) Robots(c *gin.Context) {

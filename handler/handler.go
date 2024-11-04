@@ -32,6 +32,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/", indexHandler.Index)                       // 热门帖子列表
 	engine.GET("/sitemap.xml", indexHandler.SiteMap)          // sitemap文件
 	engine.GET("/robots.txt", indexHandler.Robots)            // robots文件
+	engine.GET("/feed", indexHandler.Feed)                    // rss文件
 	engine.GET("/history", indexHandler.History)              // 全部帖子列表
 	engine.GET("/search", indexHandler.ToSearch)              // 搜索页
 	engine.GET("/new", indexHandler.ToNew)                    // 发布新贴

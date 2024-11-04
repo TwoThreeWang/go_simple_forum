@@ -7,6 +7,7 @@ require (
 	github.com/gin-contrib/multitemplate v1.0.1
 	github.com/gin-contrib/sessions v1.0.1
 	github.com/gin-gonic/gin v1.10.0
+	github.com/gorilla/feeds v1.2.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jasonlvhit/gocron v0.0.1
 	github.com/joho/godotenv v1.5.1
