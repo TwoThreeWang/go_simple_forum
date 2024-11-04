@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/model"
 	"github.com/kingwrcy/hn/provider"
+	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"gorm.io/gorm"
@@ -28,6 +29,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.POST("/upload_img", indexHandler.UploadImg)  // 头像上传接口
 	engine.GET("/hit", statisticsHandler.Hit)           // 统计信息收集
 	engine.GET("/statistics", statisticsHandler.Query)  // 统计页
+	engine.GET("/img_dl", utils.GetImg)                 // 图片代理
 
 	engine.GET("/", indexHandler.Index)                       // 热门帖子列表
 	engine.GET("/sitemap.xml", indexHandler.SiteMap)          // sitemap文件
