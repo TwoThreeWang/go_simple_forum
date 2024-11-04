@@ -166,7 +166,7 @@ Login:
 		// 如果用户不存在，先去注册
 		user.Email = email
 		user.Username = username
-		user.Avatar = avatar
+		user.Avatar = "/img_dl?url=" + avatar
 		user.GoogleId = gid
 		err := u.OauthRegister(c, user, inviteCode)
 		if err != nil {
