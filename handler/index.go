@@ -83,8 +83,25 @@ func (i *IndexHandler) SiteMap(c *gin.Context) {
 }
 
 func (i *IndexHandler) Feed(c *gin.Context) {
+	// 从 Gin 上下文中获取缓存实例
+	cache := c.MustGet("cache").(*utils.Cache)
+	// 从缓存中获取 items
 	var items []model.TbPost
-	i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
+	postItems, ok := cache.Get("feedPostItems")
+	if !ok {
+		i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
+		// 将 items 放入缓存
+		cache.Set("feedPostItems", items, 30*time.Minute)
+	} else {
+		// 使用缓存中的数据
+		items, ok = postItems.([]model.TbPost)
+		if !ok {
+			// 类型转换失败，处理错误
+			i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
+			// 将 items 放入缓存
+			cache.Set("feedPostItems", items, 30*time.Minute)
+		}
+	}
 	// 创建 RSS Feed 数据
 	SiteUrl := os.Getenv("SiteUrl")
 	rssFeed := &feeds.Feed{

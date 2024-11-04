@@ -16,6 +16,7 @@ import (
 	"github.com/kingwrcy/hn/model"
 	"github.com/kingwrcy/hn/provider"
 	"github.com/kingwrcy/hn/task"
+	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"html/template"
@@ -98,6 +99,16 @@ func main() {
 	//	engine.HTMLRender = loadLocalTemplates("./templates")
 	//	engine.Static("/static", "./static")
 	//}
+	// 创建全局缓存实例
+	globalCache := &utils.Cache{
+		Data:     make(map[string]interface{}),
+		ExpireAt: make(map[string]time.Time),
+	}
+	// 将缓存实例绑定到 Gin 上下文
+	engine.Use(func(c *gin.Context) {
+		c.Set("cache", globalCache)
+		c.Next()
+	})
 	// 路由注册
 	handler.SetupRouter(injector, engine)
 	// 处理 404 错误
