@@ -114,13 +114,13 @@ func (i *IndexHandler) Feed(c *gin.Context) {
 	for _, item := range items {
 		t := item.Model.CreatedAt
 		description := item.Content
-		if utf8.RuneCountInString(item.Content) > 150 {
+		if utf8.RuneCountInString(item.Content) > 250 {
 			// 截取前100位
-			description = string([]rune(item.Content)[:100]) + "..."
+			description = string([]rune(item.Content)[:200]) + "..."
 		}
+		description = "如要阅读全文，点击标题跳转。<br>" + description
 		feedItem := feeds.Item{
 			Title:       item.Title,
-			Id:          item.Pid,
 			Author:      &feeds.Author{Name: item.User.Username},
 			Description: description,
 			Link:        &feeds.Link{Href: SiteUrl + "/p/" + item.Pid},
