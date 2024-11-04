@@ -114,7 +114,7 @@ func (i *IndexHandler) Feed(c *gin.Context) {
 	for _, item := range items {
 		t := item.Model.CreatedAt
 		description := item.Content
-		if len(item.Content) > 100 {
+		if len(item.Content) > 200 {
 			description = string([]rune(item.Content)[:100]) + "..."
 		}
 		feedItem := feeds.Item{
