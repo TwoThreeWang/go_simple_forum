@@ -12,6 +12,7 @@ require (
 	github.com/jasonlvhit/gocron v0.0.1
 	github.com/joho/godotenv v1.5.1
 	github.com/mileusna/useragent v1.3.4
+	github.com/russross/blackfriday v1.6.0
 	github.com/samber/do v1.6.0
 	github.com/snabb/sitemap v1.0.4
 	github.com/spf13/cast v1.6.0

@@ -11,6 +11,7 @@ import (
 	"github.com/kingwrcy/hn/model"
 	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
+	"github.com/russross/blackfriday"
 	"github.com/samber/do"
 	"github.com/snabb/sitemap"
 	"github.com/spf13/cast"
@@ -114,12 +115,14 @@ func (i *IndexHandler) Feed(c *gin.Context) {
 	for _, item := range items {
 		t := item.Model.CreatedAt
 		description := item.Content
-		if utf8.RuneCountInString(item.Content) > 250 {
-			// 截取前100位
-			description = string([]rune(item.Content)[:200]) + "..."
-		}
+		//if utf8.RuneCountInString(item.Content) > 250 {
+		//	// 截取前100位
+		//	description = string([]rune(item.Content)[:200]) + "..."
+		//}
+		// 使用 blackfriday 库将 Markdown 转换为 HTML
+		description = string(blackfriday.MarkdownCommon([]byte(description)))
 		itemUrl := SiteUrl + "/p/" + item.Pid
-		content := description + "<br><br><b><a href=\"" + itemUrl + "\">点击标题阅读完整话题</a></b>"
+		content := description + "<br><br><b><a href=\"" + itemUrl + "\">点击标题阅读完整话题和讨论</a></b>"
 		feedItem := feeds.Item{
 			Id:          item.Pid,
 			IsPermaLink: "false",
