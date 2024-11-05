@@ -118,12 +118,16 @@ func (i *IndexHandler) Feed(c *gin.Context) {
 			// 截取前100位
 			description = string([]rune(item.Content)[:200]) + "..."
 		}
-		description = "如要阅读全文，点击标题跳转。<br>" + description
+		itemUrl := SiteUrl + "/p/" + item.Pid
+		content := description + "<br><br><b><a href=\"" + itemUrl + "\">点击标题阅读完整话题</a></b>"
 		feedItem := feeds.Item{
+			Id:          item.Pid,
+			IsPermaLink: "false",
 			Title:       item.Title,
 			Author:      &feeds.Author{Name: item.User.Username},
 			Description: description,
-			Link:        &feeds.Link{Href: SiteUrl + "/p/" + item.Pid},
+			Content:     content,
+			Link:        &feeds.Link{Href: itemUrl},
 			Created:     t,
 		}
 		rssFeed.Items = append(rssFeed.Items, &feedItem)
