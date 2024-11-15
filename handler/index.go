@@ -89,18 +89,38 @@ func (i *IndexHandler) Feed(c *gin.Context) {
 	// 从缓存中获取 items
 	var items []model.TbPost
 	postItems, ok := cache.Get("feedPostItems")
+	//if !ok {
+	//	i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
+	//	// 将 items 放入缓存
+	//	cache.Set("feedPostItems", items, 30*time.Minute)
+	//} else {
+	//	// 使用缓存中的数据
+	//	items, ok = postItems.([]model.TbPost)
+	//	if !ok {
+	//		// 类型转换失败，处理错误
+	//		i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
+	//		// 将 items 放入缓存
+	//		cache.Set("feedPostItems", items, 30*time.Minute)
+	//	}
+	//}
+getPost:
 	if !ok {
-		i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
+		// 查询帖子
+		userinfo := GetCurrentUser(c)
+		result := QueryPosts(i.db, vo.QueryPostsRequest{
+			Userinfo:  userinfo,
+			Page:      1,
+			Size:      50,
+			OrderType: "rss",
+		})
+		items = result["posts"].([]model.TbPost)
 		// 将 items 放入缓存
 		cache.Set("feedPostItems", items, 30*time.Minute)
 	} else {
 		// 使用缓存中的数据
 		items, ok = postItems.([]model.TbPost)
 		if !ok {
-			// 类型转换失败，处理错误
-			i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
-			// 将 items 放入缓存
-			cache.Set("feedPostItems", items, 30*time.Minute)
+			goto getPost
 		}
 	}
 	// 创建 RSS Feed 数据
@@ -115,6 +135,12 @@ func (i *IndexHandler) Feed(c *gin.Context) {
 	for _, item := range items {
 		t := item.Model.CreatedAt
 		description := item.Content
+		for _, tag := range item.Tags {
+			if tag.OpenShow == "N" {
+				description = "游客无法查看隐藏标签下的内容，请点击标题登录网站浏览！"
+				break
+			}
+		}
 		//if utf8.RuneCountInString(item.Content) > 250 {
 		//	// 截取前100位
 		//	description = string([]rune(item.Content)[:200]) + "..."
