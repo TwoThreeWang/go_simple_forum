@@ -557,7 +557,7 @@ func QueryPosts(db *gorm.DB, request vo.QueryPostsRequest) gin.H {
 		tx.Order("p.top desc ,p.point desc,p.created_at desc")
 	} else if request.OrderType == "rss" {
 		tx.Where("not exists (select 1 from tb_post_tag pt,tb_tag t where t.id = pt.tb_tag_id and pt.tb_post_id = p.id and t.show_in_all = 'N')")
-		tx.Order("p.updated_at desc")
+		tx.Order("p.created_at desc")
 	} else if request.OrderType == "" {
 		tx.Where("not exists (select 1 from tb_post_tag pt,tb_tag t where t.id = pt.tb_tag_id and pt.tb_post_id = p.id and t.show_in_all = 'N')")
 		tx.Order("p.top desc,p.created_at desc")
