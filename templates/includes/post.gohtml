@@ -3,6 +3,15 @@
     <meta name="keywords" content="{{(index .posts 0).Title}},竹林,zhulink,抽屉">
     {{ $shortDescription := printf "%.300s" (index .posts 0).Content }}
     <meta name="description" content="{{$shortDescription}}">
+    <meta property="og:title" content="{{(index .posts 0).Title}} - {{.siteName}}">
+    <meta property="og:description" content="{{$shortDescription}}">
+    <meta property="og:url" content="{{.SiteUrl}}/p/{{(index .posts 0).Pid}}">
+    <meta property="og:site_name" content="{{.siteName}}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_card">
+    <meta name="twitter:site" content="{{.SiteUrl}}/p/{{(index .posts 0).Pid}}">
+    <meta name="twitter:title" content="{{(index .posts 0).Title}} - {{.siteName}}">
+    <meta name="twitter:description" content="{{$shortDescription}}">
 <script>
     $(function () {
         $(".reply").click(function () {
