@@ -1,60 +1,16 @@
 {{ define "title"}}<title>审核日志 - {{.siteName}}</title>
-<style>
-    table.blueTable {
-
-        border-collapse: collapse;
-    }
-
-    table.blueTable td, table.blueTable th {
-        border:1px solid #ccc;
-    }
-
-    table.blueTable tbody td {
-        padding:5px 10px;
-        text-align: left;
-    }
-
-    table.blueTable tr:nth-child(even) {
-        background: #D0E4F5;
-    }
-
-    table.blueTable thead {
-
-    }
-
-    table.blueTable thead th {
-        padding:10px;
-        text-align: left;
-    }
-
-    table.blueTable thead th:first-child {
-    }
-
-    table.blueTable tfoot {
-
-    }
-
-    table.blueTable tfoot td {
-
-    }
-
-    table.blueTable tfoot .links {
-    }
-
-    table.blueTable tfoot .links a {
-
-    }
-</style>{{ end }}
+{{ end }}
 
 
 {{define "content"}}
 
-<table class="blueTable text-sm w-full" >
+<table class="w-full mytable dark:text-white/70" id="mytable">
     <thead>
     <tr>
         <th>发生时间</th>
-        <th>管理员</th>
+        <th>操作人</th>
         <th>详情</th>
+        <th>动作</th>
         <th>原因</th>
     </tr>
     </thead>
@@ -62,16 +18,14 @@
     <tbody>
     {{range .logs}}
     <tr>
-        <td style="width: 160px;">{{.CreatedAt.Format "2006-01-02 15:04:05"}}</td>
-        <td style="width: 100px;"><a class="text-blue" href="/u/profile/{{.Inspector.Model.ID}}">{{.Inspector.Username}}</a></td>
-        <td>
-            <div class="flex flex-col gap-2 items-start p-2">
-                <div>{{if eq .InspectType "POST"}}<a class="text-blue" href="/p/{{.Post.Pid}}">帖子:{{.Post.Title}}</a>{{end}}</div>
-                <div>{{if eq .InspectType "Comment"}}<a class="text-blue" href="/p/{{.Post.Pid}}">评论:{{.Title}}</a>{{end}}</div>
-                <div>动作:{{.Action}}</div>
-            </div>
-            </td>
-        <td>{{.Reason}}</td>
+        <td data-label="发生时间">{{.CreatedAt.Format "2006-01-02 15:04:05"}}</td>
+        <td data-label="操作人"><a class="text-blue" href="/u/profile/{{.Inspector.Model.ID}}">{{.Inspector.Username}}</a></td>
+        <td data-label="详情">
+            <span>{{if eq .InspectType "POST"}}<a class="text-blue" href="/p/{{.Post.Pid}}">帖子:{{.Post.Title}}</a>{{end}}</span>
+            <span>{{if eq .InspectType "Comment"}}<a class="text-blue" href="/p/{{.Post.Pid}}">评论:{{.Title}}</a>{{end}}</span>
+        </td>
+        <td data-label="动作">{{.Action}}</td>
+        <td data-label="原因">{{.Reason}}</td>
     </tr>
     {{end}}
 

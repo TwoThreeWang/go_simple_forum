@@ -1,8 +1,6 @@
 {{ define "title"}}<title>消息列表 - {{.siteName}}</title>{{ end }}
 
-
 {{define "content"}}
-
     {{ if gt .unReadMessageCount 0}}
         <div class="flex my-4 justify-end">
             <a class="btn dark:text-white/70" href="/u/message/setAllRead">全部已读</a>
@@ -10,7 +8,7 @@
     {{end}}
 
     {{if gt (len .messages) 0}}
-        <table class="w-full mytable dark:text-white/70" style="border-collapse: collapse; ">
+        <table class="w-full mytable dark:text-white/70" style="border-collapse: collapse; " id="mytable">
             <thead>
             <tr>
                 <th>发送时间</th>
@@ -22,10 +20,10 @@
             <tbody>
             {{range .messages}}
                 <tr>
-                    <td>{{.CreatedAt | timeAgo}}</td>
-                    <td>{{if eq .FromUserID 999999999}}系统{{else}}111{{end}}</td>
-                    <td style="max-width:300px;" {{if eq .Read "N"}}onclick="sendGetRequest('/u/message/setSingleRead?id={{.ID}}')"{{end}}>{{.Content  | html}}</td>
-                    <td>{{if eq .Read "N"}}<a href="/u/message/setSingleRead?id={{.ID}}">标记已读</a>{{end}}
+                    <td data-label="发送时间">{{.CreatedAt | timeAgo}}</td>
+                    <td data-label="发送人">{{if eq .FromUserID 999999999}}系统{{else}}111{{end}}</td>
+                    <td data-label="内容" {{if eq .Read "N"}}onclick="sendGetRequest('/u/message/setSingleRead?id={{.ID}}')"{{end}}>{{.Content  | html}}</td>
+                    <td data-label="操作">{{if eq .Read "Y"}}<a href="/u/message/setSingleRead?id={{.ID}}">标记已读</a>{{end}}
                     </td>
                 </tr>
             {{end}}
