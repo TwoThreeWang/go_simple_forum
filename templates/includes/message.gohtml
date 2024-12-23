@@ -23,7 +23,7 @@
                     <td data-label="发送时间">{{.CreatedAt | timeAgo}}</td>
                     <td data-label="发送人">{{if eq .FromUserID 999999999}}系统{{else}}111{{end}}</td>
                     <td data-label="内容" {{if eq .Read "N"}}onclick="sendGetRequest('/u/message/setSingleRead?id={{.ID}}')"{{end}}>{{.Content  | html}}</td>
-                    <td data-label="操作">{{if eq .Read "Y"}}<a href="/u/message/setSingleRead?id={{.ID}}">标记已读</a>{{end}}
+                    <td data-label="操作">{{if eq .Read "N"}}<a href="/u/message/setSingleRead?id={{.ID}}">标记已读</a>{{end}}
                     </td>
                 </tr>
             {{end}}
