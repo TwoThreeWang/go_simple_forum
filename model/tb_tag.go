@@ -15,7 +15,7 @@ type TbTag struct {
 	CssClass  string  `gorm:"column:css_class;type:varchar(120)"`
 	ShowInHot string  `gorm:"column:show_in_hot;type:varchar(5)"`
 	ShowInAll string  `gorm:"column:show_in_all;type:varchar(5)"`
-	OpenShow  string  `gorm:"column:open_show;type:varchar(5)"`
+	OpenShow  int     `gorm:"column:open_show;type:int8(5)"`
 }
 
 func (*TbTag) TableName() string {

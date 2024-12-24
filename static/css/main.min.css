@@ -30,7 +30,7 @@ div.sceditor-group{border:0 !important;background-color:transparent !important}
 .dark .mytable th{background:#19222e;color:#f6f6f6}
 .mytable td,th{padding:5px 10px;text-align:left;font-size:12px;min-width:70px;line-height:1.5rem}
 .mytable tr:hover{filter:brightness(0.95)}
-.x-post-tag{padding:0.05rem 0.375rem}
+.x-post-tag{padding:0.05rem 0.375rem;border-radius:0.1rem;}
 .comment-img{width:100px;height:auto;cursor:pointer;transition:transform 0.3s ease}
 .comment-img.zoomed{width:90%}
 .content iframe{width:100%;aspect-ratio:16 / 9}

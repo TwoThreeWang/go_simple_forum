@@ -57,7 +57,6 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.POST("/search", indexHandler.DoSearch)             // 搜索操作类
 	engine.GET("/invite/:code", userHandler.ToInvited)        // 邀请注册
 	engine.POST("/invite/:code", userHandler.DoInvited)       // 邀请注册操作类
-	engine.GET("/about", userHandler.ToAbout)                 // 关于页面（已废弃）
 	engine.GET("/type/:type", postHandler.SearchByType)       // 根据类型获取帖子列表
 	engine.GET("/users", userHandler.ToList)                  // 用户列表
 	engine.GET("/activate", indexHandler.Activate)            // 发送激活邮件

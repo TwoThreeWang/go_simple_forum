@@ -89,20 +89,6 @@ func (i *IndexHandler) Feed(c *gin.Context) {
 	// 从缓存中获取 items
 	var items []model.TbPost
 	postItems, ok := cache.Get("feedPostItems")
-	//if !ok {
-	//	i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
-	//	// 将 items 放入缓存
-	//	cache.Set("feedPostItems", items, 30*time.Minute)
-	//} else {
-	//	// 使用缓存中的数据
-	//	items, ok = postItems.([]model.TbPost)
-	//	if !ok {
-	//		// 类型转换失败，处理错误
-	//		i.db.Model(&model.TbPost{}).Where("status = 'Active'").Order("created_at desc").Find(&items)
-	//		// 将 items 放入缓存
-	//		cache.Set("feedPostItems", items, 30*time.Minute)
-	//	}
-	//}
 getPost:
 	if !ok {
 		// 查询帖子
@@ -128,7 +114,7 @@ getPost:
 	rssFeed := &feeds.Feed{
 		Title:       os.Getenv("SiteName"),
 		Link:        &feeds.Link{Href: SiteUrl},
-		Description: "竹林是一个类似抽屉网的内容聚合网站，分享新奇、新闻、有趣的内容，结合了书签、博客、RSS 以及无等级的评论。",
+		Description: "竹林是一个类似抽屉网的内容聚合平台，分享新奇、新闻、有趣的内容，发现新资讯，拓展新视野。",
 		Created:     time.Now(),
 		Updated:     time.Now(),
 	}
@@ -136,7 +122,7 @@ getPost:
 		t := item.Model.CreatedAt
 		description := item.Content
 		for _, tag := range item.Tags {
-			if tag.OpenShow == "N" {
+			if tag.OpenShow >= 0 {
 				description = "游客无法查看隐藏标签下的内容，请点击标题登录网站浏览！"
 				break
 			}
@@ -391,16 +377,16 @@ func (i *IndexHandler) SaveTag(c *gin.Context) {
 	}
 	showInHot := "Y"
 	showInAll := "Y"
-	openShow := "Y"
+	openShowNum, err := strconv.Atoi(request.OpenShow)
+	if err != nil {
+		openShowNum = -1
+	}
 	var pid *uint
 	if request.ShowInHot != "on" {
 		showInHot = "N"
 	}
 	if request.ShowInAll != "on" {
 		showInAll = "N"
-	}
-	if request.OpenShow != "on" {
-		openShow = "N"
 	}
 	if cast.ToInt(request.ParentID) > 0 {
 		id := cast.ToUint(request.ParentID)
@@ -417,7 +403,7 @@ func (i *IndexHandler) SaveTag(c *gin.Context) {
 			CssClass:  request.CssClass,
 			ShowInHot: showInHot,
 			ShowInAll: showInAll,
-			OpenShow:  openShow,
+			OpenShow:  openShowNum,
 		})
 	} else {
 		i.db.Model(&model.TbTag{}).Where("id = ?", request.ID).
@@ -428,7 +414,7 @@ func (i *IndexHandler) SaveTag(c *gin.Context) {
 				"css_class":   request.CssClass,
 				"show_in_hot": showInHot,
 				"show_in_all": showInAll,
-				"open_show":   openShow,
+				"open_show":   openShowNum,
 			})
 	}
 
@@ -462,7 +448,6 @@ func (i *IndexHandler) AddTag(c *gin.Context) {
 
 func (i *IndexHandler) ToTags(c *gin.Context) {
 	var tags []model.TbTag
-
 	i.db.Model(&model.TbTag{}).Where("parent_id is null").Preload("Children").Find(&tags)
 	c.HTML(200, "tags.gohtml", OutputCommonSession(i.injector, c, gin.H{
 		"tags":     tags,

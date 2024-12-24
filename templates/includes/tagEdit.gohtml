@@ -31,9 +31,12 @@
                        {{if eq .tag.ShowInAll "Y"}}checked{{end}}>
             </div>
             <div class="flex items-center gap-2">
-                <label for="openShow" class="fw-bold">是否对游客开放</label>
-                <input type="checkbox" name="openShow" id="openShow" class="input"
-                       {{if eq .tag.OpenShow "Y"}}checked{{end}}>
+                <label for="openShow" class="fw-bold">阅读权限等级</label>
+                {{if eq .tag.OpenShow nil}}
+                    <input type="number" id="openShow" name="openShow" class="input" value="-1">
+                {{else}}
+                    <input type="number" id="openShow" name="openShow" class="input" value="{{.tag.OpenShow}}">
+                {{end}}
             </div>
             <div class="flex items-center gap-2">
                 <label for="parentID" class="fw-bold">父标签</label>
@@ -45,7 +48,7 @@
                 </select>
             </div>
             <div class="flex items-center gap-2">
-                <label for="cssClass" class="fw-bold">样式</label>
+                <label for="cssClass" class="fw-bold">自定义样式</label>
                 <input type="text" name="cssClass" id="cssClass" class="input flex-1" value="{{.tag.CssClass}}">
             </div>
             <div class="flex items-center gap-2">

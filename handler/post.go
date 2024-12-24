@@ -132,7 +132,7 @@ func (p PostHandler) ToEdit(c *gin.Context) {
 }
 func (p PostHandler) Detail(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
-
+	// 查询帖子内容
 	var posts []model.TbPost
 	result := QueryPosts(p.db, vo.QueryPostsRequest{
 		Userinfo:  userinfo,
@@ -142,54 +142,59 @@ func (p PostHandler) Detail(c *gin.Context) {
 		OrderType: "single",
 	})
 
-	var uid uint = 0
-	if userinfo != nil {
-		uid = userinfo.ID
-	}
 	posts = result["posts"].([]model.TbPost)
-	// 未登录用户禁止查看隐藏标签下的内容
-	if userinfo == nil {
-		if len(posts) == 0 {
-			c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
-				"title": "权限错误", "msg": "游客无法查看隐藏标签下的内容！",
-			}))
-			return
-		}
-		for _, post := range posts {
-			for _, tag := range post.Tags {
-				if tag.OpenShow == "N" {
-					c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
-						"title": "权限错误", "msg": "游客无法查看隐藏标签下的内容！",
-					}))
-					return
-				}
-			}
-		}
-	}
-
-	var rootComments []model.TbComment
-	if len(posts) > 0 {
-		if userinfo != nil {
-			subQuery := p.db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'COMMENT' and action ='UP'", uid)
-
-			p.db.Table("tb_comment c").Select("c.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS up_voted").Joins("LEFT JOIN (?) AS vote ON c.id = vote.target_id", subQuery).
-				Preload("User").Where("post_id = ? and parent_comment_id is null", posts[0].ID).Order("created_at desc").Find(&rootComments)
-
-		} else {
-			p.db.Table("tb_comment c").Select("c.*").
-				Preload("User").Where("post_id = ? and parent_comment_id is null", posts[0].ID).Order("created_at desc").
-				Find(&rootComments)
-
-		}
-
-		buildCommentTree(&rootComments, p.db, uid)
-		posts[0].Comments = rootComments
-	} else {
+	// 没有查询到结果
+	if len(posts) == 0 {
 		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
 			"title": "Nothing To Show", "msg": "没有内容可以展示！",
 		}))
 		return
 	}
+	// 验证用户权限是否符合查看权限
+	role := -1
+	if userinfo != nil {
+		roleStr := userinfo.Role
+		if roleStr == "admin" {
+			role = 99999
+		} else {
+			num, err := strconv.Atoi(roleStr)
+			if err != nil {
+				role = 0
+			} else {
+				role = num
+			}
+		}
+	}
+	for _, post := range posts {
+		for _, tag := range post.Tags {
+			if tag.OpenShow > role {
+				c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+					"title": "权限错误", "msg": fmt.Sprintf("等级 LV.%d 以上才可以查看该标签下的内容！", tag.OpenShow),
+				}))
+				return
+			}
+		}
+	}
+
+	// 点赞及评论数据
+	var uid uint = 0
+	var rootComments []model.TbComment
+	if userinfo != nil {
+		uid = userinfo.ID
+		subQuery := p.db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'COMMENT' and action ='UP'", uid)
+
+		p.db.Table("tb_comment c").Select("c.*,CASE WHEN vote.target_id IS NOT NULL THEN 1 ELSE 0  END AS up_voted").Joins("LEFT JOIN (?) AS vote ON c.id = vote.target_id", subQuery).
+			Preload("User").Where("post_id = ? and parent_comment_id is null", posts[0].ID).Order("created_at desc").Find(&rootComments)
+
+	} else {
+		p.db.Table("tb_comment c").Select("c.*").
+			Preload("User").Where("post_id = ? and parent_comment_id is null", posts[0].ID).Order("created_at desc").
+			Find(&rootComments)
+
+	}
+
+	buildCommentTree(&rootComments, p.db, uid)
+	posts[0].Comments = rootComments
 	c.HTML(200, "post.gohtml", OutputCommonSession(p.injector, c, gin.H{
 		"posts":    posts,
 		"selected": "detail",
@@ -541,11 +546,10 @@ func QueryPosts(db *gorm.DB, request vo.QueryPostsRequest) gin.H {
 		tx.Joins("LEFT JOIN (?) AS vote ON p.id = vote.target_id", subQuery)
 		subQueryCollect := db.Table("tb_vote").Select("target_id").Where("tb_user_id = ? and type = 'POST' and action ='Collect'", request.Userinfo.ID)
 		tx.Joins("LEFT JOIN (?) AS vote_collect ON p.id = vote_collect.target_id", subQueryCollect)
-	} else {
-		tx.InnerJoins(",tb_post_tag ptw,tb_tag tw")
-		tx.Where("tw.id = ptw.tb_tag_id and ptw.tb_post_id = p.id")
-		tx.Where("tw.open_show = 'Y'")
+
 	}
+	tx.InnerJoins(",tb_post_tag ptw,tb_tag tw")
+	tx.Where("tw.id = ptw.tb_tag_id and ptw.tb_post_id = p.id")
 	if len(request.Tags) > 0 {
 		tx.InnerJoins(",tb_post_tag pt,tb_tag t")
 		tx.Where("t.id = pt.tb_tag_id and pt.tb_post_id = p.id")

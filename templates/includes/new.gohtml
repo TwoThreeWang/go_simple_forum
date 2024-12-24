@@ -81,21 +81,17 @@
 
                     {{range .tags}}
 
-                        {{if eq .Name "站务"}}
-                            {{if and (not (eq $.userinfo nil)) (eq $.userinfo.Role "admin")}}
-                                <optgroup label="{{.Name}}">
-                                    {{range  .Children}}
-                                        <option value="{{.ID}}">{{.Name}} {{if .Desc}} - {{.Desc}}{{end}}</option>
+                        <optgroup label="{{.Name}}">
+                            {{range  .Children}}
+                                {{if eq .Name "公告"}}
+                                    {{if and (not (eq $.userinfo nil)) (eq $.userinfo.Role "admin")}}
+                                        <option value="{{.ID}}">{{.Name}}{{if .Desc}} ({{.Desc}}) {{end}}</option>
                                     {{end}}
-                                </optgroup>
-                            {{end}}
-                        {{else}}
-                            <optgroup label="{{.Name}}">
-                                {{range  .Children}}
-                                    <option value="{{.ID}}">{{.Name}} {{if .Desc}} - {{.Desc}}{{end}}</option>
+                                {{else}}
+                                    <option value="{{.ID}}">{{.Name}}{{if .Desc}} ({{.Desc}}) {{end}}</option>
                                 {{end}}
-                            </optgroup>
-                        {{end}}
+                            {{end}}
+                        </optgroup>
                     {{end}}
 
                 </select>

@@ -770,12 +770,6 @@ func (u *UserHandler) ToInvited(c *gin.Context) {
 	}))
 }
 
-func (u *UserHandler) ToAbout(c *gin.Context) {
-	c.HTML(200, "about.gohtml", OutputCommonSession(u.injector, c, gin.H{
-		"selected": "/",
-	}))
-}
-
 func (u *UserHandler) DoInvited(c *gin.Context) {
 	var settings model.TbSettings
 	u.db.First(&settings)
