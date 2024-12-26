@@ -130,6 +130,28 @@
             </div>
         </div>
     </form>
+        <script>
+            document.getElementById('newPostForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // 阻止表单默认提交行为
+                var title = document.getElementById('title').value;
+                var tag = document.getElementById('tag').value;
+                var linkUrl = document.getElementById('linkUrl').value;
+                const linkRadio = document.getElementById('link');
+                if (!title || title.length <= 0) {
+                    alert("标题不能为空！");
+                    return
+                }
+                if (tag.length <= 0) {
+                    alert("标签不能为空！");
+                    return
+                }
+                if (linkRadio.checked && linkUrl.length <= 0) {
+                    alert("分享类帖子链接不能为空！");
+                    return
+                }
+                this.submit();
+            });
+        </script>
     <style>
         .SumoSelect {flex: 1;}
         .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}
