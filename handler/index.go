@@ -194,7 +194,9 @@ func (i *IndexHandler) ToNew(c *gin.Context) {
 		}
 	}
 	var tags []model.TbTag
-	i.db.Model(&model.TbTag{}).Preload("Parent").Where("parent_id is null").Preload("Children").Find(&tags)
+	i.db.Model(&model.TbTag{}).Preload("Parent").Where("parent_id is null").Preload("Children", func(db *gorm.DB) *gorm.DB {
+		return db.Order("name") // 对子标签进行排序
+	}).Order("name").Find(&tags)
 	c.HTML(200, "new.gohtml", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "new",
 		"tags":     tags,
@@ -448,7 +450,9 @@ func (i *IndexHandler) AddTag(c *gin.Context) {
 
 func (i *IndexHandler) ToTags(c *gin.Context) {
 	var tags []model.TbTag
-	i.db.Model(&model.TbTag{}).Where("parent_id is null").Preload("Children").Find(&tags)
+	i.db.Model(&model.TbTag{}).Where("parent_id is null").Preload("Children", func(db *gorm.DB) *gorm.DB {
+		return db.Order("name") // 对子标签进行排序
+	}).Order("name").Find(&tags)
 	c.HTML(200, "tags.gohtml", OutputCommonSession(i.injector, c, gin.H{
 		"tags":     tags,
 		"selected": "tags",

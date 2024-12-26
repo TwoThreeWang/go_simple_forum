@@ -85,10 +85,10 @@
                             {{range  .Children}}
                                 {{if eq .Name "公告"}}
                                     {{if and (not (eq $.userinfo nil)) (eq $.userinfo.Role "admin")}}
-                                        <option value="{{.ID}}">{{.Name}}{{if .Desc}} ({{.Desc}}) {{end}}</option>
+                                        <option value="{{.ID}}">{{.Name}}{{if .Desc}} [{{.Desc}}] {{end}}</option>
                                     {{end}}
                                 {{else}}
-                                    <option value="{{.ID}}">{{.Name}}{{if .Desc}} ({{.Desc}}) {{end}}</option>
+                                    <option value="{{.ID}}">{{.Name}}{{if .Desc}} [{{.Desc}}] {{end}}</option>
                                 {{end}}
                             {{end}}
                         </optgroup>
