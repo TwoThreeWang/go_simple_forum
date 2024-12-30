@@ -56,7 +56,7 @@
                 {{end}}
                 <div class='x-header-item hover:text-hover {{if eq .selected "new"}}selected{{end}}'><a href="/new">发布</a></div>
                 <div class='x-header-item  flex items-center gap-1 {{if eq .selected "mine"}}selected{{end}}'>
-                    <img src="{{.userinfo.Avatar}}" class="rounded w-4 h-4" referrerpolicy="no-referrer"/>
+                    <img src="{{.userinfo.Avatar}}" class="rounded w-4 h-4" referrerpolicy="no-referrer" alt="{{.userinfo.Username}}" title="{{.userinfo.Username}}"/>
                     <a class="hover:text-hover"
                             href="/u/profile/{{.userinfo.ID}}">{{.userinfo.Username}}</a></div>
                 <div class='x-header-item flex gap-1 items-center hover:text-hover {{if eq .selected "message"}}selected{{end}} {{if gt .unReadMessageCount 0}}text-red{{end}}'>
