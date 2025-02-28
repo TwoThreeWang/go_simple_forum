@@ -13,4 +13,4 @@ docker-compose up -d --remove-orphans
 #echo '启动容器'
 #docker run --name zhulink -d -v ./.env:/.env -p 32919:32919 -v ./templates:/templates -v ./static:/static:rw --log-opt max-size=50m --restart=always zhulink:latest
 echo '清理不再使用的镜像、容器和数据卷'
-docker system prune --all --force --volumes
+docker system prune --all --force --volumes --filter "label!=keep=true"
