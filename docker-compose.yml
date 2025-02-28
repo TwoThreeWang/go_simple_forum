@@ -1,0 +1,22 @@
+version: '3'
+services:
+  zhulink:
+    container_name: zhulink
+    image: zhulink:latest
+    ports:
+      - "32919:32919"
+    volumes:
+      - ./.env:/.env
+      - ./templates:/templates
+      - ./static:/static
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+    networks:
+      - docker-app-network
+
+networks:
+  docker-app-network:
+    external: true
