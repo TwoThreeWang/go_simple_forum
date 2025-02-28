@@ -1,4 +1,5 @@
 #!/bin/bash
+cd "$(dirname "$0")"
 echo '开始拉取最新代码'
 git pull origin main
 #echo '删除镜像'
