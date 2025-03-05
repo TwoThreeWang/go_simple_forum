@@ -6,6 +6,7 @@ git pull origin main
 #docker images --filter=reference="zhulink" -a -q | xargs docker rmi -f
 echo '打包镜像'
 docker build -t zhulink:latest .
+docker-compose down
 echo '启动容器'
 docker-compose up -d --remove-orphans
 #echo '停止并删除旧容器'
