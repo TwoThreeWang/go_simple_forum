@@ -8,7 +8,7 @@ a{text-decoration:none;color:inherit;word-break:break-all}
 .x-post-title a:visited{color:#5b88b6}
 .header .selected > a{text-decoration:underline;text-decoration-color:#5468ff;text-decoration-thickness:2px;text-underline-offset:0.4rem}
 .content > ol,.content > ul{margin-left:2rem;margin-bottom:1.5em}
-.content img{max-width:100%;object-fit:cover}
+.content img{object-fit:cover;max-width:100%;max-height:100vh;width:auto;height:auto;display:block;}
 .content .ios{-webkit-overflow-scrolling:touch;overflow:auto}
 .content .ios body{overflow:auto;position:relative}
 .content{word-wrap:break-word;min-height:100%;line-height:2.3em;word-break:break-all}
