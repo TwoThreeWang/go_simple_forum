@@ -90,7 +90,7 @@
                     {{ if eq $.selected "detail"}}
                         {{ if eq $post.Type "link"}}
                             <br>
-                            <aside class="dark:text-black" style="background-color: #eee;padding:5px 10px;border-radius: 3px;font-size: smaller;">阅读原文：<a href="{{$post.Link}}" target="_blank">{{$post.Link}}</a></aside>
+                            <aside class="dark:text-black" style="background-color: #eee;padding:5px 10px;border-radius: 3px;font-size: smaller;">🔗 阅读原文：<a href="{{$post.Link}}" target="_blank">{{$post.Link}}</a></aside>
                         {{end}}
                         <section class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">
                             {{$post.Content | html}}
@@ -140,7 +140,7 @@
 
                     {{ if and (eq $.selected "detail") (gt (len $.relatedPosts) 0)}}
                     <aside class="mt-8 mb-4">
-                        <h3 class="text-lg font-bold mb-4 dark:text-white/70" aria-label="相关文章推荐">相关文章推荐</h3>
+                        <h3 class="text-lg font-bold mb-4 dark:text-white/70" aria-label="相关文章推荐">✨ 相关文章推荐</h3>
                         <div class="flex flex-col gap-3">
                             {{range $.relatedPosts}}
                             <div class="flex flex-row gap-2 items-start" itemscope itemtype="https://schema.org/Article">
