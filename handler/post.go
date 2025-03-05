@@ -2,13 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/kingwrcy/hn/model"
-	"github.com/kingwrcy/hn/utils"
-	"github.com/kingwrcy/hn/vo"
-	"github.com/samber/do"
-	"github.com/spf13/cast"
-	"gorm.io/gorm"
 	"log"
 	"math/rand"
 	"net/url"
@@ -16,6 +9,14 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/kingwrcy/hn/model"
+	"github.com/kingwrcy/hn/utils"
+	"github.com/kingwrcy/hn/vo"
+	"github.com/samber/do"
+	"github.com/spf13/cast"
+	"gorm.io/gorm"
 )
 
 type PostHandler struct {
@@ -195,9 +196,31 @@ func (p PostHandler) Detail(c *gin.Context) {
 
 	buildCommentTree(&rootComments, p.db, uid)
 	posts[0].Comments = rootComments
+
+	// 获取相关文章推荐
+	var relatedPosts []model.TbPost
+	if len(posts) > 0 {
+		// 获取当前文章的标签IDs
+		var tagIDs []uint
+		for _, tag := range posts[0].Tags {
+			tagIDs = append(tagIDs, tag.ID)
+		}
+
+		// 查询具有相同标签的其他文章
+		if len(tagIDs) > 0 {
+			p.db.Preload("Tags").Preload("User").Where("id != ?", posts[0].ID).
+				Joins("JOIN tb_post_tag ON tb_post_tag.tb_post_id = tb_post.id").
+				Where("tb_post_tag.tb_tag_id IN ?", tagIDs).
+				Group("tb_post.id").
+				Order("COUNT(DISTINCT tb_post_tag.tb_tag_id) DESC, tb_post.point DESC").
+				Limit(5).Find(&relatedPosts)
+		}
+	}
+
 	c.HTML(200, "post.gohtml", OutputCommonSession(p.injector, c, gin.H{
-		"posts":    posts,
-		"selected": "detail",
+		"posts":        posts,
+		"relatedPosts": relatedPosts,
+		"selected":     "detail",
 	}))
 }
 

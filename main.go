@@ -143,6 +143,12 @@ func templateFun() template.FuncMap {
 		"dateFormat": func(date time.Time, format string) string {
 			return date.Format(format)
 		},
+		"truncate": func(text string, length int) string {
+			if len(text) <= length {
+				return text
+			}
+			return text[:length] + "..."
+		},
 		"dict": func(values ...interface{}) (map[string]interface{}, error) {
 			if len(values)%2 != 0 {
 				return nil, errors.New("invalid dict call")

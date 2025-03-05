@@ -1,5 +1,12 @@
 {{define "comment"}}
 <div id="c-{{.Comment.CID}}" class="p2 comment flex flex-row gap2 items-start" itemscope itemtype="https://schema.org/Comment">
+    <meta itemprop="upvoteCount" content="{{.Comment.UpVote}}">
+    <meta itemprop="commentCount" content="{{len .Comment.Comments}}">
+    {{if eq .Comment.Post.Pid ""}}
+        <meta itemprop="url" content="#c-{{.Comment.CID}}">
+    {{else}}
+        <meta itemprop="url" content="/p/{{.Comment.Post.Pid}}#c-{{.Comment.CID}}">
+    {{end}}
     <div class="flex flex-col items-center cursor-pointer">
         <a class="text-coolGray {{if .Comment.UpVoted}}text-red{{end}}" href="{{if .Comment.UpVoted}}javascript:void(0);{{else}}/vote?id={{.Comment.CID}}&action=u&type=COMMENT{{end}}" >
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
@@ -37,7 +44,7 @@
             <div class="hover:text-hover reply cursor-pointer"><a class="hover:text-hover" href="/delcomment?cid={{.Comment.CID}}">删除</a></div>
             {{end}}
         </div>
-        <span style="display:none" itemprop="datePublished">{{.Comment.CreatedAt}}</span>
+        <meta itemprop="datePublished" content="{{.Comment.CreatedAt}}">
         <div class="content text-sm dark:text-white/50" id="comment-content-{{.Comment.CID}}" itemprop="text">
             {{.Comment.Content | html}}
         </div>

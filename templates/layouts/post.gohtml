@@ -2,9 +2,17 @@
     <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
     <style>.mditor-mini textarea{min-height:100px} .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}</style>
     <script>function sendGetRequest(url){fetch(url)}</script>
-    <div class="x-post-list flex flex-col gap-1">
+    <main class="x-post-list flex flex-col gap-1">
         {{range  $index, $post := .posts}}
-            <div class="x-post-item flex flex-row gap-2 lg:gap-4 p-2 flex-1 items-start bg-white dark:bg-slate-800" itemscope itemtype="https://schema.org/BlogPosting" itemid="{{$post.Pid}}">
+            <article class="x-post-item flex flex-row gap-2 lg:gap-4 p-2 flex-1 items-start bg-white dark:bg-slate-800" itemscope itemtype="https://schema.org/BlogPosting" itemid="{{$post.Pid}}">
+                <meta itemprop="headline" content="{{$post.Title}}">
+                <meta itemprop="dateModified" content="{{$post.UpdatedAt}}">
+                <meta itemprop="description" content="{{truncate $post.Content 200}}">
+                <meta itemprop="url" content="/p/{{$post.Pid}}">
+                <meta itemprop="wordCount" content="{{len $post.Content}}">
+                <meta itemprop="commentCount" content="{{$post.CommentCount}}">
+                <meta itemprop="image" content="{{$post.User.Avatar}}">
+                <meta itemprop="mainEntityOfPage" content="true">
                 <div class="flex flex-col items-center cursor-pointer upVoteParent ">
                     <a class="text-coolGray  {{if $post.UpVoted}}text-red{{end}}"
                        href="{{if $post.UpVoted}}javascript:void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
@@ -14,16 +22,16 @@
                     </a>
                     <div class="text-sm text-coolGray upVote">{{$post.UpVote}}</div>
                 </div>
-                <div class="flex flex-col flex-1 gap-1 ">
-                    <div class="flex flex-row gap-2 items-center flex-wrap ">
+                <section class="flex flex-col flex-1 gap-1">
+                    <header class="flex flex-row gap-2 items-center flex-wrap">
 
-                        <div class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] " itemprop="name">
+                        <h1 class="x-post-title text-sm fw-bold hover:text-gray dark:text-gray lg:max-w-4/5 text-[#06c] " itemprop="name" aria-label="文章标题">
                             {{ if eq $post.Type "ask"}}
-                                <a href="/p/{{$post.Pid}}">{{$post.Title}}</a>
+                                <a href="/p/{{$post.Pid}}" aria-label="查看文章详情">{{$post.Title}}</a>
                             {{else}}
-                                <a href="{{$post.Link}}" target="_blank" onclick="sendGetRequest('/p/click/{{$post.Pid}}')">{{$post.Title}}</a>
+                                <a href="{{$post.Link}}" target="_blank" onclick="sendGetRequest('/p/click/{{$post.Pid}}')" aria-label="访问原文链接">{{$post.Title}}</a>
                             {{end}}
-                        </div>
+                        </h1>
                         {{if or (eq $.selected "/") (eq $.selected "history")}}
                             {{if gt $post.Top 0}}
                                 <svg width="16px" height="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
@@ -49,9 +57,9 @@
                                 <a href="/d/{{$post.Domain}}" class="hover:text-hover">{{$post.Domain}}</a>
                             </div>
                         </div>
-                    </div>
+                    </header>
                     <div class="x-post-toolbar flex flex-row gap-2 items-center text-xs text-gray">
-                        <img src="{{$post.User.Avatar}}" class="rounded w-5 h-5" alt="{{$post.User.Username}}" referrerpolicy="no-referrer" rel="noopener" onerror="this.onerror=null; this.src='/static/imgerr.png'"/>
+                        <img src="{{$post.User.Avatar}}" class="rounded w-5 h-5" alt="{{$post.User.Username}}的头像" referrerpolicy="no-referrer" rel="noopener" loading="lazy" onerror="this.onerror=null; this.src='/static/imgerr.png'"/>
                         <div itemprop="author" itemscope itemtype="https://schema.org/Person"><a class="cursor-pointer  hover:text-hover"
                                 href="/u/profile/{{$post.User.ID}}" itemprop="url"><span itemprop="name">{{$post.User.Username}}</span></a></div>
                         <div class="when" itemprop="datePublished">{{$post.CreatedAt | timeAgo}}</div>
@@ -82,16 +90,16 @@
                     {{ if eq $.selected "detail"}}
                         {{ if eq $post.Type "link"}}
                             <br>
-                            <div class="dark:text-black" style="background-color: #eee;padding:5px 10px;border-radius: 3px;font-size: smaller;">阅读原文：<a href="{{$post.Link}}" target="_blank">{{$post.Link}}</a></div>
+                            <aside class="dark:text-black" style="background-color: #eee;padding:5px 10px;border-radius: 3px;font-size: smaller;">阅读原文：<a href="{{$post.Link}}" target="_blank">{{$post.Link}}</a></aside>
                         {{end}}
-                        <div class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">
+                        <section class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">
                             {{$post.Content | html}}
-                        </div>
+                        </section>
                         <script>
                             var html = marked.parse('{{$post.Content | html}}');
                             // 链接改为新标签页打开
                             html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
-                            html = html.replaceAll('<img src','<img referrerpolicy="no-referrer" rel="noopener" onerror="this.onerror=null; this.src=\'/static/imgerr.png\'" src');
+                            html = html.replaceAll('<img src','<img referrerpolicy="no-referrer" rel="noopener" loading="lazy" onerror="this.onerror=null; this.src=\'/static/imgerr.png\'" src');
                             document.getElementById('post-content').innerHTML = html;
                         </script>
                     {{end}}
@@ -106,10 +114,6 @@
                             <span class="text-sm text-coolGray upVote {{if $post.CollectVoted}}text-red{{end}}">★ {{if $post.CollectVoted}}已{{end}}收藏({{$post.CollectVote}})</span>
                         </a>
                         {{end}}
-{{/*                        <span class="text-sm text-coolGray"> · </span>*/}}
-{{/*                        <a class="text-coolGray" href="{{if or $post.UpVoted $post.DownVoted}}javascript:alert('已经表过态了！');void(0);{{else}}/vote?id={{$post.Pid}}&action=d&type=POST{{end}}">*/}}
-{{/*                            <span class="text-sm text-coolGray upVote {{if $post.DownVoted}}text-red{{end}}">▼ {{if $post.DownVoted}}已{{end}}反对({{$post.DownVote}})</span>*/}}
-{{/*                        </a>*/}}
                         {{ if and ($.userinfo) (eq $.userinfo.Role "admin")}}
                             {{ if or (eq $.selected "approve") (eq $.selected "detail")}}
                                 <form action="/inspect" method="post">
@@ -131,8 +135,33 @@
                                 </form>
                             {{end}}
                         {{end}}
-                    </div><br>
+                    </div>
                     {{end}}
+
+                    {{ if and (eq $.selected "detail") (gt (len $.relatedPosts) 0)}}
+                    <aside class="mt-8 mb-4">
+                        <h3 class="text-lg font-bold mb-4 dark:text-white/70" aria-label="相关文章推荐">相关文章推荐</h3>
+                        <div class="flex flex-col gap-3">
+                            {{range $.relatedPosts}}
+                            <div class="flex flex-row gap-2 items-start" itemscope itemtype="https://schema.org/Article">
+                                <div class="text-sm text-coolGray">·</div>
+                                <div class="flex flex-col flex-1">
+                                    <a href="/p/{{.Pid}}" class="text-sm hover:text-hover dark:text-white/70" itemprop="headline">{{.Title}}</a>
+                                    <div class="flex flex-row gap-2 items-center text-xs text-gray mt-1">
+                                        <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">{{.User.Username}}</span></span>
+                                        <span>·</span>
+                                        <time itemprop="datePublished" datetime="{{.CreatedAt}}">{{.CreatedAt | timeAgo}}</time>
+                                        <span>·</span>
+                                        <meta itemprop="commentCount" content="{{.CommentCount}}">
+                                        <span>{{.CommentCount}}评论</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </aside>
+                    {{end}}
+
                     {{ if eq $.selected "detail" }}
                         <form method="post" action="/p/comment" id="comment_form">
                             <input type="hidden" name="post_pid" value="{{$post.Pid}}">
@@ -170,8 +199,8 @@
                             }
                         }
                     </script>
-                </div>
-            </div>
+                </section>
+            </article>
         {{end}}
         {{ if eq $.selected "detail" }}
         <script src='{{getStaticPath "/js/mditor.js"}}'></script>
@@ -188,5 +217,5 @@
             {{end}}
         </script>
         {{end}}
-    </div>
+    </main>
 {{end}}
