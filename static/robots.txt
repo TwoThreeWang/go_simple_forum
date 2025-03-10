@@ -1,16 +1,23 @@
 User-agent: mauibot
 Disallow: /
 
-User-agent: semrushbot
-Disallow: /
-
-User-agent: blexbot
-Disallow: /
-
 User-agent: mj12bot
 Disallow: /
 
 User-agent: *
-Allow: /
+Disallow: /vote/
+Disallow: /t/
+Disallow: /type/
+Disallow: /tags
+Disallow: /search
+Disallow: /u/
+Disallow: /d/
+Disallow: /activate
+Disallow: /wait
+Disallow: /inspect
+Disallow: /punch
+Disallow: /message
+
+Crawl-delay: 3
 
 Sitemap: https://zhulink.vip/sitemap.xml
