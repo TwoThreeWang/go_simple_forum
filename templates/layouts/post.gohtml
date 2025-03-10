@@ -184,7 +184,7 @@
                     {{end}}
 
                     {{if and (gt (len $post.Comments) 0) (not (eq $.selected "mine"))}}
-                        <div id="comment-tree" class="mt-4 relative">
+                        <div id="comment-tree" class="mt-4 relative" itemprop="comment">
                             {{range $post.Comments}}
                                 {{template "comment" dict "Comment" . "Post" $post "Login" $.login "Userinfo" $.userinfo}}
                             {{end}}

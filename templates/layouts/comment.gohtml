@@ -3,7 +3,7 @@
     <meta itemprop="upvoteCount" content="{{.Comment.UpVote}}">
     <meta itemprop="commentCount" content="{{len .Comment.Comments}}">
     {{if eq .Comment.Post.Pid ""}}
-        <meta itemprop="url" content="#c-{{.Comment.CID}}">
+        <meta itemprop="url" content="/p/{{.Post.Pid}}#c-{{.Comment.CID}}">
     {{else}}
         <meta itemprop="url" content="/p/{{.Comment.Post.Pid}}#c-{{.Comment.CID}}">
     {{end}}
