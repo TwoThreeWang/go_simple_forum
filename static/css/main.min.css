@@ -18,9 +18,19 @@ a{text-decoration:none;color:inherit;word-break:break-all}
 .dark .content code{background:#1b222b;color:#b4b4b4}
 .content pre code{display:block;margin:.25em 0;padding:1em}
 .content pre,.content code{white-space:pre-wrap;word-wrap:break-word;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap}
-.content blockquote{background:#fff7d9;border-left:.3em solid #f4e59f;margin:.25em 0;padding:.5em .5em .5em .75em color:#000}
+.content>*:first-child{margin-top:5px !important}
+.content>*:last-child{margin-bottom:5px !important}
+.content hr{box-sizing:content-box;overflow:hidden;background:transparent;border-bottom:1px solid #3c3c3c;height:.25em;padding:0;margin:1rem 0;background-color:#3c3c3c;border:0}
+.content blockquote{background:#fff7d9;border-left:.3em solid #f4e59f;margin:.25em 0;padding:.5em .5em .5em .75em;color:#000}
 .content blockquote cite{border-bottom:1px solid #f4e59f;display:block;font-size:1em;font-weight:700;margin:0 -.5em .25em -.75em;padding:0 .5em .15em .75em}
-.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-bottom:1em;padding:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:1.5rem;margin-bottom:1rem;font-weight:600;line-height:1.25}
+.content h1{border-left:0.2em solid #5b88b6;padding-left:8px}
+.content h2{border-left:0.15em solid #c0dfff;padding-left:8px}
+.content h2{font-size:1.5em}
+.content h3{font-size:1.25em}
+.content h4{font-size:1em}
+.content h5{font-size:.875em}
+.content h6{font-size:.85em;color:#9198a1}
 .content div,.content p{min-height:1.25em;margin-bottom:0.8em}
 .content a{text-decoration:underline;color:#5b88b6}
 #comment-tree .comment:target{border:1px solid #ccc}
