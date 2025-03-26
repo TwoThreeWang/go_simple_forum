@@ -15,7 +15,7 @@ COPY . .
 COPY templates /app/templates
 COPY static /app/static
 RUN go mod tidy
-RUN go build -p 10 -ldflags="-s -w" -o /app/main main.go
+RUN go build -p $(nproc) -ldflags="-s -w" -o /app/main main.go
 
 
 FROM scratch
