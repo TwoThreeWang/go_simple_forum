@@ -23,6 +23,9 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	inspectHandler := do.MustInvoke[*InspectHandler](injector)
 	statisticsHandler := do.MustInvoke[*StatisticsHandler](injector)
 	_ = do.MustInvoke[*CommentHandler](injector)
+	// 静态文件
+	engine.StaticFile("/ads.txt", "./static/ads.txt")       // ads.txt
+	engine.StaticFile("/robots.txt", "./static/robots.txt") // robots.txt
 
 	engine.GET("/settings", indexHandler.ToSettings)    // 系统设置
 	engine.POST("/settings", indexHandler.SaveSettings) // 系统设置操作类
@@ -33,7 +36,6 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 
 	engine.GET("/", indexHandler.Index)                       // 热门帖子列表
 	engine.GET("/sitemap.xml", indexHandler.SiteMap)          // sitemap文件
-	engine.GET("/robots.txt", indexHandler.Robots)            // robots文件
 	engine.GET("/feed", indexHandler.Feed)                    // rss文件
 	engine.GET("/history", indexHandler.History)              // 全部帖子列表
 	engine.GET("/search", indexHandler.ToSearch)              // 搜索页

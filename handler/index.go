@@ -159,10 +159,6 @@ getPost:
 	c.String(200, rssXml)
 }
 
-func (i *IndexHandler) Robots(c *gin.Context) {
-	c.File("static/robots.txt")
-}
-
 func (i *IndexHandler) ToSearch(c *gin.Context) {
 	c.HTML(200, "search.gohtml", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "search",
