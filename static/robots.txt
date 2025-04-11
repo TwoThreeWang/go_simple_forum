@@ -20,4 +20,4 @@ Disallow: /message
 
 Crawl-delay: 3
 
-Sitemap: /sitemap.xml
+Sitemap: https://zhulink.vip/sitemap.xml
