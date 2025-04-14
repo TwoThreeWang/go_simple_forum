@@ -96,7 +96,8 @@
                             {{$post.Content | html}}
                         </section>
                         <script>
-                            var html = marked.parse('{{$post.Content | html}}');
+                            const options = {sanitize: true}; // 设置 sanitize 为 true 来移除 HTML 标签
+                            var html = marked.parse('{{$post.Content | html}}', options);
                             // 链接改为新标签页打开
                             html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
                             html = html.replaceAll('<img src','<img referrerpolicy="no-referrer" rel="noopener" loading="lazy" onerror="this.onerror=null; this.src=\'/static/imgerr.png\'" src');
