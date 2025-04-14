@@ -1,5 +1,6 @@
 {{define "post"}}
     <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
+    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/dompurify/2.3.6/purify.min.js" type="application/javascript"></script>
     <style>.mditor-mini textarea{min-height:100px} .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}</style>
     <script>function sendGetRequest(url){fetch(url)}</script>
     <main class="x-post-list flex flex-col gap-1">
@@ -92,16 +93,38 @@
                             <br>
                             <aside class="dark:text-black" style="background-color: #eee;padding:5px 10px;border-radius: 3px;font-size: smaller;">🔗 阅读原文：<a href="{{$post.Link}}" target="_blank">{{$post.Link}}</a></aside>
                         {{end}}
-                        <section class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">
-                            {{$post.Content | html}}
+                        <section class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">111
+                            {{$post.Content}}
                         </section>
                         <script>
-                            const options = {sanitize: true}; // 设置 sanitize 为 true 来移除 HTML 标签
-                            var html = marked.parse('{{$post.Content | html}}', options);
+                            function escapeHtml(html) {
+                                return html
+                                    .replace(/&/g, '&amp;')  // 一定先转义 &
+                                    .replace(/</g, '&lt;')
+                                    .replace(/>/g, '&gt;');
+                            }
+                            const renderer = new marked.Renderer();
+                            renderer.html = function(token) {
+                                const html = typeof token === 'string' ? token : token.raw || '';
+                                return escapeHtml(html);
+                            };
+                            marked.setOptions({
+                                renderer,
+                                gfm: true,
+                                headerIds: false,
+                                mangle: false
+                            });
+                            var html = marked.parse('{{$post.Content}}');
+                            var safeHtml = DOMPurify.sanitize(html);
                             // 链接改为新标签页打开
-                            html = html.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
-                            html = html.replaceAll('<img src','<img referrerpolicy="no-referrer" rel="noopener" loading="lazy" onerror="this.onerror=null; this.src=\'/static/imgerr.png\'" src');
-                            document.getElementById('post-content').innerHTML = html;
+                            safeHtml = safeHtml.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
+                            safeHtml = safeHtml.replaceAll(
+                                /<img([^>]*)>/g,
+                                (match, group1) => {
+                                    return `<img${group1} referrerpolicy="no-referrer" rel="noopener" loading="lazy" onerror="this.onerror=null; this.src=\'/static/imgerr.png\'">`;
+                                }
+                            );
+                            document.getElementById('post-content').innerHTML = safeHtml;
                         </script>
                     {{end}}
                     {{if or (eq $.selected "approve") (eq $.selected "detail")}}
