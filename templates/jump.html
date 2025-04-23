@@ -25,9 +25,6 @@
             height: 250px;
             border: 2px dashed #f1f1f1;
         }
-        #tips {
-            display: none;
-        }
 
         @media (max-width: 600px) {
             .container {
@@ -107,9 +104,8 @@
         const observer = new MutationObserver(mutationsList => {
             for (const adContainer of adContainers) {
                 const adStatus = adContainer.getAttribute('data-ad-status');
-                if (adStatus !== 'filled') {
-                    tipsElement.style.display='block';
-                    adContainer.style.display='none';
+                if (adStatus == 'filled') {
+                    tipsElement.style.display='none';
                     break;
                 }
             }
