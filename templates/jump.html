@@ -17,7 +17,7 @@
             grid-gap: 30px;
             grid-template-columns: 300px 1fr;
         }
-        .pic {
+        #tips {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -26,7 +26,7 @@
             border: 2px dashed #f1f1f1;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 800px) {
             .container {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto auto;
@@ -105,8 +105,11 @@
             for (const adContainer of adContainers) {
                 const adStatus = adContainer.getAttribute('data-ad-status');
                 if (adStatus == 'filled') {
-                    tipsElement.style.display='none';
+                    tipsElement.style.display = 'none';
                     break;
+                }else if (adStatus == 'unfilled' || adStatus == 'done'){
+                    adContainer.style.display = 'none';
+                    tipsElement.style.display = 'flex';
                 }
             }
         });
