@@ -26,6 +26,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	// 静态文件
 	engine.StaticFile("/ads.txt", "./static/ads.txt")       // ads.txt
 	engine.StaticFile("/robots.txt", "./static/robots.txt") // robots.txt
+	engine.StaticFile("/jump", "./templates/jump.html")     // 跳转页
 
 	engine.GET("/settings", indexHandler.ToSettings)    // 系统设置
 	engine.POST("/settings", indexHandler.SaveSettings) // 系统设置操作类

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>页面跳转提示 - 安全中心</title>
+    <meta name="description" content="您即将离开本站跳转到三方链接，请注意账号和财产安全！">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4678475430515042" crossorigin="anonymous"></script>
+    <style>
+        body,html{margin:0;padding:0;}
+        .container {
+            max-width:800px;
+            padding: 20px;
+            margin: 10% auto 10px auto;
+            display: grid;
+            grid-gap: 30px;
+            grid-template-columns: 300px 1fr;
+        }
+        .pic {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 200px;
+            border: 2px dashed #f1f1f1;
+        }
+        .tips {
+            display: none;
+        }
+        ins.adsbygoogle[data-ad-status="unfilled"] {
+            display: none !important;
+        }
+        ins.adsbygoogle[data-ad-status="unfilled"] ~ .goo {
+            display: none !important;
+        }
+        ins.adsbygoogle[data-ad-status="unfilled"] ~ .tips {
+            display: block !important;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="pic">
+        <center>
+            <span class="tips">如果小站内容有价值，还请将本站加到广告白名单，感谢支持！</span>
+            <span class="goo">
+			<!-- 300*250矩形 -->
+			<ins class="adsbygoogle"
+                 style="display:inline-block;width:300px;height:250px"
+                 data-ad-client="ca-pub-4678475430515042"
+                 data-ad-slot="1726815067"></ins>
+			<script>
+				 (adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+			</span>
+        </center>
+    </div>
+    <div>
+        <h1>页面跳转提示！</h1>
+        <p>您即将离开 <b id="title">本站</b> 跳转到三方链接，请注意您的帐号和财产安全。</p>
+        <p id="url"></p>
+        <small>将在 <span id="countdown">10</span> 秒后自动跳转...</small>
+    </div>
+</div>
+<script>
+    function getUrlParams(url) {
+        const searchIndex = url.indexOf('?');
+        if (searchIndex === -1) {
+            return {};
+        }
+        const queryString = url.substring(searchIndex + 1);
+        const params = {};
+        queryString.split('&').forEach(pair => {
+            const [key, value] = pair.split('=');
+            if (key) {
+                params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+            }
+        });
+        return params;
+    }
+
+    // 获取当前 URL 的参数
+    const currentUrlParams = getUrlParams(window.location.href);
+    console.log(currentUrlParams);
+    console.log(currentUrlParams['url']);
+    console.log(currentUrlParams['title']);
+    const targetUrl = currentUrlParams['url'];
+    if (targetUrl) {
+        document.getElementById('url').innerHTML = '点击打开：<a href="'+targetUrl+'">'+targetUrl+'</a>';
+    }else{
+        alert("跳转网址错误！");
+        window.history.back();
+    }
+    if (currentUrlParams['title']) {
+        document.getElementById('title').textContent = currentUrlParams['title'];
+    }
+    let seconds = 10;
+    const countdownElement = document.getElementById('countdown');
+    const countdownInterval = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(countdownInterval);
+            // window.location.href = targetUrl;
+        }
+    }, 1000);
+</script>
+</body>
+</html>
