@@ -25,12 +25,8 @@
             height: 250px;
             border: 2px dashed #f1f1f1;
         }
-        ins.adsbygoogle[data-adsbygoogle-status="unfilled"] {
-            display: none !important;
-        }
-        ins.adsbygoogle[data-adsbygoogle-status="done"] + .tips,
-        ins.adsbygoogle[data-adsbygoogle-status="done"] ~ .tips {
-            display: none !important;
+        #tips {
+            display: none;
         }
 
         @media (max-width: 600px) {
@@ -53,7 +49,7 @@
 			<script>
 				 (adsbygoogle = window.adsbygoogle || []).push({});
 			</script>
-            <span class="tips">如果小站内容有价值，还请将本站加到广告白名单，感谢支持！</span>
+            <span id="tips">如果小站内容有价值，还请将本站加到广告白名单，感谢支持！</span>
         </center>
     </div>
     <div>
@@ -105,6 +101,23 @@
             // window.location.href = targetUrl;
         }
     }, 1000);
+    document.addEventListener('DOMContentLoaded', function() {
+        const adContainers = document.querySelectorAll('ins.adsbygoogle');
+        const tipsElement = document.getElementById('tips');
+        const observer = new MutationObserver(mutationsList => {
+            for (const adContainer of adContainers) {
+                const adStatus = adContainer.getAttribute('data-ad-status');
+                if (adStatus !== 'filled') {
+                    tipsElement.style.display='block';
+                    adContainer.style.display='none';
+                    break;
+                }
+            }
+        });
+        adContainers.forEach(adContainer => {
+            observer.observe(adContainer, { attributes: true });
+        });
+    });
 </script>
 </body>
 </html>
