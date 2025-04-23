@@ -117,7 +117,7 @@
                             var html = marked.parse('{{$post.Content}}');
                             var safeHtml = DOMPurify.sanitize(html);
                             // 链接改为新标签页打开
-                            safeHtml = safeHtml.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
+                            safeHtml = safeHtml.replaceAll('<a href="http','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href="/jump?url=http');
                             safeHtml = safeHtml.replaceAll(
                                 /<img([^>]*)>/g,
                                 (match, group1) => {
