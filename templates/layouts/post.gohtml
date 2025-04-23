@@ -117,7 +117,7 @@
                             var html = marked.parse('{{$post.Content}}');
                             var safeHtml = DOMPurify.sanitize(html);
                             // 链接改为新标签页打开
-                            safeHtml = safeHtml.replaceAll('<a href="http','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href="/jump?url=http');
+                            safeHtml = safeHtml.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
                             safeHtml = safeHtml.replaceAll(
                                 /<img([^>]*)>/g,
                                 (match, group1) => {
@@ -125,6 +125,16 @@
                                 }
                             );
                             document.getElementById('post-content').innerHTML = safeHtml;
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const links = document.querySelectorAll('a[rel="noopener noreferrer"]');
+                                links.forEach(link => {
+                                    const href = link.getAttribute('href');
+                                    if (href && !href.startsWith('/jump?url=')) {
+                                        const newHref = '/jump?url=' + encodeURIComponent(href);
+                                        link.setAttribute('href', newHref);
+                                    }
+                                });
+                            });
                         </script>
                     {{end}}
                     {{if or (eq $.selected "approve") (eq $.selected "detail")}}

@@ -75,7 +75,7 @@
 
     // 获取当前 URL 的参数
     const currentUrlParams = getUrlParams(window.location.href);
-    const targetUrl = currentUrlParams['url'];
+    const targetUrl = decodeURIComponent(currentUrlParams['url']);
     if (targetUrl) {
         document.getElementById('url').innerHTML = '点击打开：<a href="'+targetUrl+'">'+targetUrl+'</a>';
     }else{
