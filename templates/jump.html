@@ -88,16 +88,18 @@
     if (currentUrlParams['title']) {
         document.getElementById('title').textContent = currentUrlParams['title'];
     }
-    let seconds = 10;
-    const countdownElement = document.getElementById('countdown');
-    const countdownInterval = setInterval(() => {
-        seconds--;
-        countdownElement.textContent = seconds;
-        if (seconds <= 0) {
-            clearInterval(countdownInterval);
-            // window.location.href = targetUrl;
-        }
-    }, 1000);
+    function jump(seconds){
+        const countdownElement = document.getElementById('countdown');
+        const countdownInterval = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                // window.location.href = targetUrl;
+            }
+        }, 1000);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const adContainers = document.querySelectorAll('ins.adsbygoogle');
         const tipsElement = document.getElementById('tips');
@@ -116,6 +118,18 @@
         adContainers.forEach(adContainer => {
             observer.observe(adContainer, { attributes: true });
         });
+        // 检测积分墙
+        const fcMessageRootElement = document.querySelector('.fc-message-root');
+        if (fcMessageRootElement) {
+            console.log("class='fc-message-root' 的元素存在");
+            googletag.pubads().addEventListener('rewarded_ad_impression', function() {
+              isRewardedAdDisplayed = true;
+              console.log('积分墙消息已展示');
+              jump(3);
+            });
+        }else{
+            jump(10);
+        }
     });
 </script>
 </body>
