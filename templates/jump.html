@@ -75,9 +75,6 @@
 
     // 获取当前 URL 的参数
     const currentUrlParams = getUrlParams(window.location.href);
-    console.log(currentUrlParams);
-    console.log(currentUrlParams['url']);
-    console.log(currentUrlParams['title']);
     const targetUrl = currentUrlParams['url'];
     if (targetUrl) {
         document.getElementById('url').innerHTML = '点击打开：<a href="'+targetUrl+'">'+targetUrl+'</a>';
@@ -92,10 +89,7 @@
         // 检测积分墙
         const fcMessageRootElement = document.querySelector('.fc-message-root');
         if (fcMessageRootElement) {
-            console.log("class='fc-message-root' 的元素存在");
             googletag.pubads().addEventListener('rewarded_ad_impression', function() {
-                isRewardedAdDisplayed = true;
-                console.log('积分墙消息已展示');
                 return 1
             });
         }
@@ -109,8 +103,7 @@
             countdownElement.textContent = seconds;
             if (seconds <= 0) {
                 clearInterval(countdownInterval);
-                // window.location.href = targetUrl;
-                console.log("跳转");
+                window.location.href = targetUrl;
             }
         }, 1000);
     }
