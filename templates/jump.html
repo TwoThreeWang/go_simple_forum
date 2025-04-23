@@ -88,10 +88,24 @@
     if (currentUrlParams['title']) {
         document.getElementById('title').textContent = currentUrlParams['title'];
     }
+    function check_fc(seconds){
+        // 检测积分墙
+        const fcMessageRootElement = document.querySelector('.fc-message-root');
+        if (fcMessageRootElement) {
+            console.log("class='fc-message-root' 的元素存在");
+            googletag.pubads().addEventListener('rewarded_ad_impression', function() {
+                isRewardedAdDisplayed = true;
+                console.log('积分墙消息已展示');
+                return 1
+            });
+        }
+        return seconds
+    }
     function jump(seconds){
         const countdownElement = document.getElementById('countdown');
         const countdownInterval = setInterval(() => {
             seconds--;
+            seconds = check_fc(seconds);
             countdownElement.textContent = seconds;
             if (seconds <= 0) {
                 clearInterval(countdownInterval);
@@ -119,18 +133,7 @@
         adContainers.forEach(adContainer => {
             observer.observe(adContainer, { attributes: true });
         });
-        // 检测积分墙
-        const fcMessageRootElement = document.querySelector('.fc-message-root');
-        if (fcMessageRootElement) {
-            console.log("class='fc-message-root' 的元素存在");
-            googletag.pubads().addEventListener('rewarded_ad_impression', function() {
-              isRewardedAdDisplayed = true;
-              console.log('积分墙消息已展示');
-              jump(3);
-            });
-        }else{
-            jump(10);
-        }
+        jump(10);
     });
 </script>
 </body>
