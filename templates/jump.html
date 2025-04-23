@@ -15,7 +15,7 @@
             margin: 10% auto 10px auto;
             display: grid;
             grid-gap: 30px;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 1fr 300px;
         }
         #tips {
             display: flex;
@@ -36,6 +36,12 @@
 </head>
 <body>
 <div class="container">
+    <div>
+        <h1>页面跳转提示！</h1>
+        <p>您即将离开 <b id="title">本站</b> 跳转到三方链接，请注意您的帐号和财产安全。</p>
+        <p id="url"></p>
+        <small>将在 <span id="countdown">10</span> 秒后自动跳转...</small>
+    </div>
     <div class="pic">
         <center>
             <span id="tips">如果小站内容有价值，还请将本站加到广告白名单，感谢支持！</span>
@@ -48,12 +54,6 @@
 				 (adsbygoogle = window.adsbygoogle || []).push({});
 			</script>
         </center>
-    </div>
-    <div>
-        <h1>页面跳转提示！</h1>
-        <p>您即将离开 <b id="title">本站</b> 跳转到三方链接，请注意您的帐号和财产安全。</p>
-        <p id="url"></p>
-        <small>将在 <span id="countdown">10</span> 秒后自动跳转...</small>
     </div>
 </div>
 <script>
