@@ -4,8 +4,12 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/kingwrcy/hn/vo"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/utils"
@@ -62,7 +66,12 @@ func CacheMiddleware(duration time.Duration) gin.HandlerFunc {
 func generateCacheKey(c *gin.Context) string {
 	// 使用完整URL作为key的一部分
 	data := c.Request.URL.String()
-
+	// 添加用户信息（如果需要）
+	session := sessions.Default(c)
+	userinfo := session.Get("userinfo")
+	if v, ok := userinfo.(vo.Userinfo); ok {
+		data += "_user_" + fmt.Sprint(v.ID)
+	}
 	// 计算hash作为缓存key
 	hash := sha256.Sum256([]byte(data))
 	return "route_cache:" + hex.EncodeToString(hash[:])
