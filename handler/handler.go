@@ -1,17 +1,19 @@
 package handler
 
 import (
+	"math/rand"
+	"os"
+	"time"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/kingwrcy/hn/middleware"
 	"github.com/kingwrcy/hn/model"
 	"github.com/kingwrcy/hn/provider"
 	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"gorm.io/gorm"
-	"math/rand"
-	"os"
-	"time"
 )
 
 func SetupRouter(injector *do.Injector, engine *gin.Engine) {
@@ -35,54 +37,54 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	engine.GET("/statistics", statisticsHandler.Query)  // 统计页
 	engine.GET("/img_dl", utils.GetImg)                 // 图片代理
 
-	engine.GET("/", indexHandler.Index)                       // 热门帖子列表
-	engine.GET("/sitemap.xml", indexHandler.SiteMap)          // sitemap文件
-	engine.GET("/feed", indexHandler.Feed)                    // rss文件
-	engine.GET("/history", indexHandler.History)              // 全部帖子列表
-	engine.GET("/search", indexHandler.ToSearch)              // 搜索页
-	engine.GET("/new", indexHandler.ToNew)                    // 发布新贴
-	engine.GET("/s/:pid", indexHandler.ToPost)                //
-	engine.GET("/resetPwd", indexHandler.ToResetPwd)          // 重置密码申请页
-	engine.POST("/resetPwd", indexHandler.DoResetPwd)         // 重置密码操作类（发送重置链接邮件）
-	engine.GET("/resetPwdEdit", indexHandler.ToResetPwdEdit)  // 重置密码操作页
-	engine.POST("/resetPwdEdit", indexHandler.DoResetPwdEdit) // 重置密码操作类
-	engine.GET("/tags", indexHandler.ToTags)                  // 标签页面
-	engine.GET("/tags/edit/:id", indexHandler.ToEditTag)      // 编辑标签页面
-	engine.POST("/tags/edit", indexHandler.SaveTag)           // 编辑标签操作类
-	engine.GET("/tags/add", indexHandler.ToAddTag)            // 新增标签
-	engine.POST("/tags/remove", indexHandler.RemoveTag)       // 删除标签
-	engine.GET("/wait", indexHandler.ToWaitApproved)          // 等待审核列表
-	engine.GET("/comments", indexHandler.ToComments)          // 全部评论列表
-	engine.GET("/vote", indexHandler.Vote)                    // 投票
-	engine.GET("/delcomment", indexHandler.DelComment)        // 删除评论
-	engine.GET("/moderations", indexHandler.Moderation)       // 审核日志
-	engine.GET("/d/:domainName", indexHandler.SearchByDomain) // 根据分享域名获取帖子列表
-	engine.POST("/search", indexHandler.DoSearch)             // 搜索操作类
-	engine.GET("/invite/:code", userHandler.ToInvited)        // 邀请注册
-	engine.POST("/invite/:code", userHandler.DoInvited)       // 邀请注册操作类
-	engine.GET("/type/:type", postHandler.SearchByType)       // 根据类型获取帖子列表
-	engine.GET("/users", userHandler.ToList)                  // 用户列表
-	engine.GET("/activate", indexHandler.Activate)            // 发送激活邮件
-	engine.POST("/inspect", inspectHandler.Inspect)           // 帖子审核
+	engine.GET("/", middleware.CacheMiddleware(5*time.Minute), indexHandler.Index)                       // 热门帖子列表
+	engine.GET("/sitemap.xml", indexHandler.SiteMap)                                                     // sitemap文件
+	engine.GET("/feed", indexHandler.Feed)                                                               // rss文件
+	engine.GET("/history", middleware.CacheMiddleware(5*time.Minute), indexHandler.History)              // 全部帖子列表
+	engine.GET("/search", indexHandler.ToSearch)                                                         // 搜索页
+	engine.GET("/new", indexHandler.ToNew)                                                               // 发布新贴
+	engine.GET("/s/:pid", indexHandler.ToPost)                                                           //
+	engine.GET("/resetPwd", indexHandler.ToResetPwd)                                                     // 重置密码申请页
+	engine.POST("/resetPwd", indexHandler.DoResetPwd)                                                    // 重置密码操作类（发送重置链接邮件）
+	engine.GET("/resetPwdEdit", indexHandler.ToResetPwdEdit)                                             // 重置密码操作页
+	engine.POST("/resetPwdEdit", indexHandler.DoResetPwdEdit)                                            // 重置密码操作类
+	engine.GET("/tags", middleware.CacheMiddleware(5*time.Minute), indexHandler.ToTags)                  // 标签页面
+	engine.GET("/tags/edit/:id", indexHandler.ToEditTag)                                                 // 编辑标签页面
+	engine.POST("/tags/edit", indexHandler.SaveTag)                                                      // 编辑标签操作类
+	engine.GET("/tags/add", indexHandler.ToAddTag)                                                       // 新增标签
+	engine.POST("/tags/remove", indexHandler.RemoveTag)                                                  // 删除标签
+	engine.GET("/wait", indexHandler.ToWaitApproved)                                                     // 等待审核列表
+	engine.GET("/comments", middleware.CacheMiddleware(5*time.Minute), indexHandler.ToComments)          // 全部评论列表
+	engine.GET("/vote", indexHandler.Vote)                                                               // 投票
+	engine.GET("/delcomment", indexHandler.DelComment)                                                   // 删除评论
+	engine.GET("/moderations", middleware.CacheMiddleware(5*time.Minute), indexHandler.Moderation)       // 审核日志
+	engine.GET("/d/:domainName", middleware.CacheMiddleware(5*time.Minute), indexHandler.SearchByDomain) // 根据分享域名获取帖子列表
+	engine.POST("/search", indexHandler.DoSearch)                                                        // 搜索操作类
+	engine.GET("/invite/:code", userHandler.ToInvited)                                                   // 邀请注册
+	engine.POST("/invite/:code", userHandler.DoInvited)                                                  // 邀请注册操作类
+	engine.GET("/type/:type", middleware.CacheMiddleware(5*time.Minute), postHandler.SearchByType)       // 根据类型获取帖子列表
+	engine.GET("/users", middleware.CacheMiddleware(5*time.Minute), userHandler.ToList)                  // 用户列表
+	engine.GET("/activate", indexHandler.Activate)                                                       // 发送激活邮件
+	engine.POST("/inspect", inspectHandler.Inspect)                                                      // 帖子审核
 
 	userGroup := engine.Group("/u")
-	userGroup.POST("/login", userHandler.Login)                        // 登录操作类
-	userGroup.GET("/login", userHandler.ToLogin)                       // 登录
-	userGroup.GET("/logout", userHandler.Logout)                       // 退出登录
-	userGroup.GET("/profile/:userid", userHandler.Links)               // 用户主页
-	userGroup.GET("/profile/:userid/edit", userHandler.UserEdit)       // 用户信息修改
-	userGroup.POST("/profile/edit", userHandler.SaveUser)              // 用户信息修改操作类
-	userGroup.GET("/profile/:userid/asks", userHandler.Asks)           // 用户讨论贴子列表
-	userGroup.GET("/profile/:userid/links", userHandler.Links)         // 用户分享帖子列表
-	userGroup.GET("/profile/:userid/comments", userHandler.Comments)   // 用户评论帖子列表
-	userGroup.GET("/profile/:userid/collects", userHandler.Collects)   // 用户收藏帖子列表
-	userGroup.GET("/message/setAllRead", userHandler.SetAllRead)       // 消息全部已读
-	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead) // 消息已读
-	userGroup.GET("/message", userHandler.ToMessage)                   // 消息列表页
-	userGroup.GET("/invite", userHandler.InviteList)                   // 邀请页
-	userGroup.GET("/addinvite", userHandler.InviteNew)                 // 邀请码生成
-	userGroup.GET("/status", userHandler.SetStatus)                    // 修改用户状态（激活或者禁止）
-	userGroup.GET("/punch", userHandler.Punch)                         // 签到
+	userGroup.POST("/login", userHandler.Login)                                                                 // 登录操作类
+	userGroup.GET("/login", userHandler.ToLogin)                                                                // 登录
+	userGroup.GET("/logout", userHandler.Logout)                                                                // 退出登录
+	userGroup.GET("/profile/:userid", middleware.CacheMiddleware(5*time.Minute), userHandler.Links)             // 用户主页
+	userGroup.GET("/profile/:userid/edit", userHandler.UserEdit)                                                // 用户信息修改
+	userGroup.POST("/profile/edit", userHandler.SaveUser)                                                       // 用户信息修改操作类
+	userGroup.GET("/profile/:userid/asks", middleware.CacheMiddleware(5*time.Minute), userHandler.Asks)         // 用户讨论贴子列表
+	userGroup.GET("/profile/:userid/links", middleware.CacheMiddleware(5*time.Minute), userHandler.Links)       // 用户分享帖子列表
+	userGroup.GET("/profile/:userid/comments", middleware.CacheMiddleware(5*time.Minute), userHandler.Comments) // 用户评论帖子列表
+	userGroup.GET("/profile/:userid/collects", middleware.CacheMiddleware(5*time.Minute), userHandler.Collects) // 用户收藏帖子列表
+	userGroup.GET("/message/setAllRead", userHandler.SetAllRead)                                                // 消息全部已读
+	userGroup.GET("/message/setSingleRead", userHandler.SetSingleRead)                                          // 消息已读
+	userGroup.GET("/message", userHandler.ToMessage)                                                            // 消息列表页
+	userGroup.GET("/invite", userHandler.InviteList)                                                            // 邀请页
+	userGroup.GET("/addinvite", userHandler.InviteNew)                                                          // 邀请码生成
+	userGroup.GET("/status", userHandler.SetStatus)                                                             // 修改用户状态（激活或者禁止）
+	userGroup.GET("/punch", userHandler.Punch)                                                                  // 签到
 
 	engine.POST("/oauth/callback/google", userHandler.Oauth) // 三方登录
 
@@ -90,16 +92,16 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	//commentGroup.GET("/vote", commentHandler.Vote)
 
 	postGroup := engine.Group("/p")
-	postGroup.POST("/new", postHandler.Add)             // 发布新帖操作类
-	postGroup.GET("/:pid", postHandler.Detail)          // 帖子详情
-	postGroup.GET("/:pid/edit", postHandler.ToEdit)     // 帖子编辑
-	postGroup.POST("/:pid/edit", postHandler.DoUpdate)  // 帖子编辑操作类
-	postGroup.POST("/comment", postHandler.AddComment)  // 发布评论
-	postGroup.GET("/click/:pid", postHandler.ClickPost) // 增加点击量
+	postGroup.POST("/new", postHandler.Add)                                               // 发布新帖操作类
+	postGroup.GET("/:pid", middleware.CacheMiddleware(5*time.Minute), postHandler.Detail) // 帖子详情
+	postGroup.GET("/:pid/edit", postHandler.ToEdit)                                       // 帖子编辑
+	postGroup.POST("/:pid/edit", postHandler.DoUpdate)                                    // 帖子编辑操作类
+	postGroup.POST("/comment", postHandler.AddComment)                                    // 发布评论
+	postGroup.GET("/click/:pid", postHandler.ClickPost)                                   // 增加点击量
 
 	tagGroup := engine.Group("/t")
-	tagGroup.GET("/:tag", postHandler.SearchByTag)         // 标签页
-	tagGroup.GET("/p/:tag", postHandler.SearchByParentTag) // 标签下帖子
+	tagGroup.GET("/:tag", middleware.CacheMiddleware(5*time.Minute), postHandler.SearchByTag)         // 标签页
+	tagGroup.GET("/p/:tag", middleware.CacheMiddleware(5*time.Minute), postHandler.SearchByParentTag) // 标签下帖子
 
 }
 

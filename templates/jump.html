@@ -6,6 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>页面跳转提示 - 安全中心</title>
     <meta name="description" content="您即将离开本站跳转到三方链接，请注意账号和财产安全！">
+    <!-- 预解析DNS -->
+    <link rel="dns-prefetch" href="https://zhulink.vip/">
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="http://analysis.wangtwothree.com/">
+    <!-- 预连接 -->
+    <link rel="preconnect" href="https://zhulink.vip/" crossorigin>
+    <!-- 预渲染页面 -->
+    <link rel="prerender" href="https://zhulink.vip/">
+    <link rel="prefetch" href="https://zhulink.vip/">
+    <script async src="https://analysis.wangtwothree.com/random-string.js" data-website-id="68cb6933-0504-492e-bd3d-71ddd8147518"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4678475430515042" crossorigin="anonymous"></script>
     <style>
         body,html{margin:0;padding:0;}
@@ -40,7 +50,7 @@
         }
     </style>
 </head>
-<body>
+<body data-instant-allow-external-links>
 <div class="container">
     <div>
         <h1>页面跳转提示！</h1>
@@ -83,7 +93,27 @@
     const currentUrlParams = getUrlParams(window.location.href);
     const targetUrl = decodeURIComponent(currentUrlParams['url']);
     if (targetUrl) {
-        document.getElementById('url').innerHTML = '点击打开：<a href="'+targetUrl+'">'+targetUrl+'</a>';
+        document.getElementById('url').innerHTML = '点击打开：<a href="'+targetUrl+'" data-instant-intensity="viewport">'+targetUrl+'</a>';
+        // --- 修改 <link rel="dns-prefetch"> ---
+        const dnsPrefetchLink = document.querySelector('link[rel="dns-prefetch"]');
+        if (dnsPrefetchLink) {
+            dnsPrefetchLink.href = targetUrl;
+        }
+        // --- 修改 <link rel="preconnect"> ---
+        const preconnectLink = document.querySelector('link[rel="preconnect"]');
+        if (preconnectLink) {
+            preconnectLink.href = targetUrl;
+        }
+        // --- 修改 <link rel="prerender"> ---
+        const prerenderLink = document.querySelector('link[rel="prerender"]');
+        if (prerenderLink) {
+            prerenderLink.href = targetUrl;
+        }
+        // --- 修改 <link rel="prefetch"> ---
+        const prefetchLink = document.querySelector('link[rel="prefetch"]');
+        if (prefetchLink) {
+            prefetchLink.href = targetUrl;
+        }
     }else{
         alert("跳转网址错误！");
         window.history.back();
@@ -135,5 +165,6 @@
         jump(10);
     });
 </script>
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/instant.page/5.1.0/instantpage.min.js" type="application/javascript"></script>
 </body>
 </html>
