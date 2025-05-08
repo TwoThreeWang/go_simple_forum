@@ -63,7 +63,7 @@
                     <a href="/u/message">消息({{.unReadMessageCount}})</a>
                 </div>
                 <div class='x-header-item flex gap-1 items-center hover:text-hover'>
-                    <a href="/u/punch">签到</a>
+                    <a href="/u/punch" data-no-instant>签到</a>
                 </div>
             {{else}}
                 <div class='x-header-item flex items-center gap-1 hover:text-hover {{if eq .selected "login"}}selected{{end}}'>
