@@ -1,9 +1,13 @@
 package utils
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 // Cache 内存缓存
 type Cache struct {
+	mu       sync.Mutex
 	Data     map[string]interface{}
 	ExpireAt map[string]time.Time
 }
@@ -26,4 +30,12 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 func (c *Cache) Set(key string, value interface{}, duration time.Duration) {
 	c.Data[key] = value
 	c.ExpireAt[key] = time.Now().Add(duration)
+}
+
+// Delete 删除缓存数据
+func (c *Cache) Delete(key string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	delete(c.Data, key)
+	delete(c.ExpireAt, key)
 }

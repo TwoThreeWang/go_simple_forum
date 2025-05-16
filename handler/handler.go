@@ -92,12 +92,12 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	//commentGroup.GET("/vote", commentHandler.Vote)
 
 	postGroup := engine.Group("/p")
-	postGroup.POST("/new", postHandler.Add)                                               // 发布新帖操作类
-	postGroup.GET("/:pid", middleware.CacheMiddleware(5*time.Minute), postHandler.Detail) // 帖子详情
-	postGroup.GET("/:pid/edit", postHandler.ToEdit)                                       // 帖子编辑
-	postGroup.POST("/:pid/edit", postHandler.DoUpdate)                                    // 帖子编辑操作类
-	postGroup.POST("/comment", postHandler.AddComment)                                    // 发布评论
-	postGroup.GET("/click/:pid", postHandler.ClickPost)                                   // 增加点击量
+	postGroup.POST("/new", postHandler.Add)             // 发布新帖操作类
+	postGroup.GET("/:pid", postHandler.Detail)          // 帖子详情
+	postGroup.GET("/:pid/edit", postHandler.ToEdit)     // 帖子编辑
+	postGroup.POST("/:pid/edit", postHandler.DoUpdate)  // 帖子编辑操作类
+	postGroup.POST("/comment", postHandler.AddComment)  // 发布评论
+	postGroup.GET("/click/:pid", postHandler.ClickPost) // 增加点击量
 
 	tagGroup := engine.Group("/t")
 	tagGroup.GET("/:tag", middleware.CacheMiddleware(5*time.Minute), postHandler.SearchByTag)         // 标签页
@@ -183,6 +183,7 @@ func OutputCommonSession(injector *do.Injector, c *gin.Context, h ...gin.H) gin.
 	result["path"] = c.Request.URL.Path
 	result["refer"] = c.Request.Referer()
 	result["VERSION"] = os.Getenv("VERSION")
+	result["cacheTime"] = time.Now().Format("15:04:05")
 	result["settings"] = settings.Content
 	result["staticCdnPrefix"] = config.StaticCdnPrefix
 	result["executionTime"] = time.Since(time.UnixMilli(start)).Milliseconds()
