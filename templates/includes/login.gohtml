@@ -25,6 +25,7 @@
                     <input type="password" name="password" class="input" value="" autocomplete="off"/>
                 </div>
             </div>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAABe0A7qZtBoYRAFQ" data-callback="onSubmitForm"></div>
             <div class="flex flex-row gap-2 items-center">
                 <button class="btn" type="submit">登录</button>
                 <div class="text-red text-sm">{{.msg}}</div>
@@ -47,5 +48,6 @@
         </div>
     </form>
 </div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{end}}
 {{ define "afterBody"}}{{end}}

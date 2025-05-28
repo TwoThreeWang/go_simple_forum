@@ -12,3 +12,5 @@ EmailSmtpPort=465
 GIN_MODE=debug
 ClientID=配置google登录用的应用ID
 ClientSecret=配置google登录用的应用密钥
+CFSecretKey: Cloudflare Turnstile SecretKey
+CFVerifyURL: https://challenges.cloudflare.com/turnstile/v0/siteverify

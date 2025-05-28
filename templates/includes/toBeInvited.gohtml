@@ -54,6 +54,7 @@
                             </div>
                         </div>
                     {{end}}
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAABe0A7qZtBoYRAFQ" data-callback="onSubmitForm"></div>
                     <div class="flex gap-2">
                         <input type="submit" value="注册用户" class="btn py-1 px-4">
                         <div class="g_id_signin"
@@ -74,4 +75,5 @@
     const divElement = document.getElementById('g_id_onload');
     divElement.setAttribute('data-invite_code', '{{.code}}');
 </script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{ define "afterBody"}}{{end}}

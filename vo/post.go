@@ -11,6 +11,7 @@ type NewPostRequest struct {
 	Content string `form:"content"`
 	Type    string `form:"type"`
 	Top     string `form:"top"`
+	CfTurnstile string `form:"cf-turnstile-response,omitempty"`
 }
 
 type NewCommentRequest struct {

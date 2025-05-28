@@ -5,6 +5,14 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log"
+	"math/rand"
+	"net/mail"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/model"
@@ -16,13 +24,6 @@ import (
 	"google.golang.org/api/idtoken"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"log"
-	"math/rand"
-	"net/mail"
-	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type UserHandler struct {
@@ -43,6 +44,24 @@ func (u *UserHandler) Login(c *gin.Context) {
 	if err != nil {
 		c.HTML(200, "login.gohtml", gin.H{
 			"msg":      "参数错误",
+			"selected": "login",
+		})
+		return
+	}
+	// 验证 Turnstile 令牌
+	if request.CfTurnstile != "" {
+		remoteIP := c.ClientIP()
+		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
+		if err!= nil {
+			c.HTML(200, "login.gohtml", gin.H{
+				"msg":      "验证 Turnstile 令牌失败：" + err.Error(),
+				"selected": "login",
+			})
+			return
+		}
+	}else{
+		c.HTML(200, "login.gohtml", gin.H{
+			"msg":      "验证 Turnstile 令牌失败：缺少验证参数",
 			"selected": "login",
 		})
 		return
@@ -808,6 +827,23 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 		}))
 		return
 	}
+	// 验证 Turnstile 令牌
+	if request.CfTurnstile != "" {
+		remoteIP := c.ClientIP()
+		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
+		if err!= nil {
+			c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{
+				"msg": "验证 Turnstile 令牌失败：" + err.Error(),
+			}))
+			return
+		}
+	}else{
+		c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{
+			"msg": "验证 Turnstile 令牌失败：缺少验证参数",
+		}))
+		return
+	}
+
 	if len(request.Username) < 3 {
 		c.HTML(200, "toBeInvited.gohtml", OutputCommonSession(u.injector, c, gin.H{
 			"msg": "用户名长度必须大于3位", "code": code,

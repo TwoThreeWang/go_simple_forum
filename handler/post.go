@@ -63,6 +63,22 @@ func (p PostHandler) DoUpdate(c *gin.Context) {
 		c.Redirect(302, "/")
 		return
 	}
+	// 验证 Turnstile 令牌
+	if request.CfTurnstile != "" {
+		remoteIP := c.ClientIP()
+		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
+		if err!= nil {
+			c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+				"title": "参数错误", "msg": "验证 Turnstile 令牌失败：" + err.Error(),
+			}))
+			return
+		}
+	}else{
+		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"title": "参数错误", "msg": "验证 Turnstile 令牌失败：缺少验证参数",
+		}))
+		return
+	}
 	var post model.TbPost
 	if err := p.db.Preload("Tags").First(&post, "pid = ?", pid).Error; err != nil {
 		c.Redirect(302, "/")
@@ -282,6 +298,26 @@ func (p PostHandler) Add(c *gin.Context) {
 	if err := c.Bind(&request); err != nil {
 		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "参数异常",
+			"selected": "new",
+			"tags":     tempTags,
+		}))
+		return
+	}
+	// 验证 Turnstile 令牌
+	if request.CfTurnstile != "" {
+		remoteIP := c.ClientIP()
+		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
+		if err!= nil {
+			c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+				"msg":      "验证 Turnstile 令牌失败：" + err.Error(),
+				"selected": "new",
+				"tags":     tempTags,
+			}))
+			return
+		}
+	}else{
+		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+			"msg":      "验证 Turnstile 令牌失败：缺少验证参数",
 			"selected": "new",
 			"tags":     tempTags,
 		}))
