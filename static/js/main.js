@@ -41,6 +41,16 @@ function MediaChange(){
 $(function () {
     MediaChange()
 
+    // 控制返回顶部按钮的显示/隐藏
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTop.classList.remove('hidden');
+        } else {
+            backToTop.classList.add('hidden');
+        }
+    });
+
     $("input[name='result']").click(function () {
         const val = $(this).val()
         const index = $(this).data('index')

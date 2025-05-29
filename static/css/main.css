@@ -265,6 +265,32 @@ div.sceditor-group {
     opacity: 0.7;
 }
 
+.back-to-top {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 40px;
+    height: 40px;
+    background: #7693f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.back-to-top:hover {
+    background: #5468ff;
+    transform: translateY(-3px);
+}
+
+.back-to-top.hidden {
+    display: none;
+}
+
 .mditor-mini-help, .mditor-mini-emoji, .mditor-mini-preview{
     color: #000;
 }
