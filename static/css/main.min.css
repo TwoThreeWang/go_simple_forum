@@ -20,7 +20,7 @@ a{text-decoration:none;color:inherit;word-break:break-all}
 .content pre,.content code{white-space:pre-wrap;word-wrap:break-word;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap}
 .content>*:first-child{margin-top:5px !important}
 .content>*:last-child{margin-bottom:5px !important}
-.content hr{box-sizing:content-box;overflow:hidden;background:transparent;border-bottom:1px solid #3c3c3c;height:.25em;padding:0;margin:1rem 0;background-color:#3c3c3c;border:0}
+.content hr{overflow:hidden;padding:3px;border:0;background: repeating-linear-gradient(135deg, #a2a9b6 0px, #a2a9b6 1px, transparent 1px, transparent 6px);}
 .content blockquote{background:#fff7d9;border-left:.3em solid #f4e59f;margin:.25em 0;padding:.5em .5em .5em .75em;color:#000}
 .content blockquote cite{border-bottom:1px solid #f4e59f;display:block;font-size:1em;font-weight:700;margin:0 -.5em .25em -.75em;padding:0 .5em .15em .75em}
 .content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:1.5rem;margin-bottom:1rem;font-weight:600;line-height:1.25}
