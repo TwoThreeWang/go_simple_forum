@@ -49,6 +49,8 @@ a {
     width: auto;
     height: auto;
     display: block;
+    box-shadow:  10px 10px 22px #cfcfcf,
+             -10px -10px 22px #ffffff;
 }
 
 
@@ -149,16 +151,9 @@ a {
     line-height: 1.25;
 }
 
-.content h1{
-    border-left: 0.2em solid #5b88b6;
-    padding-left: 8px;
-}
 .content h2{
     border-left: 0.15em solid #c0dfff;
     padding-left: 8px;
-}
-
-.content h2 {
     font-size: 1.5em;
 }
 
