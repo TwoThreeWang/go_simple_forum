@@ -67,14 +67,14 @@ func (p PostHandler) DoUpdate(c *gin.Context) {
 	if request.CfTurnstile != "" {
 		remoteIP := c.ClientIP()
 		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
-		if err!= nil {
-			c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		if err != nil {
+			c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
 				"title": "参数错误", "msg": "验证 Turnstile 令牌失败：" + err.Error(),
 			}))
 			return
 		}
-	}else{
-		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+	} else {
+		c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
 			"title": "参数错误", "msg": "验证 Turnstile 令牌失败：缺少验证参数",
 		}))
 		return
@@ -141,7 +141,7 @@ func (p PostHandler) ToEdit(c *gin.Context) {
 	}
 	var tempTags []model.TbTag
 	p.db.Model(&model.TbTag{}).Preload("Parent").Where("parent_id is null").Preload("Children").Find(&tempTags)
-	c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+	c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 		"post":     post,
 		"selected": "new",
 		"tags":     tempTags,
@@ -162,7 +162,7 @@ func (p PostHandler) Detail(c *gin.Context) {
 	posts = result["posts"].([]model.TbPost)
 	// 没有查询到结果
 	if len(posts) == 0 {
-		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
 			"title": "Nothing To Show", "msg": "没有内容可以展示！",
 		}))
 		return
@@ -185,7 +185,7 @@ func (p PostHandler) Detail(c *gin.Context) {
 	for _, post := range posts {
 		for _, tag := range post.Tags {
 			if tag.OpenShow > role {
-				c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+				c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
 					"title": "权限错误", "msg": fmt.Sprintf("等级 LV.%d 以上才可以查看该标签下的内容！", tag.OpenShow),
 				}))
 				return
@@ -233,7 +233,7 @@ func (p PostHandler) Detail(c *gin.Context) {
 		}
 	}
 
-	c.HTML(200, "post.gohtml", OutputCommonSession(p.injector, c, gin.H{
+	c.HTML(200, "post.html", OutputCommonSession(p.injector, c, gin.H{
 		"posts":        posts,
 		"relatedPosts": relatedPosts,
 		"selected":     "detail",
@@ -273,7 +273,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		if user.Status == "Wait" {
 			msg = "未激活用户不允许发布，请到个人中心邮箱激活账户！"
 		}
-		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
 			"title": "Error",
 			"msg":   msg,
 		}))
@@ -296,7 +296,7 @@ func (p PostHandler) Add(c *gin.Context) {
 
 	var request vo.NewPostRequest
 	if err := c.Bind(&request); err != nil {
-		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "参数异常",
 			"selected": "new",
 			"tags":     tempTags,
@@ -307,16 +307,16 @@ func (p PostHandler) Add(c *gin.Context) {
 	if request.CfTurnstile != "" {
 		remoteIP := c.ClientIP()
 		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
-		if err!= nil {
-			c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		if err != nil {
+			c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 				"msg":      "验证 Turnstile 令牌失败：" + err.Error(),
 				"selected": "new",
 				"tags":     tempTags,
 			}))
 			return
 		}
-	}else{
-		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+	} else {
+		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "验证 Turnstile 令牌失败：缺少验证参数",
 			"selected": "new",
 			"tags":     tempTags,
@@ -324,7 +324,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		return
 	}
 	if len(request.Link) > 1024 {
-		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "网址链接太长了，最大长度1024",
 			"selected": "new",
 			"tags":     tempTags,
@@ -333,7 +333,7 @@ func (p PostHandler) Add(c *gin.Context) {
 	}
 	log.Printf("params:%+v", request)
 	if len(request.TagIDs) == 0 || len(request.TagIDs) > 5 {
-		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "标签最少1个,最多5个",
 			"selected": "new",
 			"tags":     tempTags,
@@ -341,7 +341,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		return
 	}
 	if request.Type == "" {
-		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "类型必填",
 			"selected": "new",
 			"tags":     tempTags,
@@ -349,7 +349,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		return
 	}
 	if request.Type == "link" && request.Link == "" {
-		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "分享类的链接是必填项",
 			"selected": "new",
 			"tags":     tempTags,
@@ -403,7 +403,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		return nil
 	})
 	if err != nil {
-		c.HTML(200, "new.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":      "系统错误",
 			"selected": "new",
 		}))
@@ -418,7 +418,7 @@ func (p PostHandler) Add(c *gin.Context) {
 	if status == "Active" {
 		c.Redirect(302, "/p/"+post.Pid)
 	} else if status == "Wait" {
-		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
 			"msg":   "发布成功，等待管理员审核后展示！",
 			"title": "Success",
 		}))
@@ -444,7 +444,7 @@ func (p PostHandler) AddComment(c *gin.Context) {
 		if status == "Wait" {
 			msg = "未激活用户不允许评论，请到个人中心邮箱激活账户！"
 		}
-		c.HTML(200, "result.gohtml", OutputCommonSession(p.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
 			"title": "Error",
 			"msg":   msg,
 		}))
@@ -533,7 +533,7 @@ func (p PostHandler) SearchByTag(c *gin.Context) {
 
 	tagName := strings.Split(c.Param("tag"), ",")
 
-	c.HTML(200, "index.gohtml", OutputCommonSession(p.injector, c, gin.H{
+	c.HTML(200, "index.html", OutputCommonSession(p.injector, c, gin.H{
 		"selected": "history",
 	}, QueryPosts(p.db, vo.QueryPostsRequest{
 		Userinfo:  userinfo,
@@ -553,7 +553,7 @@ func (p PostHandler) SearchByParentTag(c *gin.Context) {
 		Select("name").
 		Where("parent_id = (select id from tb_tag a where a.name = ?)", c.Param("tag")).Scan(&tags)
 
-	c.HTML(200, "index.gohtml", OutputCommonSession(p.injector, c, gin.H{
+	c.HTML(200, "index.html", OutputCommonSession(p.injector, c, gin.H{
 		"selected": "history",
 	}, QueryPosts(p.db, vo.QueryPostsRequest{
 		Userinfo:  userinfo,
@@ -568,7 +568,7 @@ func (p PostHandler) SearchByType(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
 	page := c.DefaultQuery("p", "1")
 	typeName := c.Param("type")
-	c.HTML(200, "index.gohtml", OutputCommonSession(p.injector, c, gin.H{
+	c.HTML(200, "index.html", OutputCommonSession(p.injector, c, gin.H{
 		"selected": "history",
 	}, QueryPosts(p.db, vo.QueryPostsRequest{
 		Userinfo:  userinfo,

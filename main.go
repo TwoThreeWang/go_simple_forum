@@ -5,6 +5,13 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
+	"html/template"
+	"io"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-contrib/sessions"
@@ -19,15 +26,10 @@ import (
 	"github.com/kingwrcy/hn/utils"
 	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
-	"html/template"
-	"io"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"time"
+
+	"log"
 
 	"gorm.io/gorm"
-	"log"
 )
 
 func timeAgo(target time.Time) string {
@@ -113,7 +115,7 @@ func main() {
 	handler.SetupRouter(injector, engine)
 	// 处理 404 错误
 	engine.NoRoute(func(c *gin.Context) {
-		c.HTML(200, "404.gohtml", gin.H{})
+		c.HTML(200, "404.html", gin.H{})
 	})
 
 	go task.StartPostTask(injector)
@@ -176,11 +178,11 @@ func templateFun() template.FuncMap {
 func loadLocalTemplates(templatesDir string) multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
 
-	layouts, err := filepath.Glob(templatesDir + "/layouts/*.gohtml")
+	layouts, err := filepath.Glob(templatesDir + "/layouts/*.html")
 	if err != nil {
 		panic(err.Error())
 	}
-	includes, err := filepath.Glob(templatesDir + "/includes/*.gohtml")
+	includes, err := filepath.Glob(templatesDir + "/includes/*.html")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -198,11 +200,11 @@ func loadLocalTemplates(templatesDir string) multitemplate.Renderer {
 func loadTemplates(templatesDir fs.FS) multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
 
-	layouts, err := fs.Glob(templatesDir, "layouts/*.gohtml")
+	layouts, err := fs.Glob(templatesDir, "layouts/*.html")
 	if err != nil {
 		panic(err.Error())
 	}
-	includes, err := fs.Glob(templatesDir, "includes/*.gohtml")
+	includes, err := fs.Glob(templatesDir, "includes/*.html")
 	if err != nil {
 		panic(err.Error())
 	}

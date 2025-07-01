@@ -4,15 +4,16 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/model"
 	"github.com/mileusna/useragent"
 	"github.com/samber/do"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
-	"html/template"
-	"strings"
-	"time"
 )
 
 type StatisticsHandler struct {
@@ -68,7 +69,7 @@ func (s *StatisticsHandler) Query(c *gin.Context) {
 	countryMapListJson, _ := json.Marshal(countryMapList)
 	referMapListJson, _ := json.Marshal(referMapList)
 
-	c.HTML(200, "statistics.gohtml", OutputCommonSession(s.injector, c, gin.H{
+	c.HTML(200, "statistics.html", OutputCommonSession(s.injector, c, gin.H{
 		"selected":    "statistics",
 		"referData":   template.JS(referMapListJson),
 		"startDate":   start,

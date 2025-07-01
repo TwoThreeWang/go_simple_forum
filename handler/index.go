@@ -6,6 +6,13 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
 	"github.com/kingwrcy/hn/model"
@@ -17,12 +24,6 @@ import (
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"log"
-	"os"
-	"strconv"
-	"strings"
-	"time"
-	"unicode/utf8"
 )
 
 type IndexHandler struct {
@@ -53,7 +54,7 @@ func (i *IndexHandler) Index(c *gin.Context) {
 		return
 	}
 
-	c.HTML(200, "index.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "index.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "/",
 	}, topics))
 }
@@ -160,7 +161,7 @@ getPost:
 }
 
 func (i *IndexHandler) ToSearch(c *gin.Context) {
-	c.HTML(200, "search.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "search.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "search",
 	}))
 }
@@ -174,7 +175,7 @@ func (i *IndexHandler) DoSearch(c *gin.Context) {
 	if request.Page <= 0 {
 		request.Page = 1
 	}
-	c.HTML(200, "search.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "search.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected":  "search",
 		"condition": request,
 	}, QueryPosts(i.db, request)))
@@ -193,7 +194,7 @@ func (i *IndexHandler) ToNew(c *gin.Context) {
 	i.db.Model(&model.TbTag{}).Preload("Parent").Where("parent_id is null").Preload("Children", func(db *gorm.DB) *gorm.DB {
 		return db.Order("name") // 对子标签进行排序
 	}).Order("name").Find(&tags)
-	c.HTML(200, "new.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "new.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "new",
 		"tags":     tags,
 		"msg":      msg,
@@ -201,14 +202,14 @@ func (i *IndexHandler) ToNew(c *gin.Context) {
 }
 
 func (i *IndexHandler) ToPost(c *gin.Context) {
-	c.HTML(200, "post.gohtml", OutputCommonSession(i.injector, c, gin.H{}))
+	c.HTML(200, "post.html", OutputCommonSession(i.injector, c, gin.H{}))
 }
 func (i *IndexHandler) ToResetPwd(c *gin.Context) {
-	c.HTML(200, "resetPwd.gohtml", OutputCommonSession(i.injector, c, gin.H{}))
+	c.HTML(200, "resetPwd.html", OutputCommonSession(i.injector, c, gin.H{}))
 }
 func (i *IndexHandler) ToResetPwdEdit(c *gin.Context) {
 	key := c.DefaultQuery("key", "")
-	c.HTML(200, "resetPwdEdit.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "resetPwdEdit.html", OutputCommonSession(i.injector, c, gin.H{
 		"key": key,
 	}))
 }
@@ -217,13 +218,13 @@ func (i *IndexHandler) ToResetPwdEdit(c *gin.Context) {
 func (i *IndexHandler) DoResetPwd(c *gin.Context) {
 	var data vo.ResetPwd
 	if err := c.Bind(&data); err != nil {
-		c.HTML(200, "resetPwd.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "resetPwd.html", OutputCommonSession(i.injector, c, gin.H{
 			"msg": "内容异常，请检查后重试！",
 		}))
 		return
 	}
 	if data.Email == "" {
-		c.HTML(200, "resetPwd.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "resetPwd.html", OutputCommonSession(i.injector, c, gin.H{
 			"msg": "内容异常，请先输入注册邮箱！",
 		}))
 		return
@@ -234,7 +235,7 @@ func (i *IndexHandler) DoResetPwd(c *gin.Context) {
 		Where("email = ?", data.Email).
 		First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 
-		c.HTML(200, "resetPwd.gohtml", gin.H{
+		c.HTML(200, "resetPwd.html", gin.H{
 			"msg": "内容异常，请确认注册邮箱是否正确！",
 		})
 		return
@@ -251,12 +252,12 @@ func (i *IndexHandler) DoResetPwd(c *gin.Context) {
 	fmt.Println(content)
 	msg := utils.Email{}.Send(data.Email, "["+siteName+"] 密码重置操作", content)
 	if msg != "Success" {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "系统异常", "msg": "密码重置邮件发送异常，请稍后重试！",
 		}))
 		return
 	}
-	c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 		"title": "Success", "msg": "密码重置邮件已发送，请查收邮箱！",
 	}))
 }
@@ -265,13 +266,13 @@ func (i *IndexHandler) DoResetPwd(c *gin.Context) {
 func (i *IndexHandler) DoResetPwdEdit(c *gin.Context) {
 	var data vo.ResetPwd
 	if err := c.Bind(&data); err != nil {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "Error", "msg": "内容异常，请检查后重试！",
 		}))
 		return
 	}
 	if data.Email == "" || data.Password == "" || data.Key == "" {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "Error", "msg": "内容异常，请检查后重试！",
 		}))
 		return
@@ -282,7 +283,7 @@ func (i *IndexHandler) DoResetPwdEdit(c *gin.Context) {
 		Where("email = ?", data.Email).
 		First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 
-		c.HTML(200, "result.gohtml", gin.H{
+		c.HTML(200, "result.html", gin.H{
 			"title": "Error", "msg": "内容异常，请确认注册邮箱是否正确！",
 		})
 		return
@@ -290,21 +291,21 @@ func (i *IndexHandler) DoResetPwdEdit(c *gin.Context) {
 	// 验证key中的信息和实际信息
 	decodedMessage, err := base64.StdEncoding.DecodeString(data.Key)
 	if err != nil {
-		c.HTML(200, "result.gohtml", gin.H{
+		c.HTML(200, "result.html", gin.H{
 			"title": "Error", "msg": "内容异常，请检查后重试！",
 		})
 		return
 	}
 	keys := strings.Split(string(decodedMessage), "#,")
 	if keys[0] != string(user.ID) || keys[1] != data.Email {
-		c.HTML(200, "result.gohtml", gin.H{
+		c.HTML(200, "result.html", gin.H{
 			"title": "Error", "msg": "内容异常，请检查后重试！",
 		})
 		return
 	}
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "系统异常", "msg": "密码重置出错，请稍后重试！",
 		}))
 		return
@@ -316,12 +317,12 @@ func (i *IndexHandler) DoResetPwdEdit(c *gin.Context) {
 		})
 	if affected.RowsAffected == 0 {
 		// 没有记录被更新，可能是没有找到匹配的记录
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "Error", "msg": "密码重置失败，请检查邮箱是否正确后重试！",
 		}))
 		return
 	}
-	c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 		"title": "密码重置成功", "msg": "现在点击右上角使用新密码登录！",
 	}))
 }
@@ -335,7 +336,7 @@ func (i *IndexHandler) ToAddTag(c *gin.Context) {
 	var parentTags []model.TbTag
 	i.db.Find(&parentTags, "parent_id is null")
 
-	c.HTML(200, "tagEdit.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "tagEdit.html", OutputCommonSession(i.injector, c, gin.H{
 		"parents":  parentTags,
 		"selected": "tags",
 	}))
@@ -353,7 +354,7 @@ func (i *IndexHandler) ToEditTag(c *gin.Context) {
 	var parentTags []model.TbTag
 	i.db.Find(&parentTags, "parent_id is null")
 
-	c.HTML(200, "tagEdit.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "tagEdit.html", OutputCommonSession(i.injector, c, gin.H{
 		"tag":      tag,
 		"parentID": cast.ToInt(tag.ParentID),
 		"parents":  parentTags,
@@ -449,7 +450,7 @@ func (i *IndexHandler) ToTags(c *gin.Context) {
 	i.db.Model(&model.TbTag{}).Where("parent_id is null").Preload("Children", func(db *gorm.DB) *gorm.DB {
 		return db.Order("name") // 对子标签进行排序
 	}).Order("name").Find(&tags)
-	c.HTML(200, "tags.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "tags.html", OutputCommonSession(i.injector, c, gin.H{
 		"tags":     tags,
 		"selected": "tags",
 	}))
@@ -475,7 +476,7 @@ func (i *IndexHandler) ToWaitApproved(c *gin.Context) {
 		return
 	}
 
-	c.HTML(200, "wait.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "wait.html", OutputCommonSession(i.injector, c, gin.H{
 		"posts":        waitApprovedList,
 		"waitApproved": len(waitApprovedList),
 		"selected":     "approve",
@@ -487,7 +488,7 @@ func (i *IndexHandler) History(c *gin.Context) {
 
 	page := c.DefaultQuery("p", "1")
 
-	c.HTML(200, "index.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "index.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "history",
 	}, QueryPosts(i.db, vo.QueryPostsRequest{
 		Userinfo: userinfo,
@@ -505,7 +506,7 @@ func (i *IndexHandler) ToComments(c *gin.Context) {
 	pageNumber := cast.ToInt(page)
 	userinfo := GetCurrentUser(c)
 	if userinfo == nil {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "权限错误", "msg": "游客无法查看全部评论列表！",
 		}))
 		return
@@ -526,7 +527,7 @@ func (i *IndexHandler) ToComments(c *gin.Context) {
 	if total%int64(size) > 0 {
 		totalPage = totalPage + 1
 	}
-	c.HTML(200, "comments.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "comments.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected":    "comment",
 		"comments":    comments,
 		"totalPage":   totalPage,
@@ -551,7 +552,7 @@ func (i *IndexHandler) DelComment(c *gin.Context) {
 		var user model.TbUser
 		i.db.Where("ID = ?", userinfo.ID).First(&user)
 		if user.Points-3 < 0 {
-			c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+			c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 				"title": "删除失败", "msg": "积分不足，删除评论失败！",
 			}))
 			return
@@ -559,7 +560,7 @@ func (i *IndexHandler) DelComment(c *gin.Context) {
 	}
 	// 判断这条评论是不是本人删除或者删除者是不是管理员
 	if userinfo.Role != "admin" && userinfo.ID != item.UserID {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "权限错误", "msg": "非管理员只允许删除自己发布的评论！",
 		}))
 		return
@@ -765,7 +766,7 @@ func (i *IndexHandler) Moderation(c *gin.Context) {
 	if total%int64(size) > 0 {
 		totalPage = totalPage + 1
 	}
-	c.HTML(200, "moderation.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "moderation.html", OutputCommonSession(i.injector, c, gin.H{
 		"logs":        logs,
 		"totalPage":   totalPage,
 		"hasNext":     pageNumber < int(totalPage),
@@ -781,7 +782,7 @@ func (i *IndexHandler) SearchByDomain(c *gin.Context) {
 
 	page := c.DefaultQuery("p", "1")
 
-	c.HTML(200, "index.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "index.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "history",
 	}, QueryPosts(i.db, vo.QueryPostsRequest{
 		Userinfo:  userinfo,
@@ -804,13 +805,13 @@ func (i *IndexHandler) ToSettings(c *gin.Context) {
 	var saveSettingsRequest vo.SaveSettingsRequest
 	if errors.Is(i.db.First(&settings).Error, gorm.ErrRecordNotFound) {
 		saveSettingsRequest.RegMode = "hotnews"
-		c.HTML(200, "settings.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "settings.html", OutputCommonSession(i.injector, c, gin.H{
 			"selected": "settings",
 		}))
 		return
 	}
 
-	c.HTML(200, "settings.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "settings.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "settings",
 	}))
 }
@@ -851,7 +852,7 @@ func (i *IndexHandler) Activate(c *gin.Context) {
 	//key := c.Query("key")
 	userinfo := GetCurrentUser(c)
 	if uid == "" || userinfo == nil || uid != strconv.FormatUint(uint64(userinfo.ID), 10) {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "Error", "msg": "参数错误！",
 		}))
 		return
@@ -865,12 +866,12 @@ func (i *IndexHandler) Activate(c *gin.Context) {
 	content := "您好，<br><br>收到此邮件是因为您在<b>竹林</b>网站上进行了注册，<br><br>请点击链接激活账号：" + siteUrl + "/u/status?id=" + uid + "&key=" + key
 	msg := utils.Email{}.Send(userinfo.Email, "["+siteName+"] 账户激活邮件", content)
 	if msg != "Success" {
-		c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+		c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 			"title": "系统异常", "msg": "激活邮件发送异常，请稍后重试！",
 		}))
 		return
 	}
-	c.HTML(200, "result.gohtml", OutputCommonSession(i.injector, c, gin.H{
+	c.HTML(200, "result.html", OutputCommonSession(i.injector, c, gin.H{
 		"title": "Success", "msg": "激活邮件已发送，请查收邮箱！",
 	}))
 }

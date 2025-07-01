@@ -5,7 +5,17 @@
 <div class="mt-4 dark:text-white">
     <form action="/u/login" method="post" autocomplete="off">
         <p class="font-bold text-5 mb-4">登录</p>
-
+        <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="medium"
+                     data-logo_alignment="left"
+                style="max-width:200px">
+                </div>
+        <br>
+        <p class="text-4 mb-4">—— OR ——</p>
         <div class="flex flex-col gap-2">
             <div class="flex flex-row items-center">
                 <div class="mr-2 text-sm">用户</div>
@@ -31,15 +41,6 @@
                 <div class="text-red text-sm">{{.msg}}</div>
             </div>
             {{if  eq .settings.RegMode "open"}}
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-shape="rectangular"
-                     data-theme="outline"
-                     data-text="signin_with"
-                     data-size="medium"
-                     data-logo_alignment="left"
-                style="max-width:200px">
-                </div>
                 <p class="text-sm text-gray">新用户 <a class="aLink underline" href="/invite/open">注册</a></p>
             {{else if eq .settings.RegMode "invite"}}
                 <p class="text-sm text-gray">目前仅开放邀请注册</p>
