@@ -183,6 +183,10 @@ func (i *IndexHandler) DoSearch(c *gin.Context) {
 
 func (i *IndexHandler) ToNew(c *gin.Context) {
 	userinfo := GetCurrentUser(c)
+	if userinfo == nil {
+		c.Redirect(302, "/u/login")
+		return
+	}
 	msg := ""
 	if userinfo.Role != "admin" {
 		role, err := strconv.Atoi(userinfo.Role)
