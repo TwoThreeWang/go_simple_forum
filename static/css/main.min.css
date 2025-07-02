@@ -8,7 +8,8 @@ a{text-decoration:none;color:inherit;word-break:break-all}
 .x-post-title a:visited{color:#5b88b6}
 .header .selected > a{text-decoration:underline;text-decoration-color:#5468ff;text-decoration-thickness:2px;text-underline-offset:0.4rem}
 .content > ol,.content > ul{margin-left:2rem;margin-bottom:1.5em}
-.content img{object-fit:cover;max-width:100%;max-height:100vh;width:auto;height:auto;display:block;box-shadow:10px 10px 22px #cfcfcf,-10px -10px 22px #ffffff}
+.content img{object-fit:cover;max-width:100%;max-height:100vh;width:auto;height:auto;display:block;box-shadow:10px 10px 22px #cfcfcf,-10px -10px 22px #ffffff;margin: 1rem 0;}
+.dark .content img {box-shadow: 10px 10px 22px #1a2332,-10px -10px 22px #232f44;}
 .content .ios{-webkit-overflow-scrolling:touch;overflow:auto}
 .content .ios body{overflow:auto;position:relative}
 .content{word-wrap:break-word;min-height:100%;line-height:2.3em;word-break:break-all}

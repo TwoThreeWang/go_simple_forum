@@ -49,8 +49,14 @@ a {
     width: auto;
     height: auto;
     display: block;
+    margin: 1rem 0;
     box-shadow:  10px 10px 22px #cfcfcf,
              -10px -10px 22px #ffffff;
+}
+
+.dark .content img {
+    box-shadow:  10px 10px 22px #1a2332,
+             -10px -10px 22px #232f44;
 }
 
 
