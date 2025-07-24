@@ -115,8 +115,8 @@
                                 mangle: true
                             });
                             var html = marked.parse('{{$post.Content}}');
-                            var safeHtml = DOMPurify.sanitize(html, { 
-                                ADD_TAGS: ['iframe'], 
+                            var safeHtml = DOMPurify.sanitize(html, {
+                                ADD_TAGS: ['iframe'],
                                 ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling']
                             });
                             // 链接改为新标签页打开
@@ -144,8 +144,8 @@
                     <br>
                     <div>
                         {{if eq $.selected "detail"}}
-                        <a class="text-coolGray" href="{{if $post.UpVoted}}javascript:alert('已经表过态了！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
-                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">▲ {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</span>
+                        <a class="text-coolGray" href="{{if $post.UpVoted}}javascript:alert('已经表过态啦！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
+                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">▲ {{if $post.UpVoted}}已{{end}}这不是点赞，这是一种肯定({{$post.UpVote}})</span>
                         </a>&nbsp;&nbsp;
                         <a class="text-coolGray" href="{{if $post.CollectVoted}}/vote?id={{$post.Pid}}&action=cd&type=POST{{else}}/vote?id={{$post.Pid}}&action=c&type=POST{{end}}">
                             <span class="text-sm text-coolGray upVote {{if $post.CollectVoted}}text-red{{end}}">★ {{if $post.CollectVoted}}已{{end}}收藏({{$post.CollectVote}})</span>
@@ -177,7 +177,7 @@
 
                     {{ if and (eq $.selected "detail") (gt (len $.relatedPosts) 0)}}
                     <aside class="mt-8 mb-4">
-                        <h3 class="text-lg font-bold mb-4 dark:text-white/70" aria-label="相关文章推荐">✨ 相关文章推荐</h3>
+                        <h3 class="text-lg font-bold mb-4 dark:text-white/70" aria-label="相关文章推荐">✨ 这几篇也不赖，你可能还想看看</h3>
                         <div class="flex flex-col gap-3">
                             {{range $.relatedPosts}}
                             <div class="flex flex-row gap-2 items-start" itemscope itemtype="https://schema.org/Article">
@@ -200,19 +200,21 @@
                     {{end}}
 
                     {{ if eq $.selected "detail" }}
+                        <br>
+                        <h3 class="text-lg font-bold mb-4 dark:text-white/70" aria-label="评论">🫵 来啊，说点有用的废话!</h3>
                         <form method="post" action="/p/comment" id="comment_form">
                             <input type="hidden" name="post_pid" value="{{$post.Pid}}">
                             <input type="hidden" name="post_id" value="{{$post.ID}}">
                             <input type="hidden" name="parent_comment_id" value="">
                             <div class="flex flex-col gap-2 mt-4">
-                                <textarea id="md_editor" name="content" class="input" rows="5"></textarea>
+                                <textarea id="md_editor" name="content" class="input" rows="5" placeholder="评论也是内容的一部分，你的高见正在被期待！"></textarea>
                                 <div id="emoji-list-0" class="emoji-list" style="display: none"></div>
                                 <div class="flex flex-row gap2 mt-2 dark:text-white">
                                     {{if $.login}}
                                         <button class="btn" type="submit">发表评论</button>
                                     {{else}}
                                         <a href="/u/login?redirect=/p/{{$post.Pid}}"
-                                           class="text-sm hover:text-hover underline fw700">去登录发表评论</a>
+                                           class="text-sm hover:text-hover underline fw700">登录一下，不然你说话我听不到！</a>
                                     {{end}}
                                 </div>
                             </div>
@@ -250,7 +252,7 @@
                 previewClass : 'content'
             });
             {{if not $.login}}
-            editor.insert("登录后发表评论");
+            editor.insert("🤖 先上号，再上嘴！");
             {{end}}
         </script>
         {{end}}

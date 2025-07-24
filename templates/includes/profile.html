@@ -1,4 +1,4 @@
-{{ define "title"}}<title>个人中心 - {{.siteName}}</title>{{ end }}
+{{ define "title"}}<title>📬个人角落 - {{.siteName}}</title>{{ end }}
 
 {{define "content"}}
 
@@ -20,8 +20,8 @@
                 <div>
                     <p class="font-bold text-lg">{{.user.Username}}</p>
                     <p class="text-md">{{.user.Bio}}</p>
-                    <p class="text-sm text-gray">第 {{.user.ID}} 号会员, {{.user.CreatedAt.Format "2006-01-02"}} {{if .invitedUsername }} 通过 <a
-                            href="/u/profile/{{.inviteUserId}}" class="aLink">{{.invitedUsername}}</a> 的邀请{{end}}加入{{.siteName}}.</p>
+                    <p class="text-sm text-gray">第 {{.user.ID}} 号会员, {{.user.CreatedAt.Format "2006-01-02"}} {{if .invitedUsername }} 在 <a
+                            href="/u/profile/{{.inviteUserId}}" class="aLink">{{.invitedUsername}}</a> 的盛情邀请下{{end}}加入{{.siteName}}.</p>
                 </div>
             </div>
             <br>
