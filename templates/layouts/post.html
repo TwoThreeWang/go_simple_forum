@@ -111,11 +111,14 @@
                             marked.setOptions({
                                 renderer,
                                 gfm: true,
-                                headerIds: false,
-                                mangle: false
+                                headerIds: true,
+                                mangle: true
                             });
                             var html = marked.parse('{{$post.Content}}');
-                            var safeHtml = DOMPurify.sanitize(html);
+                            var safeHtml = DOMPurify.sanitize(html, { 
+                                ADD_TAGS: ['iframe'], 
+                                ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling']
+                            });
                             // 链接改为新标签页打开
                             safeHtml = safeHtml.replaceAll('<a href','<a target="_blank" class="dark:text-white/70" rel="noopener noreferrer" href');
                             safeHtml = safeHtml.replaceAll(
