@@ -56,7 +56,7 @@ func (i *IndexHandler) Index(c *gin.Context) {
 
 	c.HTML(200, "index.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "/",
-		"title":    "🔥正在热议",
+		"title":    "🔥热议",
 		"slogan":   "链接有趣内容，聚合真实想法，和真实的人一起筛内容，不靠算法也能刷到好东西。",
 	}, topics))
 }
@@ -117,7 +117,7 @@ getPost:
 	rssFeed := &feeds.Feed{
 		Title:       os.Getenv("SiteName"),
 		Link:        &feeds.Link{Href: SiteUrl},
-		Description: "竹林是一个类似抽屉网的内容聚合平台，分享新奇、新闻、有趣的内容，发现新资讯，拓展新视野。",
+		Description: "竹林是一个链接优质内容和真实用户讨论的去算法推荐社区，由用户分享推荐优质资讯，聚焦真实评论与用户共鸣，和真实的人一起筛内容，依靠用户共识挑出值得一读的内容，不靠算法也能刷到好东西。",
 		Created:     time.Now(),
 		Updated:     time.Now(),
 	}
@@ -137,7 +137,7 @@ getPost:
 		// 使用 blackfriday 库将 Markdown 转换为 HTML
 		description = string(blackfriday.MarkdownCommon([]byte(description)))
 		itemUrl := SiteUrl + "/p/" + item.Pid
-		content := description + "<br><br><b><a href=\"" + itemUrl + "\">点击标题阅读完整话题和讨论</a></b>"
+		content := description + "<br><br><b><a href=\"" + itemUrl + "\">评论也是内容的一部分，点击标题阅读完整话题和讨论</a></b>"
 		feedItem := feeds.Item{
 			Id:          item.Pid,
 			IsPermaLink: "false",
@@ -496,7 +496,7 @@ func (i *IndexHandler) History(c *gin.Context) {
 
 	c.HTML(200, "index.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "history",
-		"title":    "👀随便逛逛",
+		"title":    "全部",
 		"slogan":   "链接有趣内容，聚合真实想法，和真实的人一起筛内容，不靠算法也能刷到好东西。",
 	}, QueryPosts(i.db, vo.QueryPostsRequest{
 		Userinfo: userinfo,

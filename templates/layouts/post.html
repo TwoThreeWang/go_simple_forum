@@ -144,12 +144,14 @@
                     <br>
                     <div>
                         {{if eq $.selected "detail"}}
-                        <a class="text-coolGray" href="{{if $post.UpVoted}}javascript:alert('已经表过态啦！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
-                            <span class="text-sm text-coolGray upVote {{if $post.UpVoted}}text-red{{end}}">▲ {{if $post.UpVoted}}已{{end}}这不是点赞，这是一种肯定({{$post.UpVote}})</span>
+                        <div class="post-actions">
+                        <a href="{{if $post.UpVoted}}javascript:alert('已经表过态啦！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
+                            <button class="text-sm upVote like-button {{if $post.UpVoted}}text-red{{end}}">👍 {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</button>
                         </a>&nbsp;&nbsp;
-                        <a class="text-coolGray" href="{{if $post.CollectVoted}}/vote?id={{$post.Pid}}&action=cd&type=POST{{else}}/vote?id={{$post.Pid}}&action=c&type=POST{{end}}">
-                            <span class="text-sm text-coolGray upVote {{if $post.CollectVoted}}text-red{{end}}">★ {{if $post.CollectVoted}}已{{end}}收藏({{$post.CollectVote}})</span>
+                        <a href="{{if $post.CollectVoted}}/vote?id={{$post.Pid}}&action=cd&type=POST{{else}}/vote?id={{$post.Pid}}&action=c&type=POST{{end}}">
+                            <button class="text-sm upVote like-button {{if $post.CollectVoted}}text-red{{end}}">★ {{if $post.CollectVoted}}已{{end}}收藏({{$post.CollectVote}})</button>
                         </a>
+                        </div>
                         {{end}}
                         {{ if and ($.userinfo) (eq $.userinfo.Role "admin")}}
                             {{ if or (eq $.selected "approve") (eq $.selected "detail")}}

@@ -50,6 +50,10 @@ div.sceditor-group{border:0 !important;background-color:transparent !important}
 .back-to-top{position:fixed;right:20px;bottom:20px;width:40px;height:40px;background:#7693f5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;cursor:pointer;transition:all 0.3s ease;z-index:1000}
 .back-to-top:hover{background:#5468ff;transform:translateY(-3px)}
 .back-to-top.hidden{display:none}
+.post-actions{padding:10px 0;border-top:solid 1px #e4e6e9;border-bottom:solid 1px #e4e6e9}
+.like-button{background:none;border:0;cursor:pointer;transition:transform 0.2s ease;transform-origin:center;user-select:none}
+.like-button:hover{transform:scale(1.2)}
+.like-button:active{transform:scale(0.7)}
 @media (max-width:768px){.mytable{display:inline-table;width:100%}
     .mytable thead{display:none}
     .mytable tbody tr{display:block;margin-bottom:10px;border:1px solid #ddd;padding:10px}
