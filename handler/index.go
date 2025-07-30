@@ -496,7 +496,7 @@ func (i *IndexHandler) History(c *gin.Context) {
 
 	c.HTML(200, "index.html", OutputCommonSession(i.injector, c, gin.H{
 		"selected": "history",
-		"title":    "全部",
+		"title":    "最新",
 		"slogan":   "链接有趣内容，聚合真实想法，和真实的人一起筛内容，不靠算法也能刷到好东西。",
 	}, QueryPosts(i.db, vo.QueryPostsRequest{
 		Userinfo: userinfo,
