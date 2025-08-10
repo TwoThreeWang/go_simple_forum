@@ -1,6 +1,7 @@
 {{define "post"}}
     <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/dompurify/2.3.6/purify.min.js" type="application/javascript"></script>
+    <!-- <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/dompurify/2.3.6/purify.min.js" type="application/javascript"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.6/purify.min.js" integrity="sha512-YlctBG9PGZIhh9keoqI3eZkQM9T8QUbiBi7qNYAO/TUEo8jqWX5pLp5+x1cKRQDRzJ/lyGyJ9WUVNIRduxIIFw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>.mditor-mini textarea{min-height:100px} .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}</style>
     <script>function sendGetRequest(url){fetch(url)}</script>
     <main class="x-post-list flex flex-col gap-1">
@@ -93,7 +94,7 @@
                             <br>
                             <aside class="dark:text-black" style="background-color: #eee;padding:5px 10px;border-radius: 3px;font-size: smaller;">🔗 阅读原文：<a href="{{$post.Link}}" target="_blank">{{$post.Link}}</a></aside>
                         {{end}}
-                        <section class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">111
+                        <section class="mt-2 text-sm content dark:text-white/70" id="post-content" itemprop="articleBody">
                             {{$post.Content}}
                         </section>
                         <script>
@@ -146,10 +147,10 @@
                         {{if eq $.selected "detail"}}
                         <div class="post-actions">
                         <a href="{{if $post.UpVoted}}javascript:alert('已经表过态啦！');void(0);{{else}}/vote?id={{$post.Pid}}&action=u&type=POST{{end}}">
-                            <button class="text-sm upVote like-button {{if $post.UpVoted}}text-red{{end}}">👍 {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</button>
+                            <button class="text-sm upVote like-button dark:text-white/70 {{if $post.UpVoted}}text-red{{end}}">👍 {{if $post.UpVoted}}已{{end}}赞同({{$post.UpVote}})</button>
                         </a>&nbsp;&nbsp;
                         <a href="{{if $post.CollectVoted}}/vote?id={{$post.Pid}}&action=cd&type=POST{{else}}/vote?id={{$post.Pid}}&action=c&type=POST{{end}}">
-                            <button class="text-sm upVote like-button {{if $post.CollectVoted}}text-red{{end}}">★ {{if $post.CollectVoted}}已{{end}}收藏({{$post.CollectVote}})</button>
+                            <button class="text-sm upVote like-button dark:text-white/70 {{if $post.CollectVoted}}text-red{{end}}">★ {{if $post.CollectVoted}}已{{end}}收藏({{$post.CollectVote}})</button>
                         </a>
                         </div>
                         {{end}}
