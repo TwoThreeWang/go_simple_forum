@@ -11,6 +11,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/kingwrcy/hn/vo"
 
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kingwrcy/hn/utils"
 )
@@ -75,4 +77,17 @@ func generateCacheKey(c *gin.Context) string {
 	// 计算hash作为缓存key
 	hash := sha256.Sum256([]byte(data))
 	return "route_cache:" + hex.EncodeToString(hash[:])
+}
+
+// ClearAllRouteCache 清除所有路由缓存
+func ClearAllRouteCache(cache *utils.Cache) int {
+	count := 0
+	for key := range cache.Data {
+		if strings.HasPrefix(key, "route_cache:") {
+			delete(cache.Data, key)
+			delete(cache.ExpireAt, key)
+			count++
+		}
+	}
+	return count
 }

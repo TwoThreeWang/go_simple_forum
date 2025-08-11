@@ -25,6 +25,7 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	inspectHandler := do.MustInvoke[*InspectHandler](injector)
 	statisticsHandler := do.MustInvoke[*StatisticsHandler](injector)
 	_ = do.MustInvoke[*CommentHandler](injector)
+	cacheAdminHandler := do.MustInvoke[*CacheAdminHandler](injector) // 新增加
 	// 静态文件
 	engine.StaticFile("/ads.txt", "./static/ads.txt")       // ads.txt
 	engine.StaticFile("/robots.txt", "./static/robots.txt") // robots.txt
@@ -103,8 +104,11 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	tagGroup.GET("/:tag", middleware.CacheMiddleware(5*time.Minute), postHandler.SearchByTag)         // 标签页
 	tagGroup.GET("/p/:tag", middleware.CacheMiddleware(5*time.Minute), postHandler.SearchByParentTag) // 标签下帖子
 
+	// 添加缓存管理路由（放到最后）
+	engine.GET("/cache/clear", cacheAdminHandler.ClearCacheHandler)
 }
 
+// 在 provideHandlers 函数中添加
 func provideHandlers(injector *do.Injector) {
 	do.Provide(injector, NewIndexHandler)
 	do.Provide(injector, NewUserHandler)
@@ -112,6 +116,7 @@ func provideHandlers(injector *do.Injector) {
 	do.Provide(injector, newInspectHandler)
 	do.Provide(injector, newCommentHandler)
 	do.Provide(injector, NewStatisticsHandler)
+	do.Provide(injector, NewCacheAdminHandler) // 新增加
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
