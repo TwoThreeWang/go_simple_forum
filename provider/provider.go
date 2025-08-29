@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/samber/do"
 	"gorm.io/driver/postgres"
@@ -10,12 +11,34 @@ import (
 )
 
 type AppConfig struct {
-	Port            int    `env:"PORT" env-default:"32919"`
-	DB              string `env:"DB"`
-	CookieSecret    string `env:"COOKIE_SECRET" env-default:"UbnpjqcvDJ8mDCB"`
-	StaticCdnPrefix string `env:"STATIC_CDN_PREFIX" env-default:"/static"`
+	Port         int    `env:"PORT" env-default:"32919"`
+	Version      string `env:"VERSION" env-default:"1.0.0"`
+	GinMode      string `env:"GIN_MODE" env-default:"debug"`
+	DB           string `env:"DB"`
+	CookieSecret string `env:"COOKIE_SECRET" env-default:"UbnpjqcvDJ8mDCB"`
+	
+	// 站点信息
+	SiteName string `env:"SiteName" env-default:"竹林"`
+	SiteUrl  string `env:"SiteUrl" env-default:"http://localhost:32919"`
+	
+	// 邮件服务
+	EmailApiUrl    string `env:"EmailApiUrl"`
+	EmailSender    string `env:"EmailSender"`
+	EmailSenderName string `env:"EmailSenderName"`
+	EmailPassword  string `env:"EmailPassword"`
+	EmailSmtpHost  string `env:"EmailSmtpHost" env-default:"smtp.mail.ru"`
+	EmailSmtpPort  int    `env:"EmailSmtpPort" env-default:"587"`
+	
+	// OAuth配置
+	ClientID     string `env:"ClientID"`
+	ClientSecret string `env:"ClientSecret"`
+	
+	// Cloudflare验证
+	CFSecretKey string `env:"CFSecretKey"`
+	CFVerifyURL string `env:"CFVerifyURL" env-default:"https://challenges.cloudflare.com/turnstile/v0/siteverify"`
 }
 
+// NewRepository 数据库连接
 func NewRepository(i *do.Injector) (*gorm.DB, error) {
 	appConfig := do.MustInvoke[*AppConfig](i)
 	fmt.Println(appConfig.DB)
@@ -28,6 +51,7 @@ func NewRepository(i *do.Injector) (*gorm.DB, error) {
 	return db, nil
 }
 
+// NewAppConfig 加载配置文件
 func NewAppConfig(i *do.Injector) (*AppConfig, error) {
 	var cfg AppConfig
 

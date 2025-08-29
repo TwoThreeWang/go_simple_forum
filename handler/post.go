@@ -10,10 +10,11 @@ import (
 	"strings"
 	"time"
 
+	"go_simple_forum/model"
+	"go_simple_forum/utils"
+	"go_simple_forum/vo"
+
 	"github.com/gin-gonic/gin"
-	"github.com/kingwrcy/hn/model"
-	"github.com/kingwrcy/hn/utils"
-	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"

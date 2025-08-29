@@ -1,14 +1,15 @@
 package task
 
 import (
-	"github.com/jasonlvhit/gocron"
-	"github.com/kingwrcy/hn/model"
-	"github.com/samber/do"
-	"github.com/spf13/cast"
-	"gorm.io/gorm"
+	"go_simple_forum/model"
 	"log"
 	"math"
 	"time"
+
+	"github.com/jasonlvhit/gocron"
+	"github.com/samber/do"
+	"github.com/spf13/cast"
+	"gorm.io/gorm"
 )
 
 func StartPostTask(i *do.Injector) {

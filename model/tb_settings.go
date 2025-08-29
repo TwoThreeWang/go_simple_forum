@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/kingwrcy/hn/vo"
+	"go_simple_forum/vo"
 )
 
 type SaveSettingsRequest vo.SaveSettingsRequest

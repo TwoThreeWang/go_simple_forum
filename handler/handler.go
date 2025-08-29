@@ -2,16 +2,16 @@ package handler
 
 import (
 	"math/rand"
-	"os"
 	"time"
+
+	"go_simple_forum/middleware"
+	"go_simple_forum/model"
+	"go_simple_forum/provider"
+	"go_simple_forum/utils"
+	"go_simple_forum/vo"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/kingwrcy/hn/middleware"
-	"github.com/kingwrcy/hn/model"
-	"github.com/kingwrcy/hn/provider"
-	"github.com/kingwrcy/hn/utils"
-	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 	"gorm.io/gorm"
 )
@@ -182,15 +182,14 @@ func OutputCommonSession(injector *do.Injector, c *gin.Context, h ...gin.H) gin.
 	var settings model.TbSettings
 	db.First(&settings)
 
-	result["siteName"] = os.Getenv("SiteName")
-	result["ClientID"] = os.Getenv("ClientID")
-	result["SiteUrl"] = os.Getenv("SiteUrl")
+	result["siteName"] = config.SiteName
+	result["ClientID"] = config.ClientID
+	result["SiteUrl"] = config.SiteUrl
 	result["path"] = c.Request.URL.Path
 	result["refer"] = c.Request.Referer()
-	result["VERSION"] = os.Getenv("VERSION")
+	result["VERSION"] = config.Version
 	result["cacheTime"] = time.Now().Format("15:04:05")
 	result["settings"] = settings.Content
-	result["staticCdnPrefix"] = config.StaticCdnPrefix
 	result["executionTime"] = time.Since(time.UnixMilli(start)).Milliseconds()
 	return result
 }

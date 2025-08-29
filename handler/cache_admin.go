@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"go_simple_forum/middleware"
+	"go_simple_forum/utils"
+	"go_simple_forum/vo"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/kingwrcy/hn/middleware"
-	"github.com/kingwrcy/hn/utils"
-	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 )
 

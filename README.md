@@ -81,7 +81,7 @@ go mod download
 3. **配置环境**
 ```bash
 # 复制环境变量模板
-cp example_env.txt .env
+cp .env.example .env
 
 # 编辑配置文件
 vim .env
@@ -93,7 +93,7 @@ vim .env
 ```
 
 6. **访问应用**
-打开浏览器访问 `http://localhost:8080`
+打开浏览器访问 `http://localhost:32919`
 
 ### 初始说明
 
@@ -113,8 +113,8 @@ go_simple_forum/
 ├── utils/           # 工具函数
 ├── provider/        # 服务提供者
 ├── task/            # 定时任务
-├── init/            # 初始化脚本
 ├── sql/             # 数据库脚本
+├── vo/              # 视图模型
 ├── Dockerfile       # Docker配置
 ├── docker-compose.yml
 ├── go.mod          # Go模块配置

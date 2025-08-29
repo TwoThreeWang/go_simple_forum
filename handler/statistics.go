@@ -8,8 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"go_simple_forum/model"
+
 	"github.com/gin-gonic/gin"
-	"github.com/kingwrcy/hn/model"
 	"github.com/mileusna/useragent"
 	"github.com/samber/do"
 	"github.com/spf13/cast"

@@ -1,16 +1,21 @@
 package main
 
 import (
-	"embed"
 	"encoding/gob"
 	"errors"
 	"fmt"
 	"html/template"
-	"io"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
+
+	"go_simple_forum/handler"
+	"go_simple_forum/middleware"
+	"go_simple_forum/model"
+	"go_simple_forum/provider"
+	"go_simple_forum/task"
+	"go_simple_forum/utils"
+	"go_simple_forum/vo"
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/multitemplate"
@@ -18,13 +23,6 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/kingwrcy/hn/handler"
-	"github.com/kingwrcy/hn/middleware"
-	"github.com/kingwrcy/hn/model"
-	"github.com/kingwrcy/hn/provider"
-	"github.com/kingwrcy/hn/task"
-	"github.com/kingwrcy/hn/utils"
-	"github.com/kingwrcy/hn/vo"
 	"github.com/samber/do"
 
 	"log"
@@ -32,34 +30,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func timeAgo(target time.Time) string {
-	duration := time.Now().Sub(target)
-	if duration < time.Second {
-		return "刚刚"
-	} else if duration < time.Minute {
-		return fmt.Sprintf("%d秒前", duration/time.Second)
-	} else if duration < time.Hour {
-		return fmt.Sprintf("%d分钟前", duration/time.Minute)
-	} else if duration < 24*time.Hour {
-		return fmt.Sprintf("%d小时前", duration/time.Hour)
-	} else if duration < 24*time.Hour*365 {
-		return fmt.Sprintf("%d天前", duration/(24*time.Hour))
-	} else {
-		return fmt.Sprintf("%d年前", duration/(24*time.Hour*365))
-	}
-}
-
-//go:embed static
-var staticFS embed.FS
-
-//go:embed templates
-var templatesFS embed.FS
-
 func main() {
 	// 加载配置文件
 	err := godotenv.Load()
 	if err != nil {
-		log.Printf("Error loading .env file" + err.Error())
+		log.Fatalf("Error loading .env file" + err.Error())
 	}
 	// 创建依赖注入容器
 	injector := do.New()
@@ -81,26 +56,26 @@ func main() {
 	}
 	// 初始化数据库配置
 	initSystem(db)
-
+	// 注册自定义类型，为了在 Gin 的会话(session)中存储和读取 vo.Userinfo 类型的数据。
 	gob.Register(vo.Userinfo{})
+
+	// 设置gin运行模式
+	gin.SetMode(config.GinMode)
 	engine := gin.Default()
-	engine.Use(gzip.Gzip(gzip.DefaultCompression))
-	//store, _ := redis.NewStore(10, "tcp", config.RedisAddress, "", []byte(config.CookieSecret))
+	// 压缩响应数据，减少网络传输量
+	engine.Use(gzip.Gzip(
+		gzip.BestCompression, // 压缩级别
+		gzip.WithExcludedExtensions([]string{
+			".png", ".jpg", ".jpeg", ".gif", ".ico", ".zip", ".gz", ".rar", ".7z", ".mp4", ".mp3",
+		}), // 排除的文件扩展名
+	))
+	// session 数据的存储方式，使用浏览器的 cookie 来保存这些信息，并用密钥进行签名防止篡改。
 	store := cookie.NewStore([]byte(config.CookieSecret))
 
 	engine.Use(sessions.Sessions("c", store))
 	engine.Use(middleware.CostHandler())
-	engine.HTMLRender = loadLocalTemplates("./templates")
+	engine.HTMLRender = loadTemplates("./templates")
 	engine.Static("/static", "./static")
-	//if os.Getenv("GIN_MODE") == "release" {
-	//	ts, _ := fs.Sub(templatesFS, "templates")
-	//	engine.HTMLRender = loadTemplates(ts)
-	//	s, _ := fs.Sub(staticFS, "static")
-	//	engine.StaticFS("/static", http.FS(s))
-	//} else {
-	//	engine.HTMLRender = loadLocalTemplates("./templates")
-	//	engine.Static("/static", "./static")
-	//}
 	// 创建全局缓存实例
 	globalCache := &utils.Cache{
 		Data:     make(map[string]interface{}),
@@ -124,6 +99,25 @@ func main() {
 	engine.Run(fmt.Sprintf(":%d", config.Port))
 }
 
+// 时间格式化
+func timeAgo(target time.Time) string {
+	duration := time.Now().Sub(target)
+	if duration < time.Second {
+		return "刚刚"
+	} else if duration < time.Minute {
+		return fmt.Sprintf("%d秒前", duration/time.Second)
+	} else if duration < time.Hour {
+		return fmt.Sprintf("%d分钟前", duration/time.Minute)
+	} else if duration < 24*time.Hour {
+		return fmt.Sprintf("%d小时前", duration/time.Hour)
+	} else if duration < 24*time.Hour*365 {
+		return fmt.Sprintf("%d天前", duration/(24*time.Hour))
+	} else {
+		return fmt.Sprintf("%d年前", duration/(24*time.Hour*365))
+	}
+}
+
+// 自定义模板函数
 func templateFun() template.FuncMap {
 	return template.FuncMap{
 		"timeAgo": timeAgo,
@@ -175,7 +169,8 @@ func templateFun() template.FuncMap {
 	}
 }
 
-func loadLocalTemplates(templatesDir string) multitemplate.Renderer {
+// 加载模板
+func loadTemplates(templatesDir string) multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
 
 	layouts, err := filepath.Glob(templatesDir + "/layouts/*.html")
@@ -197,42 +192,7 @@ func loadLocalTemplates(templatesDir string) multitemplate.Renderer {
 	return r
 }
 
-func loadTemplates(templatesDir fs.FS) multitemplate.Renderer {
-	r := multitemplate.NewRenderer()
-
-	layouts, err := fs.Glob(templatesDir, "layouts/*.html")
-	if err != nil {
-		panic(err.Error())
-	}
-	includes, err := fs.Glob(templatesDir, "includes/*.html")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// Generate our templates map from our layouts/ and includes/ directories
-	for _, include := range includes {
-		layoutCopy := make([]string, len(layouts))
-		copy(layoutCopy, layouts)
-		files := append(layoutCopy, include)
-		templateContents := make([]string, len(files))
-
-		for _, f := range files {
-			open, err := templatesDir.Open(f)
-			if err != nil {
-				panic(err)
-			}
-			buffer, err := io.ReadAll(open)
-			if err != nil {
-				panic(err)
-			}
-			templateContents = append(templateContents, string(buffer))
-			open.Close()
-		}
-		r.AddFromStringsFuncs(filepath.Base(include), templateFun(), templateContents...)
-	}
-	return r
-}
-
+// 初始化系统配置
 func initSystem(db *gorm.DB) {
 	var systemUserExists int64
 	db.Table("tb_user").Where("id=999999999").Count(&systemUserExists)

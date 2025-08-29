@@ -2,14 +2,15 @@ package handler
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/kingwrcy/hn/model"
-	"github.com/kingwrcy/hn/vo"
-	"github.com/samber/do"
-	"gorm.io/gorm"
+	"go_simple_forum/model"
+	"go_simple_forum/vo"
 	"log"
 	"math/rand"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/samber/do"
+	"gorm.io/gorm"
 )
 
 type InspectHandler struct {

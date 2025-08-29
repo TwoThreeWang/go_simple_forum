@@ -1,4 +1,4 @@
-module github.com/kingwrcy/hn
+module go_simple_forum
 
 go 1.23.4
 
