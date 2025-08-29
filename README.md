@@ -1,98 +1,125 @@
-# Go开发的极简论坛
+# Go Simple Forum
 
-## 项目简介
+一个简洁轻量的 Go 语言开发的论坛系统，采用前后端不分离架构，提供完整的社区讨论功能。
 
-一个基于Go语言开发的轻量级论坛系统，具有以下特点：
+本项目基于 [https://github.com/kingwrcy/hotnews](https://github.com/kingwrcy/hotnews) 二开，感谢原作者的贡献。
 
-- 极简设计：得益于Go语言强大的内嵌静态资源功能，镜像包仅6.29MB，运行时内存占用仅28MB
-- 功能完善：支持Markdown编辑器、用户管理、积分系统、标签管理等功能
-- 易于部署：支持Docker容器化部署，配置简单
-- SEO友好：支持sitemap、RSS订阅
-
-本项目基于 [https://github.com/kingwrcy/hotnews](https://github.com/kingwrcy/hotnews) 修改开发，感谢原作者的贡献。
-
-在源代码的基础上增改的功能：
-
-- [x] 发布及评论的编辑器改为 md 编辑器，文章内容保存为 md 格式
-- [x] 优化文章内容行间距
-- [x] 评论及文章内容链接改为新标签页打开
-- [x] 头像可以设置自定义头像
-- [x] 用户信息修改功能
-- [x] 邮件重置密码功能
-- [x] 增加404页面
-- [x] 标签增加对游客隐藏选项
-- [x] 新注册用户邮箱激活功能
-- [x] 管理员管理用户状态（Wait：等待激活；Active：活跃用户；Banned：禁止用户）
-- [x] 管理员管理文章状态（Wait：等待审核；Active：正常；Rejected：删除）
-- [x] 增加邮箱登录支持
-- [x] 增加sitemap
-- [x] 管理员删除评论功能
-- [x] 增加积分功能
-- [x] 增加签到功能
-- [x] 积分兑换邀请码
-- [x] 用户主页改用ID，不用用户名
-- [x] 热门帖子计算由7天内帖子改为15天内帖子，定时任务改为60分钟刷新一次排名
-- [x] 信任级别小于2的用户发帖需要审核
-- [x] 帖子审核通过或删除发站内通知
-- [x] 默认头像改为使用本地图片
-- [x] 自定义头像本地上传功能
-- [x] SEO优化
-- [x] 评论增加emoji
-- [x] 增加帖子收藏功能
-- [x] 增加 Google 一键登录功能
-- [x] 优化黑暗模式，增加自动模式切换
-- [x] 邮件发送改为使用 smtp
-- [x] 增加 RSS
-- [x] 增加图片代理接口，优化 google 头像显示
-- [x] 标签增加阅读等级设置
-
-### Demo
+## Demo
 
 竹林：[https://zhulink.vip](https://zhulink.vip)
 
 ![论坛截图](https://openai-75050.gzc.vod.tencent-cloud.com/openaiassets_5ba4ebcbd2030fee5ac43c38e41a0f41_2579861720144999302.png)
 
-## 主要功能
+## 🌟 功能特性
 
-### 内容管理
-- Markdown编辑器支持，文章内容以MD格式保存
-- 文章状态管理（等待审核/正常/删除）
-- 评论管理与emoji表情支持
-- 帖子收藏功能
-- 文章内容链接新标签页打开
-
-### 用户系统
-- 邮箱注册与登录
-- Google一键登录集成
-- 用户等级与积分系统
-- 自定义头像上传
-- 邮件密码重置
+### 核心功能
+- **用户系统**：注册、登录、个人资料管理
+- **帖子管理**：发布、编辑、删除、搜索
+- **评论系统**：支持多级评论回复
+- **标签系统**：灵活的帖子分类和标签管理
+- **投票系统**：点赞、踩功能
+- **消息通知**：实时消息提醒
+- **内容审核**：举报和管理员审核机制
 
 ### 管理功能
-- 用户状态管理（等待激活/活跃/禁止）
-- 标签管理与访问权限控制
-- 评论删除与管理
-- 站内消息通知
+- **用户管理**：用户列表、权限管理
+- **内容审核**：帖子/评论审核
+- **统计分析**：用户活跃度、帖子统计
+- **系统设置**：网站配置管理
 
-### 其他特性
-- 黑暗模式支持，可自动切换
-- SEO优化与sitemap
-- RSS订阅支持
-- 图片代理优化
+### 技术特色
+- **极简设计**：得益于Go语言强大的内嵌静态资源功能，镜像包仅6.29MB，运行时内存占用仅28MB
+- **高性能**：基于 Go 的高并发处理
+- **缓存优化**：使用内存缓存提升访问速度
+- **SEO友好**：支持搜索引擎优化
+- **响应式设计**：适配移动端和桌面端
+- **Markdown支持**：支持完整的 Markdown 格式
 
-## 积分规则
+## 🛠️ 技术栈
 
-### 获取积分
-- 签到：1-10随机积分
-- 被点赞：+1积分
-- 被评论：+1积分
-- 发布评论：+1积分
-- 发布帖子：1-5随机积分
+### 后端
+- **语言**：Go 1.19+
+- **框架**：Gin Web Framework
+- **数据库**：PostgreSQL
+- **ORM**：GORM
+- **验证**：Validator
+- **日志**：Zap
 
-### 消耗积分
-- 生成邀请码：-50积分
-- 帖子被删除：-5积分
-- 评论被删除：-3积分
+### 前端
+- **模板引擎**：Go HTML Template
+- **样式**：UnoCSS + 自定义CSS
+- **脚本**：jQuery + 原生JavaScript
+- **编辑器**：Markdown编辑器（支持ScEditor）
+- **图标**：自定义SVG图标
+
+### 部署
+- **容器化**：Docker + Docker Compose
+- **反向代理**：Nginx
+- **进程管理**：Supervisor
+
+## 🚀 快速开始
+
+### 环境要求
+- Go 1.19 或更高版本
+- PostgreSQL 13 或更高版本
+- SMTP服务（可选，用于邮件功能）
+- Google OAuth（可选，用于Google登录）
+
+### 安装步骤
+
+1. **克隆项目**
+```bash
+git clone https://github.com/TwoThreeWang/go_simple_forum
+cd go_simple_forum
+```
+
+2. **安装依赖**
+```bash
+go mod download
+```
+
+3. **配置环境**
+```bash
+# 复制环境变量模板
+cp example_env.txt .env
+
+# 编辑配置文件
+vim .env
+```
+
+4. **启动应用**
+```bash
+./bulid.sh
+```
+
+6. **访问应用**
+打开浏览器访问 `http://localhost:8080`
+
+### 初始说明
+
+- 首个注册用户自动成为管理员
+- 管理员可以添加/管理父标签和子标签
+- 支持用户列表管理和IP统计
+
+## 📁 项目结构
+
+```
+go_simple_forum/
+├── handler/          # 路由处理器
+├── model/           # 数据模型
+├── middleware/      # 中间件
+├── templates/       # HTML模板
+├── static/          # 静态资源
+├── utils/           # 工具函数
+├── provider/        # 服务提供者
+├── task/            # 定时任务
+├── init/            # 初始化脚本
+├── sql/             # 数据库脚本
+├── Dockerfile       # Docker配置
+├── docker-compose.yml
+├── go.mod          # Go模块配置
+└── main.go         # 程序入口
+```
 
 ## 数据库设计
 
@@ -110,57 +137,70 @@
 | tb_user | 用户表 |
 | tb_vote | 投票表 |
 
-## 快速开始
+## 🔧 开发指南
 
-### 环境要求
-- Go 1.16+
-- PostgreSQL
-- SMTP服务（可选，用于邮件功能）
-- Google OAuth（可选，用于Google登录）
-
-### 配置说明
-
-在项目根目录创建 `.env` 文件，配置以下环境变量：
-
-```dotenv
-PORT=32919  # 服务端口
-DB='host=127.0.0.1 user=postgres password=123456 dbname=hotnews port=5432 sslmode=disable TimeZone=Asia/Shanghai'  # 数据库连接
-COOKIE_SECRET=test  # Cookie密钥
-VERSION=0.0.1  # 版本号
-SiteName=竹林  # 站点名称
-SiteUrl=https://zhulink.vip  # 站点URL
-EmailSender=发件人地址  # SMTP发件人
-EmailSenderName=发件人姓名  # SMTP发件人名称
-EmailPassword=邮箱密码  # SMTP密码
-EmailSmtpHost=smtp服务器  # SMTP服务器
-EmailSmtpPort=smtp端口  # SMTP端口
-GIN_MODE=release  # 运行模式
-ClientID=Google应用ID  # Google OAuth ID
-ClientSecret=Google应用密钥  # Google OAuth Secret
-```
-
-### 启动说明
-
-1. 本地开发启动：
+### 开发命令
 ```bash
+# 运行应用
 go run main.go
+
+# 运行测试
+go test ./...
+
+# 代码格式化
+go fmt ./...
+
+# 依赖整理
+go mod tidy
 ```
 
-2. Docker部署：
-参考项目中的 `build.sh` 和 `docker-compose.yml` 文件
+### 添加新功能
+1. 在 `model/` 目录定义数据模型
+2. 在 `handler/` 目录添加处理器
+3. 在 `templates/` 目录创建对应模板
+4. 更新路由配置
 
-### 初始说明
+## 📊 性能优化
 
-- 首个注册用户自动成为管理员
-- 管理员可以添加/管理父标签和子标签
-- 支持用户列表管理和IP统计
+### 缓存策略
+- **页面缓存**：热门页面缓存5分钟
+- **用户缓存**：用户信息缓存30分钟
+- **统计缓存**：统计数据缓存1小时
+- **搜索结果**：搜索结果缓存15分钟
 
-## 开发计划
+### 数据库优化
+- 关键字段索引优化
+- 查询语句优化
+- 分页查询使用游标
 
-- [ ] 集市功能：支持用户发布虚拟商品，使用积分交易
-- [ ] 帖子感谢功能：感谢消耗2积分，被感谢获得2积分
-- [ ] 评论感谢功能：感谢消耗1积分，被感谢获得1积分
+### 前端优化
+- 静态资源压缩
+- CDN加速
+- 懒加载图片
+- 浏览器缓存
 
-## 贡献
+## 🔐 安全特性
 
-欢迎提交Issue和Pull Request。
+- **密码安全**：bcrypt加密存储
+- **CSRF保护**：所有表单包含CSRF令牌
+- **XSS防护**：输入内容严格过滤
+- **SQL注入防护**：使用预编译语句
+- **验证码**：集成Cloudflare Turnstile
+- **频率限制**：API调用频率限制
+
+## 📄 许可证
+
+本项目采用 MIT 许可证。
+
+### 更新日志
+查看 [CHANGELOG.md](CHANGELOG.md) 了解版本更新历史。
+
+## 🙏 致谢
+
+- 感谢所有贡献者的努力
+- 感谢开源社区的支持
+- 特别鸣谢使用到的开源项目
+
+---
+
+**⭐ 如果这个项目对你有帮助，请给个星标支持一下！**
