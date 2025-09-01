@@ -1,9 +1,9 @@
 {{ define "title"}}
     <title>发表内容 - {{.siteName}}</title>
     <link rel="stylesheet"
-          href='{{getStaticPath "/css/sumoselect.min.css" }}'>
-    <script src='{{getStaticPath "/js/jquery.sumoselect.min.js"}}'></script>
-    <script src='{{getStaticPath "/js/mditor.js"}}'></script>
+          href='/static/css/sumoselect.min.css'>
+    <script src='/static/js/jquery.sumoselect.min.js'></script>
+    <script src='/static/js/mditor.js'></script>
     <script>
         $(function () {
             const selectBox = $('.selectBox')

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -92,7 +91,7 @@ func main() {
 	engine.NoRoute(func(c *gin.Context) {
 		c.HTML(200, "404.html", gin.H{})
 	})
-
+	// 定时任务
 	go task.StartPostTask(injector)
 
 	log.Printf("启动http服务,端口:%d,监听请求中...", config.Port)
@@ -158,13 +157,6 @@ func templateFun() template.FuncMap {
 				dict[key] = values[i+1]
 			}
 			return dict, nil
-		},
-		"getStaticPath": func(resource string) string {
-			prefix := os.Getenv("STATIC_CDN_PREFIX")
-			if prefix == "" {
-				return "/static" + resource
-			}
-			return prefix + resource
 		},
 	}
 }

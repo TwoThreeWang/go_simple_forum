@@ -1,5 +1,5 @@
 {{define "post"}}
-    <script src='{{getStaticPath "/js/marked.min.js"}}'></script>
+    <script src='/static/js/marked.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.6/purify.min.js" integrity="sha512-YlctBG9PGZIhh9keoqI3eZkQM9T8QUbiBi7qNYAO/TUEo8jqWX5pLp5+x1cKRQDRzJ/lyGyJ9WUVNIRduxIIFw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>.mditor-mini textarea{min-height:100px} .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}</style>
     <script>function sendGetRequest(url){fetch(url)}</script>
@@ -244,7 +244,7 @@
             </article>
         {{end}}
         {{ if eq $.selected "detail" }}
-        <script src='{{getStaticPath "/js/mditor.js"}}'></script>
+        <script src='/static/js/mditor.js'></script>
         <script type="text/javascript">
             //获取textarea dom对象
             var ele_textarea = document.getElementById('md_editor');
