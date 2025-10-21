@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"encoding/gob"
 	"errors"
 	"fmt"
 	"html/template"
+	"net/http"
 	"path/filepath"
 	"time"
 
@@ -91,11 +93,29 @@ func main() {
 	engine.NoRoute(func(c *gin.Context) {
 		c.HTML(200, "404.html", gin.H{})
 	})
-	// 定时任务
-	go task.StartPostTask(injector)
+	// 创建用于控制后台任务的 context
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
+	// 启动定时任务
+	go task.StartPostTask(injector)
+	go task.StartCleanCacheTask(ctx, injector)
+
+	srv := &http.Server{
+		Addr:              fmt.Sprintf(":%d", config.Port),
+		Handler:           engine,
+		ReadTimeout:       30 * time.Second,  // 限制读取完整请求的时间（包括Body）
+		WriteTimeout:      30 * time.Second,  // 限制写入响应的时间
+		IdleTimeout:       120 * time.Second, // 限制空闲连接的保持时间（Keep-Alive）
+		ReadHeaderTimeout: 10 * time.Second,  // 限制读取请求头的时间
+		MaxHeaderBytes:    1 << 20,           // 1MB，限制请求头的最大大小
+	}
+
+	// 启动服务
 	log.Printf("启动http服务,端口:%d,监听请求中...", config.Port)
-	engine.Run(fmt.Sprintf(":%d", config.Port))
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		panic(err)
+	}
 }
 
 // 时间格式化
