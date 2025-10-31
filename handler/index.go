@@ -756,7 +756,8 @@ func (i *IndexHandler) Vote(c *gin.Context) {
 			return nil
 		})
 	}
-
+	// 刷新帖子热门分数
+	go utils.CalculateHotScore(i.db, id)
 	c.Redirect(302, refer)
 }
 

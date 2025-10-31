@@ -42,8 +42,9 @@ func (p PostHandler) ClickPost(c *gin.Context) {
 	if err := p.db.Model(&model.TbPost{}).Where("pid =?", pid).Update("clickVote", gorm.Expr(fmt.Sprintf("\"%s\"", "clickVote")+"+1")).Error; err != nil {
 		fmt.Println("帖子点击量增加报错：" + err.Error())
 	}
+	// 刷新帖子热门分数
+	go utils.CalculateHotScore(p.db, pid)
 	c.JSON(200, gin.H{"message": "success"})
-	return
 }
 
 func (p PostHandler) DoUpdate(c *gin.Context) {
@@ -116,8 +117,9 @@ func (p PostHandler) DoUpdate(c *gin.Context) {
 		}
 	}
 	p.db.Save(&post)
+	// 刷新帖子热门分数
+	go utils.CalculateHotScore(p.db, pid)
 	c.Redirect(302, "/p/"+post.Pid)
-	return
 }
 
 func (p PostHandler) ToEdit(c *gin.Context) {
@@ -525,6 +527,8 @@ func (p PostHandler) AddComment(c *gin.Context) {
 		c.Redirect(302, "/")
 		return
 	}
+	// 刷新帖子热门分数
+	go utils.CalculateHotScore(p.db, post.Pid)
 	c.Redirect(302, redirectUrl)
 }
 

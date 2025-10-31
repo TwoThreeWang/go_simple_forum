@@ -2,6 +2,7 @@ package task
 
 import (
 	"go_simple_forum/model"
+	"go_simple_forum/utils"
 	"log"
 	"math"
 	"time"
@@ -13,6 +14,22 @@ import (
 )
 
 func StartPostTask(i *do.Injector) {
+	s := gocron.NewScheduler()
+	s.Every(1).Hours().Do(func(i *do.Injector) {
+		log.Printf("start refresh last 15 days post points.")
+		db := do.MustInvoke[*gorm.DB](i)
+
+		var postIDs []string
+		db.Model(&model.TbPost{}).Select("pid").Where("created_at >= now() - interval '15 day' and status = 'Active'").Pluck("id", &postIDs)
+		for _, pid := range postIDs {
+			utils.CalculateHotScore(db, pid)
+		}
+		log.Printf("end of refresh last 15 days post points.")
+	}, i)
+	s.Start()
+}
+
+func StartPostTaskBak(i *do.Injector) {
 	s := gocron.NewScheduler()
 	s.Every(1).Hours().Do(func(i *do.Injector) {
 		log.Printf("start refresh last 15 days post points.")
