@@ -31,7 +31,7 @@ func CalculateHotScore(db *gorm.DB, pid string) {
 	hoursSinceCreate := time.Since(post.CreatedAt).Hours()
 	hoursSinceUpdate := time.Since(post.UpdatedAt).Hours()
 	// 时间衰减，帖子越老，热度越低
-	ageDecay := math.Pow(hoursSinceCreate+2, 1.3)
+	ageDecay := math.Pow(hoursSinceCreate+0.5, 1.3)
 	// 最近更新，活跃加成，最近有人互动的帖子，会让热度恢复或保持高位，老帖在有新互动（比如更新）后能恢复部分热度
 	updateBoost := 1 / (1 + hoursSinceUpdate/24)
 
