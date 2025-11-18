@@ -49,20 +49,18 @@ func (u *UserHandler) Login(c *gin.Context) {
 		})
 		return
 	}
-	// 验证 Turnstile 令牌
-	if request.CfTurnstile != "" {
-		remoteIP := c.ClientIP()
-		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
-		if err != nil {
+	// 验证自定义验证码
+	if request.CaptchaAnswer != 0 && request.CaptchaID != "" {
+		if !utils.ValidateCaptcha(c, request.CaptchaAnswer, request.CaptchaID) {
 			c.HTML(200, "login.html", gin.H{
-				"msg":      "验证 Turnstile 令牌失败：" + err.Error(),
+				"msg":      "验证码错误，请重新获取",
 				"selected": "login",
 			})
 			return
 		}
 	} else {
 		c.HTML(200, "login.html", gin.H{
-			"msg":      "验证 Turnstile 令牌失败：缺少验证参数",
+			"msg":      "请先获取验证码",
 			"selected": "login",
 		})
 		return
@@ -276,6 +274,18 @@ func (u *UserHandler) ToLogin(c *gin.Context) {
 	c.HTML(200, "login.html", OutputCommonSession(u.injector, c, gin.H{
 		"selected": "login",
 	}))
+}
+
+// GenerateCaptcha 生成验证码API
+func (u *UserHandler) GenerateCaptcha(c *gin.Context) {
+	captcha := utils.GenerateMathCaptcha()
+	utils.SetCaptchaInSession(c, captcha)
+
+	c.JSON(200, gin.H{
+		"success": true,
+		"question": captcha.Question,
+		"id": captcha.ID,
+	})
 }
 func (u *UserHandler) Logout(c *gin.Context) {
 	session := sessions.Default(c)
@@ -828,19 +838,19 @@ func (u *UserHandler) DoInvited(c *gin.Context) {
 		}))
 		return
 	}
-	// 验证 Turnstile 令牌
-	if request.CfTurnstile != "" {
-		remoteIP := c.ClientIP()
-		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
-		if err != nil {
+	// 验证自定义验证码
+	if request.CaptchaAnswer != 0 && request.CaptchaID != "" {
+		if !utils.ValidateCaptcha(c, request.CaptchaAnswer, request.CaptchaID) {
 			c.HTML(200, "toBeInvited.html", OutputCommonSession(u.injector, c, gin.H{
-				"msg": "验证 Turnstile 令牌失败：" + err.Error(),
+				"msg": "验证码错误，请重新获取",
+				"code": code,
 			}))
 			return
 		}
 	} else {
 		c.HTML(200, "toBeInvited.html", OutputCommonSession(u.injector, c, gin.H{
-			"msg": "验证 Turnstile 令牌失败：缺少验证参数",
+			"msg": "请先获取验证码",
+			"code": code,
 		}))
 		return
 	}

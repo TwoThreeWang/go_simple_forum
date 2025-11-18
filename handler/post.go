@@ -65,19 +65,17 @@ func (p PostHandler) DoUpdate(c *gin.Context) {
 		c.Redirect(302, "/")
 		return
 	}
-	// 验证 Turnstile 令牌
-	if request.CfTurnstile != "" {
-		remoteIP := c.ClientIP()
-		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
-		if err != nil {
+	// 验证自定义验证码
+	if request.CaptchaAnswer != 0 && request.CaptchaID != "" {
+		if !utils.ValidateCaptcha(c, request.CaptchaAnswer, request.CaptchaID) {
 			c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
-				"title": "参数错误", "msg": "验证 Turnstile 令牌失败：" + err.Error(),
+				"title": "参数错误", "msg": "验证码错误，请重新获取",
 			}))
 			return
 		}
 	} else {
 		c.HTML(200, "result.html", OutputCommonSession(p.injector, c, gin.H{
-			"title": "参数错误", "msg": "验证 Turnstile 令牌失败：缺少验证参数",
+			"title": "参数错误", "msg": "请先获取验证码",
 		}))
 		return
 	}
@@ -306,13 +304,11 @@ func (p PostHandler) Add(c *gin.Context) {
 		}))
 		return
 	}
-	// 验证 Turnstile 令牌
-	if request.CfTurnstile != "" {
-		remoteIP := c.ClientIP()
-		_, err := utils.VerifyTurnstileToken(c, request.CfTurnstile, remoteIP)
-		if err != nil {
+	// 验证自定义验证码
+	if request.CaptchaAnswer != 0 && request.CaptchaID != "" {
+		if !utils.ValidateCaptcha(c, request.CaptchaAnswer, request.CaptchaID) {
 			c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
-				"msg":      "验证 Turnstile 令牌失败：" + err.Error(),
+				"msg":      "验证码错误，请重新获取",
 				"selected": "new",
 				"tags":     tempTags,
 			}))
@@ -320,7 +316,7 @@ func (p PostHandler) Add(c *gin.Context) {
 		}
 	} else {
 		c.HTML(200, "new.html", OutputCommonSession(p.injector, c, gin.H{
-			"msg":      "验证 Turnstile 令牌失败：缺少验证参数",
+			"msg":      "请先获取验证码",
 			"selected": "new",
 			"tags":     tempTags,
 		}))

@@ -124,7 +124,20 @@
                 {{end}}
             </script>
             <div id="emoji-list-0" class="emoji-list"  style="display: none"></div>
-            <div class="cf-turnstile" data-sitekey="0x4AAAAAABe0A7qZtBoYRAFQ" data-callback="onSubmitForm"></div>
+            <div class="flex flex-row items-center gap-2">
+                <label class="text-sm font-medium">验证码：</label>
+                <div class="flex items-center gap-2">
+                    <input type="number"
+                           name="captcha_answer"
+                           class="input w-24"
+                           placeholder="点击获取"
+                           onclick="getCaptcha()"
+                           id="postCaptchaAnswer"
+                           readonly>
+                    <span id="post-captcha-question" class="text-sm font-medium"></span>
+                    <input type="hidden" name="captcha_id" id="postCaptchaId">
+                </div>
+            </div>
             <div class="flex flex-row gap-2 items-center mt-2">
                 <button class="btn py-1 px-4" type="submit">提交</button>
                 <a class="cursor-pointer bg-white border-0 text-black rounded py-1 px-4" href="https://markdown.com.cn/cheat-sheet.html" target="_blank">markdown语法</a>
@@ -157,6 +170,25 @@
         .SumoSelect {flex: 1;}
         .emoji-list span{padding:3px;margin:1px;border:1px solid #ddd;display:inline-block;}
     </style>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+    function getCaptcha() {
+        fetch('/api/captcha/generate')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('post-captcha-question').textContent = data.question;
+                    document.getElementById('postCaptchaId').value = data.id;
+                    document.getElementById('postCaptchaAnswer').removeAttribute('readonly');
+                    document.getElementById('postCaptchaAnswer').placeholder = '';
+                    document.getElementById('postCaptchaAnswer').value = '';
+                    document.getElementById('postCaptchaAnswer').focus();
+                }
+            })
+            .catch(error => {
+                console.error('Error generating captcha:', error);
+                document.getElementById('post-captcha-question').textContent = '获取失败，请重试';
+            });
+    }
+</script>
 {{end}}
 {{ define "afterBody"}}{{end}}

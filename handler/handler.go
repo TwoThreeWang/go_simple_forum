@@ -87,6 +87,9 @@ func SetupRouter(injector *do.Injector, engine *gin.Engine) {
 	userGroup.GET("/status", userHandler.SetStatus)                                                             // 修改用户状态（激活或者禁止）
 	userGroup.GET("/punch", userHandler.Punch)                                                                  // 签到
 
+	// 验证码路由
+	engine.GET("/api/captcha/generate", userHandler.GenerateCaptcha) // 生成验证码
+
 	engine.POST("/oauth/callback/google", userHandler.Oauth) // 三方登录
 
 	//commentGroup := engine.Group("/c")

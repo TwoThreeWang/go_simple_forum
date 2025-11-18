@@ -1,9 +1,10 @@
 package vo
 
 type LoginRequest struct {
-	Username string `form:"username,omitempty"`
-	Password string `form:"password,omitempty"`
-	CfTurnstile string `form:"cf-turnstile-response,omitempty"`
+	Username      string `form:"username,omitempty"`
+	Password      string `form:"password,omitempty"`
+	CaptchaAnswer int    `form:"captcha_answer,omitempty"`
+	CaptchaID     string `form:"captcha_id,omitempty"`
 }
 type RegisterRequest struct {
 	Username       string `form:"username,omitempty"`
@@ -11,7 +12,8 @@ type RegisterRequest struct {
 	RepeatPassword string `form:"repeatPassword,omitempty"`
 	Email          string `form:"email,omitempty"`
 	Bio            string `form:"bio,omitempty"`
-	CfTurnstile string `form:"cf-turnstile-response,omitempty"`
+	CaptchaAnswer  int    `form:"captcha_answer,omitempty"`
+	CaptchaID      string `form:"captcha_id,omitempty"`
 }
 
 type EditUserRequest struct {

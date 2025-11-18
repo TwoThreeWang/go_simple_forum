@@ -54,7 +54,20 @@
                             </div>
                         </div>
                     {{end}}
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAABe0A7qZtBoYRAFQ" data-callback="onSubmitForm"></div>
+                    <div class="flex gap-2 items-center">
+                        <label class="fw-bold w-[70px]">验证码</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                   name="captcha_answer"
+                                   class="input w-24"
+                                   placeholder="点击获取"
+                                   onclick="getCaptcha()"
+                                   id="registerCaptchaAnswer"
+                                   readonly>
+                            <span id="register-captcha-question" class="text-sm font-medium"></span>
+                            <input type="hidden" name="captcha_id" id="registerCaptchaId">
+                        </div>
+                    </div>
                     <div class="flex gap-2">
                         <input type="submit" value="注册用户" class="btn py-1 px-4">
                         <div class="g_id_signin"
@@ -70,10 +83,35 @@
             {{end}}
         </form>
     {{end}}
-{{end}}
 <script>
-    const divElement = document.getElementById('g_id_onload');
-    divElement.setAttribute('data-invite_code', '{{.code}}');
+    // 安全地设置 Google 登录参数
+    try {
+        const divElement = document.getElementById('g_id_onload');
+        if (divElement) {
+            divElement.setAttribute('data-invite_code', '{{.code}}');
+        }
+    } catch (error) {
+        console.warn('Google login setup failed:', error);
+    }
+
+    function getCaptcha() {
+        fetch('/api/captcha/generate')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('register-captcha-question').textContent = data.question;
+                    document.getElementById('registerCaptchaId').value = data.id;
+                    document.getElementById('registerCaptchaAnswer').removeAttribute('readonly');
+                    document.getElementById('registerCaptchaAnswer').placeholder = '';
+                    document.getElementById('registerCaptchaAnswer').value = '';
+                    document.getElementById('registerCaptchaAnswer').focus();
+                }
+            })
+            .catch(error => {
+                console.error('Error generating captcha:', error);
+                document.getElementById('register-captcha-question').textContent = '获取失败，请重试';
+            });
+    }
 </script>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{{end}}
 {{ define "afterBody"}}{{end}}

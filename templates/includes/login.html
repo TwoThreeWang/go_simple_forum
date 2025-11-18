@@ -45,7 +45,20 @@
                     <input type="password" name="password" class="input" value="" autocomplete="off"/>
                 </div>
             </div>
-            <div class="cf-turnstile" data-sitekey="0x4AAAAAABe0A7qZtBoYRAFQ" data-callback="onSubmitForm"></div>
+            <div class="flex flex-row items-center">
+                <div class="mr-2 text-sm">验证码</div>
+                <div class="flex items-center gap-2">
+                    <input type="number"
+                           name="captcha_answer"
+                           class="input w-24"
+                           placeholder="点击获取"
+                           onclick="getCaptcha()"
+                           id="captchaAnswer"
+                           readonly>
+                    <span id="captcha-question" class="text-sm font-medium"></span>
+                      <input type="hidden" name="captcha_id" id="captchaId">
+                </div>
+            </div>
             <div class="flex flex-row gap-2 items-center">
                 <button class="btn" type="submit">登录</button>
                 <div class="text-red text-sm">{{.msg}}</div>
@@ -59,6 +72,25 @@
         </div>
     </form>
 </div>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+    function getCaptcha() {
+        fetch('/api/captcha/generate')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('captcha-question').textContent = data.question;
+                    document.getElementById('captchaId').value = data.id;
+                    document.getElementById('captchaAnswer').removeAttribute('readonly');
+                    document.getElementById('captchaAnswer').placeholder = '';
+                    document.getElementById('captchaAnswer').value = '';
+                    document.getElementById('captchaAnswer').focus();
+                }
+            })
+            .catch(error => {
+                console.error('Error generating captcha:', error);
+                document.getElementById('captcha-question').textContent = '获取失败，请重试';
+            });
+    }
+</script>
 {{end}}
 {{ define "afterBody"}}{{end}}
