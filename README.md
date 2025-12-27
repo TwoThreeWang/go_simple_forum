@@ -1,5 +1,7 @@
 # Go Simple Forum
 
+本项目不再更新，转移到：[https://github.com/TwoThreeWang/zhulink](https://github.com/TwoThreeWang/zhulink)
+
 一个简洁轻量的 Go 语言开发的论坛系统，采用前后端不分离架构，提供完整的社区讨论功能。
 
 本项目基于 [https://github.com/kingwrcy/hotnews](https://github.com/kingwrcy/hotnews) 二开，感谢原作者的贡献。
